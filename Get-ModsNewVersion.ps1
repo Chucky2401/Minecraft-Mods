@@ -24,7 +24,7 @@
         Date modified  : 19/07/2022
         Change         : Use an ini file for user settings
     .LINK
-        http://srv-pa-git.sterimed.local/Chemin/vers/dépôt/gitlab/sterimed
+        https://github.com/Chucky2401/Minecraft-Mods/blob/main/README.md#get-modsnewversion
 #>
 
 #---------------------------------------------------------[Script Parameters]------------------------------------------------------
