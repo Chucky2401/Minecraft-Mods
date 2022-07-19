@@ -1,0 +1,67 @@
+"name";"ModId";"Version";"type";"InternalCategory";"GoC";"FileId";FileName
+"AdvancementInfo";"403815";"0.47.10";"Mods";;"True";"3687748";advancementinfo-1.18.2-fabric0.47.10-1.3.1.jar
+"Advancements Enlarger";"355583";"0.2.4";"Mods";;"True";"3329360";advancements-enlarger-0.2.4.jar
+"AppleSkin";"248787";"2.4.0";"Mods";;"False";"3686478";appleskin-fabric-mc1.18.2-2.4.0.jar
+"Architectury API";"419699";"4.4.68";"Mods";;"True";"3807923";architectury-4.4.68.jar
+"Better Birch Leaves Add-On";"514560";"1";"Ressources";;"True";"3422660";Better+Birch+Leaves+V1-1.17.zip
+"Better Dropped Items";"350250";;"Mods";;"False";;
+"Better Spruce Leaves Add-On";"514567";"1";"Ressources";;"True";"3422663";Better+Spruce+Leaves+V1-1.17.zip
+"Better Third Person";"435044";"1.7.3";"Mods";;"True";"3738178";BetterThirdPerson-Fabric-1.18.2-1.7.3.jar
+"BetterF3";"401648";"1.2.5";"Mods";;"True";"3798366";BetterF3-1.2.5-Fabric-1.18.2.jar
+"BSL Shaders";"322506";"8.1.02.3";"Shaders";;"True";"3805263";
+"Cloth Config API";"348521";"6.2.62";"Mods";;"True";"3782775";cloth-config-6.2.62-fabric.jar
+"Continuity";"531351";"1.1.0";"Mods";"NoOptifine";"True";"3675822";continuity-1.1.0+1.18.2.jar
+"CraftPresence";"297038";"1.8.8";"Mods";;"False";"3667807";CraftPresence-Fabric-1.18.2-Release-1.8.8.jar
+"Dark Loading Screen";"365727";"1.6.11";"Mods";;"False";"3470993";dark-loading-screen-1.6.11.jar
+"Diggus Maximus";"341888";"1.5.5";"Mods";;"False";"3817898";diggusmaximus-1.5.5-1.18.jar
+"Dramatic Skys";"231821";"1.4";"Ressources";;"True";"3547981";Dramatic+Skys+Demo+1.4.zip
+"EditSign";"344996";"2.3.1";"Mods";;"False";"3688924";EditSign-1.18.2-2.3.1.jar
+"Effective 💦";"556381";"1.2.1";"Mods";;"False";"3735277";effective-1.2.1.jar
+"Enchanted ToolTips";"331965";;"Mods";;"False";;
+"Enhanced Attack Indicator";"446173";"1.0.3";"Mods";;"False";"3728272";enhanced_attack_indicator-1.0.3+1.18.jar
+"Experience Container";"327525";"1.15.3";"Mods";;"False";"3571649";Experience-Container-1.15.3.jar
+"Fabric API";"306612";"0.54.0";"Mods";;"True";"3811649";fabric-api-0.54.0+1.18.2.jar
+"Fabric Capes";"408481";"1.3.1";"Mods";"NoOptifine";"True";"3780643";Capes-1.3.1+1.18.2.jar
+"Fabric Language Kotlin";"308769";"1.7.4+kotlin.1.6.21";"Mods";"NoOptifine";"True";"3764014";fabric-language-kotlin-1.7.4+kotlin.1.6.21.jar
+"Fabric Loader";"70979811";"0.14.6(0.11.0)";"Mods";;"True";"4846495246544048464949464841";fabric-installer-0.11.0.jar
+"Faithful 32x";"436482";"Beta 20";"Ressources";;"True";"3648418";Compliance-32x-Java-Beta-20.zip
+"Falling Leaves";"417510";"1.11.1";"Mods";;"True";"3782712";fallingleaves-1.11.1+1.18.2.jar
+"FallingTree";"349559";"3.5.1";"Mods";;"False";"3777696";FallingTree-1.18.2-3.5.1.jar
+"FerriteCore";"459857";"4.2.1";"Mods";"NoOptifine";"True";"3767285";ferritecore-4.2.1-fabric.jar
+"Held Item Info";"365615";"1.2.0";"Mods";;"False";"3346573";held-item-info-1.2.0.jar
+"Horse Stats Vanilla";"351393";"4.1.10";"Mods";;"False";"3551503";horse-stats-vanilla-4.1.10.jar
+"Indium";"459496";"1.0.3";"Mods";"NoOptifine";"True";"3767308";indium-1.0.3+mc1.18.2.jar
+"Inmis";"369254";"2.6.0";"Mods";;"False";"3783618";inmis-2.6.0-1.18.2.jar
+"Inventory Hotswap";"423235";"1.3";"Mods";;"False";"3549075";inventory-hotswap-fabric-1.18-1.3.jar
+"Inventory HUD+";"357540";"3.4.2";"Mods";;"False";"3545928";InventoryHUD-fabric-[1.18]+-3.4.2.jar
+"Inventory Profiles Next";"495267";"1.5.0";"Mods";;"False";"3810331";InventoryProfilesNext-fabric-1.18.2-1.5.0.jar
+"Iris Shaders";"455508";"1.2.4";"Mods";"NoOptifine";"True";"3770305";iris-mc1.18.2-1.2.4-build.38.jar
+"Item Scroller";"242064";"0.16.0";"Mods";;"False";"3671377";itemscroller-fabric-1.18.2-0.16.0.jar
+"Jerm's Better Leaves Add-on";"301900";"2.8";"Ressources";;"True";"3649669";Better+Leaves+Addon+V2.8-1.18.zip
+"LambdaBetterGrass";"400322";"1.2.3";"Mods";"NoOptifine";"True";"3684228";lambdabettergrass-1.2.3+1.18.jar
+"LambDynamicLights";"393442";"2.1.0";"Mods";"NoOptifine";"True";"3541670";lambdynamiclights-2.1.0+1.17.jar
+"Light Overlay";"325492";"6.0.5";"Mods";;"True";"3668243";light-overlay-6.0.5.jar
+"Litematica";"308892";"0.11.3";"Mods";;"True";"3783909";litematica-fabric-1.18.2-0.11.3.jar
+"Lithium";"360438";"0.7.10";"Mods";"NoOptifine";"True";"3801263";lithium-fabric-mc1.18.2-0.7.10.jar
+"MaLiLib";"303119";"0.12.1";"Mods";;"True";"3692220";malilib-fabric-1.18.2-0.12.1.jar
+"MAmbience";"317590";"5.0.0";"Mods";;"True";"3667763";Mambience-5.0.0+1.18.2.jar
+"MiniHUD";"244260";"0.22.0";"Mods";;"False";"3671392";minihud-fabric-1.18.2-0.22.0.jar
+"Mod Menu";"308702";"3.2.2";"Mods";;"True";"3789482";modmenu-3.2.2.jar
+"OptiFabric";"322385";"1.13.0";"Mods";;"True";"3717575";optifabric-1.13.0.jar
+"OptiFine";"79112116";"HD_U_H7";"Mods";;"True";"72689585957255";OptiFine_1.18.2_HD_U_H7.jar
+"Phosphor";"372124";"0.8.1";"Mods";"NoOptifine";"True";"3573395";phosphor-fabric-mc1.18.x-0.8.1.jar
+"Potion Descriptions";"414488";;"Mods";;"False";;
+"Presence Footsteps";"334259";"1.5.0";"Mods";;"True";"3671978";PresenceFootsteps-1.5.0.jar
+"Replay Mod";"82101112";"2.6.5";"Mods";;"True";"5046544653";replaymod-1.18.2-2.6.5.jar
+"Roughly Enough Items";"310111";"8.2.471";"Mods";;"False";"3816876";RoughlyEnoughItems-8.2.471.jar
+"Shield Corrections Colored";"308471";"1.2.0";"Ressources";;"True";"3346215";Shield+Corrections+[Colored].zip
+"Shield Corrections Regular";"308471";"1.2.0";"Ressources";;"True";"3346214";Shield+Corrections+[Colored].zip
+"ShulkerBoxTooltip";"315811";"3.0.7";"Mods";;"True";"3709224";shulkerboxtooltip-3.0.7+1.18.2.jar
+"Sodium";"394468";"0.4.1";"Mods";"NoOptifine";"True";"3669187";sodium-fabric-mc1.18.2-0.4.1+build.15.jar
+"ToolTipFix";"411557";"1.0.4";"Mods";;"False";"3543273";tooltipfix-1.0.4-1.18.jar
+"Tweakeroo";"297344";"0.13.3";"Mods";;"False";"3783910";tweakeroo-fabric-1.18.2-0.13.3.jar
+"WorldEdit";"225608";"7.2.10";"Mods";;"True";"3697298";worldedit-mod-7.2.10.jar
+"WTHIT";"440979";"4.10.3";"Mods";;"False";"3791303";wthit-fabric-4.10.3.jar
+"Xaeros Minimap";"263420";"22.9.0";"Mods";;"False";"505046574648";Xaeros_Minimap_22.9.0_Fabric_1.18.2.jar
+"Xaeros WorldMap";"317780";"1.23.1";"Mods";;"False";"494650514649";XaerosWorldMap_1.23.1_Fabric_1.18.2.jar
+"Zoomify";"574741";"1.6.0";"Mods";"NoOptifine";"True";"3800449";Zoomify-1.6.0.jar

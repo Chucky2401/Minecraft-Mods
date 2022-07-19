@@ -1,0 +1,14 @@
+Continuity (2.0.0): https://edge.forgecdn.net/files/3822/251/continuity-2.0.0+1.19.jar
+Fabric Capes (1.4.4): https://edge.forgecdn.net/files/3844/992/Capes-1.4.4+1.19.jar
+Fabric Language Kotlin (1.8.1+kotlin.1.7.0): https://edge.forgecdn.net/files/3850/90/fabric-language-kotlin-1.8.1+kotlin.1.7.0.jar
+FerriteCore (5.0.0): https://edge.forgecdn.net/files/3824/694/ferritecore-5.0.0-fabric.jar
+Indium (1.0.6): https://edge.forgecdn.net/files/3840/292/indium-1.0.6+mc1.19.jar
+Iris Shaders (1.2.5): https://edge.forgecdn.net/files/3821/21/iris-mc1.19-1.2.5.jar
+LambdaBetterGrass (1.3.0): https://edge.forgecdn.net/files/3834/55/lambdabettergrass-1.3.0+1.19.jar
+LambDynamicLights (2.1.2): https://edge.forgecdn.net/files/3824/820/lambdynamiclights-2.1.2+1.19.jar
+Lithium (0.8.1): https://edge.forgecdn.net/files/3865/696/lithium-fabric-mc1.19-0.8.1.jar
+Phosphor (0.8.1): https://edge.forgecdn.net/files/3832/74/phosphor-fabric-mc1.19.x-0.8.1.jar
+Reese's Sodium Options (1.4.3): https://edge.forgecdn.net/files/3820/953/reeses_sodium_options-1.4.3+mc1.19-build.43.jar
+Sodium (0.4.2): https://edge.forgecdn.net/files/3820/973/sodium-fabric-mc1.19-0.4.2+build.16.jar
+Sodium Extra (0.4.5): https://edge.forgecdn.net/files/3821/14/sodium-extra-0.4.5+mc1.19-build.43.jar
+Zoomify (1.7.1): https://edge.forgecdn.net/files/3844/111/Zoomify-1.7.1.jar
