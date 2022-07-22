@@ -17,7 +17,7 @@
         .\Get-ModsNewVersion.ps1 -MCVersion "1.19.0" -NoDownload
     .NOTES
         Name           : Get-ModsNewVersion
-        Version        : 1.0.1.25
+        Version        : 1.0.2.26
         Created by     : Chucky2401
         Date created   : 13/07/2022
         Modified by    : Chucky2401
