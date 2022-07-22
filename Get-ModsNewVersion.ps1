@@ -17,12 +17,12 @@
         .\Get-ModsNewVersion.ps1 -MCVersion "1.19.0" -NoDownload
     .NOTES
         Name           : Get-ModsNewVersion
-        Version        : 1.0.0.23
+        Version        : 1.0.1.25
         Created by     : Chucky2401
         Date created   : 13/07/2022
         Modified by    : Chucky2401
-        Date modified  : 19/07/2022
-        Change         : Use an ini file for user settings
+        Date modified  : 22/07/2022
+        Change         : Update readme file
     .LINK
         https://github.com/Chucky2401/Minecraft-Mods/blob/main/README.md#get-modsnewversion
 #>
@@ -693,6 +693,26 @@ $sMarkdownNoOptifine = "$($sModsMarkdownDirectory)\MC_$($MCVersion)-NoOptifine-$
 $sInfoWebSiteOptifine   = "$($sModsTexteDirectory)\MC_$($MCVersion)-Optifine-$(Get-Date -Format "yyyy.MM.dd_HH.mm").txt"
 $sInfoWebSiteNoOptifine = "$($sModsTexteDirectory)\MC_$($MCVersion)-NoOptifine-$(Get-Date -Format "yyyy.MM.dd_HH.mm").txt"
 
+# Mods
+$aMainModsList            = Import-Csv -Path $aMainModsListFile -Delimiter ";" -Encoding utf8
+$aPreviousModListDownload = $null
+$aModListDownload         = @()
+$aRelationType            = @(
+    'None'
+    'Embedded Library'
+    'Optional Dependency'
+    'Required Dependency'
+    'Tool'
+    'Incompatible'
+    'Include'
+)
+$aMarkdownModsOptifine    = @()
+$aMarkdownModsOptifine   += "Mise à jour de **Nos Ressources Minecraft** - *$($sCurseForgeVersion)* - (__{RECOMMANDATION}__)"
+$aMarkdownModsNoOptifine  = @()
+$aMarkdownModsNoOptifine += "Mise à jour de **Nos Ressources Minecraft Sans Optifine** - *$($sCurseForgeVersion)* - (__{RECOMMANDATION}__)"
+$aTexteModsOptifine       = @()
+$aTexteModsNoOptifine     = @()
+
 # Minecraft
 $htSettings['McBaseFolder']       += "1.18.2"
 $aDownloadDirectories              = @{
@@ -719,26 +739,6 @@ If ($MCVersion -match "^(.+)\.0$") {
 $sLogPath = "$($PSScriptRoot)\logs"
 $sLogName = "MC_$($MCVersion)_download_mods-$(Get-Date -Format "yyyy.MM.dd_HH.mm").log"
 $sLogFile = "$($sLogPath)\$($sLogName)"
-
-# Mods
-$aMainModsList            = Import-Csv -Path $aMainModsListFile -Delimiter ";" -Encoding utf8
-$aPreviousModListDownload = $null
-$aModListDownload         = @()
-$aRelationType            = @(
-    'None'
-    'Embedded Library'
-    'Optional Dependency'
-    'Required Dependency'
-    'Tool'
-    'Incompatible'
-    'Include'
-)
-$aMarkdownModsOptifine    = @()
-$aMarkdownModsOptifine   += "Mise à jour de **Nos Ressources Minecraft** - *$($sCurseForgeVersion)* - (__{RECOMMANDATION}__)"
-$aMarkdownModsNoOptifine  = @()
-$aMarkdownModsNoOptifine += "Mise à jour de **Nos Ressources Minecraft Sans Optifine** - *$($sCurseForgeVersion)* - (__{RECOMMANDATION}__)"
-$aTexteModsOptifine       = @()
-$aTexteModsNoOptifine     = @()
 
 # Divers
 $iCompteur         = 0
