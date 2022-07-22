@@ -714,7 +714,14 @@ $aTexteModsOptifine       = @()
 $aTexteModsNoOptifine     = @()
 
 # Minecraft
-$htSettings['McBaseFolder']       += "1.18.2"
+$sCurseForgeVersion = ""
+If ($MCVersion -match "^(.+)\.0$") {
+    $sCurseForgeVersion = $MCVersion -replace "\.0$", ""
+} Else {
+    $sCurseForgeVersion = $MCVersion
+}
+
+$htSettings['McBaseFolder']       += $sCurseForgeVersion
 $aDownloadDirectories              = @{
     BaseFolder              = "$($htSettings['McBaseFolder'])"
     GocFolder               = "$($htSettings['McBaseFolder'])\#GoC"
@@ -726,13 +733,6 @@ $aDownloadDirectories              = @{
     ModsNoOptifineFolder    = "$($htSettings['McBaseFolder'])\Mods\NoOptifine"
     RessourcesFolder        = "$($htSettings['McBaseFolder'])\Ressources"
     ShadersFolder           = "$($htSettings['McBaseFolder'])\Shaders"
-}
-
-$sCurseForgeVersion = ""
-If ($MCVersion -match "^(.+)\.0$") {
-    $sCurseForgeVersion = $MCVersion -replace "\.0$", ""
-} Else {
-    $sCurseForgeVersion = $MCVersion
 }
 
 # Logs
