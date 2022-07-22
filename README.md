@@ -15,6 +15,7 @@ My scripts to download Minecraft mods
       - [Examples](#examples)
       - [Appendix](#appendix)
         - [I. Folders organization](#i-folders-organization)
+        - [II. Main listing fields description](#ii-main-listing-fields-description)
 
 ## Why this script
 
@@ -67,7 +68,7 @@ The most important part of this Readme!
     2. ModLoaderType: if you want to download the mod for a specific loader (eg: Fabric, Forge, Quilt)
     3. McBaseFolder: the base folder where the script will download all files.
 
-        *At the beginning, the script will generate a folder named with the version, and subfolder for Mods, Ressources and Shaders*. See *Appendix I.* for details.
+        *At the beginning, the script will generate a folder named with the version, and subfolder for Mods, Ressources and Shaders*. See *[Appendix I.](#i-folders-organization)* for details.
 
 4. Modify or create your file `csv\00_main_listing.csv`. Use the existing one to help yourself
 
@@ -105,3 +106,81 @@ YourBaseFolder
     |_Ressources
     |_Shaders
 ```
+
+##### II. Main listing fields description
+
+I will try to describe you the fields of the main listing csv file.
+
+- name
+
+    The name of the mods displayed on CurseForge.
+    For the Optifine, ReplayMod, Fabric Loader and Xaero's mod, write what you want.
+
+- displayName
+
+    The name you want to see in the final csv, or markdown and text file
+    For example, for the mods **Roughly Enough Items Fabric/Forge (REI)** I prefere to see **Roughly Enough Items**
+
+- id
+
+    The mod id on CurseForge.
+    For the Optifine, ReplayMod, Fabric Loader and Xaero's mod, I converted the mod name into a byte value of each character with this command: `[String]::Join("", "OptiFine".ToCharArray().ToByte($null))`
+
+- type
+
+    Supported values:
+    - Mods
+    - Ressources
+    - Shaders
+
+    Nothing to add more
+
+- summary
+
+    Summary of the mods. Useless in the script, just for me, for reminder.
+
+- sourceWebsite
+
+    The source website of the mod. Use to choose how to retrieve information of the mod.
+    Supported values:
+
+    - curseforge
+    - optifine
+    - replaymod
+    - chocolateminecraft
+    - fabricmc
+
+- pageLink
+
+    Link to the mod
+
+- internalCategory
+
+    **Only for Mods type**
+    I use this field to classified mod between Optifine and sodium mods. Because, as you know, we can't use OptiFine and Sodium together. So for all the Sodium mods, I use the internal category *NoOptifine*. **This is the only supported category at the moment.**
+    I think you can leave it empty for your usage.
+
+- goc
+
+    As I download mods for the Gentlemen of Craft and myself, I don't post update of mods don't used by them. So, I use this boolean to help me.
+    Moreover, if the value is `True`, the mod will appear in the text and markdown file. Otherwise, it will not. If you don't need the markdown and the text file, just write `False` for each mods. Simple as that!
+
+- copy
+
+    *Not used for the moment*
+    This field will help me to know if we have to copy the mod to the `mods` folder.
+
+- skip
+
+    This field is a little bit complex.
+    It's used for the Shield Correction Ressources pack.
+    For the regular version, I have to skip the first one, because it's the color version.
+    Generally, you just have to put 0.
+
+- versionPattern
+
+    The regex to use to find the version of the mod.
+
+- versionField
+
+    In which field we have to look for the version of the mod
