@@ -68,11 +68,11 @@ The most important part of this Readme!
     2. ModLoaderType: if you want to download the mod for a specific loader (eg: Fabric, Forge, Quilt)
     3. McBaseFolder: the base folder where the script will download all files.
 
-        *At the beginning, the script will generate a folder named with the version, and subfolder for Mods, Ressources and Shaders*. See *[Appendix I.](#i-folders-organization)* for details.
+        *At the beginning, the script will generate a folder named with the version, and subfolder for Mods, Ressources and Shaders*. See *[Appendix I.](#i-folders-organization)* for more details.
 
 4. Modify or create your file `csv\00_main_listing.csv`. Use the existing one to help yourself
 
-    For the moment, the field **internalCategory** only managed the *NoOptifine* value. I use it myself because I rather use the Sodium mods instead of Optifine. But all the Gentlemen of Craft rather still use OptiFine
+    For the moment, the field **internalCategory** only managed the *NoOptifine* value. I use it myself because I rather use the Sodium mods instead of Optifine. But all the Gentlemen of Craft rather still use OptiFine. See *[Appendix II.](#ii-main-listing-fields-description)* for more details.
 
 5. Run the script in a PowerShell console with at least the version parameter!
 
