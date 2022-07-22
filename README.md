@@ -1,7 +1,7 @@
 # Minecraft-Mods
 My scripts to download Minecraft mods
 
-![GitHub](https://img.shields.io/github/license/Chucky2401/Minecraft-Mods?style=plastic)
+![GitHub](https://img.shields.io/github/license/Chucky2401/Minecraft-Mods)
 
 ## Table of Contents
 
