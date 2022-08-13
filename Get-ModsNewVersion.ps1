@@ -31,9 +31,10 @@
 
 [CmdletBinding(SupportsShouldProcess, ConfirmImpact = "Low")]
 Param (
-    [Parameter(Mandatory)]
+    [Parameter(Mandatory = $True)]
     [ValidatePattern("\d+\.\d+\.\d+")]
     [string]$MCVersion,
+    [Parameter(Mandatory = $False)]
     [switch]$NoDownload
 )
 
@@ -1018,8 +1019,27 @@ $aMainModsList | ForEach-Object {
             Update           = ""
         }
     }
-    
+
     If ($oModInfo.Update -and !$NoDownload) {
+        # Rename previous file if exist
+        If ($oModInfo.PrevisouFileName -ne "") {
+            ShowLogMessage "INFO" "A previous file exist. Renaming..." ([ref]$sLogFile)
+            $sPreviousFilePath = $oModInfo.FilePath -replace "$([Regex]::Escape($oModInfo.FileName))", "$($oModInfo.PrevisouFileName)"
+            $sNewPreviousFilePath = "$($sPreviousFilePath).old"
+            Try {
+                Rename-Item -Path $sPreviousFilePath -NewName $sNewPreviousFilePath -Force -ErrorAction Stop
+                ShowLogMessage "SUCCESS" "Previous file has been renamed!" ([ref]$sLogFile)
+            } Catch {
+                $sErrorMessage = $_.Exception.Message
+                $sStackTrace = $_.ScriptStackTrace
+                ShowLogMessage "WARNING" "Preivous file has not been renamed!" ([ref]$sLogFile)
+                ShowLogMessage "DEBUG" "Details:" ([ref]$sLogFile)
+                If ($PSBoundParameters['Debug']) {
+                    ShowLogMessage "OTHER" "`t$($sErrorMessage)`n`t$($sStackTrace)" ([ref]$sLogFile)
+                }
+            }
+        }
+        
         # Downloading
         Write-Progress -Activity "Download updated mods..." -PercentComplete $iPercentComplete -Status "Downloading $($PSItem.name)..."
         ShowLogMessage "INFO" "Downloading the new version of the mod..." ([ref]$sLogFile)
