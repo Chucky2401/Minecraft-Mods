@@ -801,7 +801,7 @@ If (!(Test-Path "$($htSettings['McBaseFolder'])")) {
                 exit 0
             }
         } Else {
-            ShowLogMessage "SUCCESS" "Folder '$($PSItem)' exists!" ([ref]$sLogFile)
+            ShowLogMessage "SUCCESS" "Folder '$($PSItem.Value)' exists!" ([ref]$sLogFile)
         }
     }
 }
