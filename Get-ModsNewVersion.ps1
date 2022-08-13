@@ -17,12 +17,12 @@
         .\Get-ModsNewVersion.ps1 -MCVersion "1.19.0" -NoDownload
     .NOTES
         Name           : Get-ModsNewVersion
-        Version        : 1.0.2.26
+        Version        : 1.0.3
         Created by     : Chucky2401
         Date created   : 13/07/2022
         Modified by    : Chucky2401
-        Date modified  : 22/07/2022
-        Change         : Update readme file
+        Date modified  : 13/08/2022
+        Change         : Fix settings var wrong file
     .LINK
         https://github.com/Chucky2401/Minecraft-Mods/blob/main/README.md#get-modsnewversion
 #>
@@ -654,7 +654,7 @@ function Get-InfoFabricLoader {
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
 # User settings
-$htSettings = Get-Settings "$($PSScriptRoot)\conf\Clean-Restic.ps1.ini"
+$htSettings = Get-Settings "$($PSScriptRoot)\conf\Get-ModsNewVersion.ps1.ini"
 
 # API
 $sBaseUri         = "https://api.curseforge.com"
@@ -721,7 +721,7 @@ If ($MCVersion -match "^(.+)\.0$") {
     $sCurseForgeVersion = $MCVersion
 }
 
-$htSettings['McBaseFolder']       += $sCurseForgeVersion
+$htSettings['McBaseFolder']       += $MCVersion
 $aDownloadDirectories              = @{
     BaseFolder              = "$($htSettings['McBaseFolder'])"
     GocFolder               = "$($htSettings['McBaseFolder'])\#GoC"
@@ -784,15 +784,15 @@ If (!(Test-Path "$($htSettings['McBaseFolder'])")) {
 } Else {
     ShowLogMessage "INFO" "Base folder '$($htSettings['McBaseFolder'])' exists. We check subfolders..." ([ref]$sLogFile)
     $aDownloadDirectories.GetEnumerator() | Sort-Object Name | Select-Object -Skip 1 | ForEach-Object {
-        If (!(Test-Path "$($PSItem)")) {
-            ShowLogMessage "WARNING" "Folder '$($PSItem)' does not exist !" ([ref]$sLogFile)
+        If (!(Test-Path "$($PSItem.Value)")) {
+            ShowLogMessage "WARNING" "Folder '$($PSItem.Value)' does not exist !" ([ref]$sLogFile)
             ShowLogMessage "INFO" "Creating the folder..." ([ref]$sLogFile)
             Try {
-                New-Item -Path "$($PSItem)" -ItemType Directory -ErrorAction Stop | Out-Null
-                ShowLogMessage "SUCCESS" "Folder '$($PSItem)' created successfully!" ([ref]$sLogFile)
+                New-Item -Path "$($PSItem.Value)" -ItemType Directory -ErrorAction Stop | Out-Null
+                ShowLogMessage "SUCCESS" "Folder '$($PSItem.Value)' created successfully!" ([ref]$sLogFile)
             } Catch {
                 $sErrorMessage = $_.Exception.Message
-                ShowLogMessage "ERROR" "Folder '$($PSItem)' has not been created!" ([ref]$sLogFile)
+                ShowLogMessage "ERROR" "Folder '$($PSItem.Value)' has not been created!" ([ref]$sLogFile)
                 If ($PSBoundParameters['Debug']) {
                     ShowLogMessage "DEBUG" "Error detail:" ([ref]$sLogFile)
                     ShowLogMessage "OTHER" "`$($sErrorMessage)" ([ref]$sLogFile)
