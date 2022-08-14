@@ -1,0 +1,463 @@
+
+[13.08.2022 - 18:56:46] (INFO)    Testing if directory exist...
+[13.08.2022 - 18:56:46] (INFO)    Base folder 'E:\Games\Minecraft\#Setup_Minecraft\1.19.0' exists. We check subfolders...
+[13.08.2022 - 18:56:46] (SUCCESS) Folder 'System.Collections.DictionaryEntry' exists!
+[13.08.2022 - 18:56:46] (SUCCESS) Folder 'System.Collections.DictionaryEntry' exists!
+[13.08.2022 - 18:56:46] (SUCCESS) Folder 'System.Collections.DictionaryEntry' exists!
+[13.08.2022 - 18:56:46] (SUCCESS) Folder 'System.Collections.DictionaryEntry' exists!
+[13.08.2022 - 18:56:46] (SUCCESS) Folder 'System.Collections.DictionaryEntry' exists!
+[13.08.2022 - 18:56:46] (SUCCESS) Folder 'System.Collections.DictionaryEntry' exists!
+[13.08.2022 - 18:56:46] (SUCCESS) Folder 'System.Collections.DictionaryEntry' exists!
+[13.08.2022 - 18:56:46] (SUCCESS) Folder 'System.Collections.DictionaryEntry' exists!
+[13.08.2022 - 18:56:46] (SUCCESS) Folder 'System.Collections.DictionaryEntry' exists!
+
+[13.08.2022 - 18:56:46] (INFO)    Checking if we already download mods...
+[13.08.2022 - 18:56:46] (INFO)    We already downloaded mods. We will download only new version
+
+[13.08.2022 - 18:56:46] (INFO)    Download updated mods
+[13.08.2022 - 18:56:46] (INFO)    Querying last file for AdvancementInfo (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:56:50] (INFO)    A file has been found!
+[13.08.2022 - 18:56:50] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:56:50] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 18:56:50] (INFO)    Querying last file for Advancements Enlarger (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:56:51] (WARNING) No files found.
+
+[13.08.2022 - 18:56:51] (INFO)    Querying last file for AppleSkin (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:56:52] (INFO)    A file has been found!
+[13.08.2022 - 18:56:52] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:56:52] (INFO)    The mods has been updated! (2.4.0 -> 2.4.1)
+[13.08.2022 - 18:56:52] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 18:56:56] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 18:56:56] (INFO)    Querying last file for Architectury API (Fabric/Forge) (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:56:57] (INFO)    A file has been found!
+[13.08.2022 - 18:56:57] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:56:57] (INFO)    The mods has been updated! (5.9.31 -> 5.12.42)
+[13.08.2022 - 18:56:57] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 18:56:58] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 18:56:58] (INFO)    Querying last file for Atmosfera (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:56:58] (WARNING) No files found.
+
+[13.08.2022 - 18:56:58] (INFO)    Querying last file for bad packets (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:56:59] (INFO)    A file has been found!
+[13.08.2022 - 18:56:59] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:56:59] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 18:56:59] (INFO)    Querying last file for Better Birch Leaves Add-on (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:57:00] (WARNING) No files found.
+
+[13.08.2022 - 18:57:00] (INFO)    Querying last file for Better Dropped Items (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:57:00] (INFO)    A file has been found!
+[13.08.2022 - 18:57:00] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:57:00] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 18:57:00] (INFO)    Querying last file for Better Spruce Leaves Add-on (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:57:01] (WARNING) No files found.
+
+[13.08.2022 - 18:57:01] (INFO)    Querying last file for Better Third Person (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:57:07] (INFO)    A file has been found!
+[13.08.2022 - 18:57:07] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:57:07] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 18:57:07] (INFO)    Querying last file for BetterF3 (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:57:09] (INFO)    A file has been found!
+[13.08.2022 - 18:57:09] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:57:09] (INFO)    The mods has been updated! (1.3.1 -> 1.3.2)
+[13.08.2022 - 18:57:09] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 18:57:13] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 18:57:13] (INFO)    Querying last file for BSL Shaders (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:57:21] (WARNING) No files found.
+
+[13.08.2022 - 18:57:21] (INFO)    Querying last file for Charm (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:57:23] (INFO)    A file has been found!
+[13.08.2022 - 18:57:23] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:57:23] (INFO)    The mods has been updated! (4.1.2 -> 4.2.1)
+[13.08.2022 - 18:57:23] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 18:57:29] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 18:57:29] (INFO)    Querying last file for Cloth Config API (Fabric/Forge) (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:57:59] (INFO)    A file has been found!
+[13.08.2022 - 18:57:59] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:57:59] (INFO)    The mods has been updated! (7.0.73 -> 8.0.75)
+[13.08.2022 - 18:57:59] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 18:58:03] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 18:58:03] (INFO)    Querying last file for Complementary Shaders v4 (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:58:03] (WARNING) No files found.
+
+[13.08.2022 - 18:58:03] (INFO)    Querying last file for Continuity (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:58:09] (INFO)    A file has been found!
+[13.08.2022 - 18:58:09] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:58:09] (INFO)    The mods has been updated! (2.0.0 -> 2.0.1)
+[13.08.2022 - 18:58:09] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 18:58:14] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 18:58:14] (INFO)    Querying last file for CraftPresence (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:58:15] (INFO)    A file has been found!
+[13.08.2022 - 18:58:15] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:58:15] (INFO)    The mods has been updated! (1.8.8 -> 1.8.9)
+[13.08.2022 - 18:58:15] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 18:58:17] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 18:58:17] (INFO)    Querying last file for Dark Loading Screen (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:58:18] (INFO)    A file has been found!
+[13.08.2022 - 18:58:18] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:58:18] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 18:58:18] (INFO)    Querying last file for Diggus Maximus (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:58:18] (INFO)    A file has been found!
+[13.08.2022 - 18:58:18] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:58:18] (INFO)    The mods has been updated! (1.5.6 -> 1.5.8)
+[13.08.2022 - 18:58:18] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 18:58:19] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 18:58:19] (INFO)    Querying last file for Dramatic Skys (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:58:24] (INFO)    A file has been found!
+[13.08.2022 - 18:58:24] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:58:24] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 18:58:24] (INFO)    Querying last file for EditSign (Forge&Fabric) (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:58:26] (INFO)    A file has been found!
+[13.08.2022 - 18:58:26] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:58:26] (INFO)    The mods has been updated! (2.4.1 -> 2.4.2)
+[13.08.2022 - 18:58:26] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 18:58:41] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 18:58:41] (INFO)    Querying last file for Effective 💦 (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:58:42] (INFO)    A file has been found!
+[13.08.2022 - 18:58:42] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:58:42] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 18:58:42] (INFO)    Querying last file for Enchanted ToolTips (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:58:42] (INFO)    A file has been found!
+[13.08.2022 - 18:58:42] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:58:42] (INFO)    The mods has been updated! (1.3.6 -> 1.3.7)
+[13.08.2022 - 18:58:42] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 18:58:44] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 18:58:44] (INFO)    Querying last file for Enhanced Attack Indicator (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:58:47] (INFO)    A file has been found!
+[13.08.2022 - 18:58:47] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:58:47] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 18:58:47] (INFO)    Querying last file for Experience Container [XP] (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:58:47] (WARNING) No files found.
+
+[13.08.2022 - 18:58:47] (INFO)    Querying last file for Fabric API (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:58:48] (INFO)    A file has been found!
+[13.08.2022 - 18:58:48] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:58:48] (INFO)    The mods has been updated! (0.57.0 -> 0.58.0)
+[13.08.2022 - 18:58:48] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 18:58:52] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 18:58:52] (INFO)    Querying last file for Fabric Capes (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:58:53] (INFO)    A file has been found!
+[13.08.2022 - 18:58:53] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:58:53] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 18:58:53] (INFO)    Querying last file for Fabric Language Kotlin (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:59:01] (INFO)    A file has been found!
+[13.08.2022 - 18:59:01] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:59:01] (INFO)    The mods has been updated! (1.8.1+kotlin.1.7.0 -> 1.8.2+kotlin.1.7.10)
+[13.08.2022 - 18:59:01] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 18:59:08] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 18:59:08] (INFO)    Querying last file for Fabric Loader (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:59:09] (INFO)    A file has been found!
+[13.08.2022 - 18:59:09] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:59:09] (INFO)    The mods has been updated! (0.14.8(0.11.0) -> 0.14.9(0.11.0))
+[13.08.2022 - 18:59:09] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 18:59:09] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 18:59:09] (INFO)    Querying last file for Faithful 32x (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:59:27] (INFO)    A file has been found!
+[13.08.2022 - 18:59:27] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:59:27] (INFO)    The mods has been updated! (1.19 -> 1.19.2)
+[13.08.2022 - 18:59:27] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 18:59:38] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 18:59:38] (INFO)    Querying last file for Falling Leaves (Fabric) (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 18:59:59] (INFO)    A file has been found!
+[13.08.2022 - 18:59:59] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 18:59:59] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 18:59:59] (INFO)    Querying last file for FallingTree (Forge&Fabric) (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:00:00] (INFO)    A file has been found!
+[13.08.2022 - 19:00:00] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:00:00] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:00:00] (INFO)    Querying last file for FerriteCore (Fabric) (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:00:01] (INFO)    A file has been found!
+[13.08.2022 - 19:00:01] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:00:01] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:00:01] (INFO)    Querying last file for Held Item Info (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:00:25] (INFO)    A file has been found!
+[13.08.2022 - 19:00:25] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:00:25] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:00:25] (INFO)    Querying last file for Horse Stats Vanilla (Fabric) (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:00:25] (INFO)    A file has been found!
+[13.08.2022 - 19:00:25] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:00:25] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:00:25] (INFO)    Querying last file for Indium (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:00:30] (INFO)    A file has been found!
+[13.08.2022 - 19:00:30] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:00:30] (INFO)    The mods has been updated! (1.0.6 -> 1.0.7)
+[13.08.2022 - 19:00:30] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 19:00:36] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 19:00:36] (INFO)    Querying last file for Inmis (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:00:36] (INFO)    A file has been found!
+[13.08.2022 - 19:00:36] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:00:36] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:00:36] (INFO)    Querying last file for Inventory Hotswap (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:00:37] (INFO)    A file has been found!
+[13.08.2022 - 19:00:37] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:00:37] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:00:37] (INFO)    Querying last file for Inventory HUD+ (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:00:42] (INFO)    A file has been found!
+[13.08.2022 - 19:00:42] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:00:42] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:00:42] (INFO)    Querying last file for Inventory Profiles Next (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:00:43] (INFO)    A file has been found!
+[13.08.2022 - 19:00:43] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:00:43] (INFO)    The mods has been updated! (1.6.0 -> 1.6.3)
+[13.08.2022 - 19:00:43] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 19:00:51] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 19:00:51] (INFO)    Querying last file for Iris Shaders (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:00:51] (INFO)    A file has been found!
+[13.08.2022 - 19:00:51] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:00:51] (INFO)    The mods has been updated! (1.2.5 -> 1.2.6)
+[13.08.2022 - 19:00:51] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 19:00:55] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 19:00:55] (INFO)    Querying last file for Item Scroller (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:00:55] (INFO)    A file has been found!
+[13.08.2022 - 19:00:55] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:00:55] (INFO)    The mods has been updated for Minecraft 1.19!
+[13.08.2022 - 19:00:55] (INFO)    This is a new mod to download!
+[13.08.2022 - 19:00:55] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 19:00:56] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 19:00:56] (INFO)    Querying last file for Jerm's Better Leaves Add-on (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:00:57] (INFO)    A file has been found!
+[13.08.2022 - 19:00:57] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:00:57] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:00:57] (INFO)    Querying last file for LambdaBetterGrass (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:00:59] (INFO)    A file has been found!
+[13.08.2022 - 19:00:59] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:00:59] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:00:59] (INFO)    Querying last file for LambDynamicLights (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:01:08] (INFO)    A file has been found!
+[13.08.2022 - 19:01:08] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:01:08] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:01:08] (INFO)    Querying last file for Light Overlay (Rift/Forge/Fabric) (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:01:09] (INFO)    A file has been found!
+[13.08.2022 - 19:01:09] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:01:09] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:01:09] (INFO)    Querying last file for Litematica (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:01:09] (INFO)    A file has been found!
+[13.08.2022 - 19:01:09] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:01:09] (INFO)    The mods has been updated for Minecraft 1.19!
+[13.08.2022 - 19:01:09] (INFO)    This is a new mod to download!
+[13.08.2022 - 19:01:09] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 19:01:15] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 19:01:15] (INFO)    Querying last file for Lithium (Fabric) (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:01:17] (INFO)    A file has been found!
+[13.08.2022 - 19:01:17] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:01:17] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:01:17] (INFO)    Querying last file for MaLiLib (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:01:18] (INFO)    A file has been found!
+[13.08.2022 - 19:01:18] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:01:18] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:01:18] (INFO)    Querying last file for MAmbience (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:01:21] (INFO)    A file has been found!
+[13.08.2022 - 19:01:21] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:01:21] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:01:21] (INFO)    Querying last file for MiniHUD (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:01:30] (INFO)    A file has been found!
+[13.08.2022 - 19:01:30] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:01:30] (INFO)    The mods has been updated for Minecraft 1.19!
+[13.08.2022 - 19:01:30] (INFO)    This is a new mod to download!
+[13.08.2022 - 19:01:30] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 19:01:34] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 19:01:34] (INFO)    Querying last file for Mod Menu (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:01:39] (INFO)    A file has been found!
+[13.08.2022 - 19:01:39] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:01:39] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:01:39] (INFO)    Querying last file for OptiFabric (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:01:40] (INFO)    A file has been found!
+[13.08.2022 - 19:01:40] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:01:40] (INFO)    The mods has been updated! (1.13.5 -> 1.13.10)
+[13.08.2022 - 19:01:40] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 19:01:43] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 19:01:43] (INFO)    Querying last file for OptiFine (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:01:54] (INFO)    A file has been found!
+[13.08.2022 - 19:01:54] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:01:54] (INFO)    The mods has been updated! (HD_U_H8 -> HD_U_H9)
+[13.08.2022 - 19:01:54] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 19:02:04] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 19:02:04] (INFO)    Querying last file for Phosphor (Fabric) (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:02:04] (INFO)    A file has been found!
+[13.08.2022 - 19:02:04] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:02:04] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:02:04] (INFO)    Querying last file for Potion Descriptions (Fabric) (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:02:05] (WARNING) No files found.
+
+[13.08.2022 - 19:02:05] (INFO)    Querying last file for Presence Footsteps [Fabric] (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:02:06] (INFO)    A file has been found!
+[13.08.2022 - 19:02:06] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:02:06] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:02:06] (INFO)    Querying last file for Reese's Sodium Options (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:02:08] (INFO)    A file has been found!
+[13.08.2022 - 19:02:08] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:02:08] (INFO)    The mods has been updated! (1.4.3 -> 1.4.5)
+[13.08.2022 - 19:02:08] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 19:02:09] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 19:02:09] (INFO)    Querying last file for Replay Mod (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:02:42] (INFO)    A file has been found!
+[13.08.2022 - 19:02:42] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:02:42] (INFO)    The mods has been updated! (2.6.6 -> 2.6.8)
+[13.08.2022 - 19:02:42] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 19:03:03] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 19:03:03] (INFO)    Querying last file for Roughly Enough Items Fabric/Forge (REI) (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:03:04] (INFO)    A file has been found!
+[13.08.2022 - 19:03:04] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:03:04] (INFO)    The mods has been updated! (9.1.517 -> 9.1.526)
+[13.08.2022 - 19:03:04] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 19:03:07] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 19:03:07] (INFO)    Querying last file for Shield Corrections Colored (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:03:07] (INFO)    A file has been found!
+[13.08.2022 - 19:03:07] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:03:07] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:03:07] (INFO)    Querying last file for Shield Corrections Regular (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:03:08] (INFO)    A file has been found!
+[13.08.2022 - 19:03:08] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:03:08] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:03:08] (INFO)    Querying last file for ShulkerBoxTooltip (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:03:09] (INFO)    A file has been found!
+[13.08.2022 - 19:03:09] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:03:09] (INFO)    The mods has been updated! (3.0.10 -> 3.1.1)
+[13.08.2022 - 19:03:09] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 19:03:11] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 19:03:11] (INFO)    Querying last file for Sodium (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:03:11] (INFO)    A file has been found!
+[13.08.2022 - 19:03:11] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:03:11] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:03:11] (INFO)    Querying last file for Sodium Extra (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:03:12] (INFO)    A file has been found!
+[13.08.2022 - 19:03:12] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:03:12] (INFO)    The mods has been updated! (0.4.5 -> 0.4.6)
+[13.08.2022 - 19:03:12] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 19:03:13] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 19:03:13] (INFO)    Querying last file for ToolTipFix (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:03:13] (INFO)    A file has been found!
+[13.08.2022 - 19:03:13] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:03:13] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:03:13] (INFO)    Querying last file for Tweakeroo (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:03:14] (INFO)    A file has been found!
+[13.08.2022 - 19:03:14] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:03:14] (INFO)    The mods has been updated for Minecraft 1.19!
+[13.08.2022 - 19:03:14] (INFO)    This is a new mod to download!
+[13.08.2022 - 19:03:14] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 19:03:16] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 19:03:16] (INFO)    Querying last file for WorldEdit (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:03:17] (INFO)    A file has been found!
+[13.08.2022 - 19:03:17] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:03:17] (INFO)    The mods has been updated! (7.2.11 -> 7.2.11)
+[13.08.2022 - 19:03:17] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 19:03:26] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 19:03:26] (INFO)    Querying last file for WTHIT (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:03:27] (INFO)    A file has been found!
+[13.08.2022 - 19:03:27] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:03:27] (INFO)    The mods has been updated! (5.6.1 -> 5.10.0)
+[13.08.2022 - 19:03:27] (INFO)    Downloading the new version of the mod...
+[13.08.2022 - 19:03:29] (SUCCESS) The mod has been downloaded successfully!
+
+[13.08.2022 - 19:03:29] (INFO)    Querying last file for Xaeros Minimap (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:03:36] (INFO)    A file has been found!
+[13.08.2022 - 19:03:36] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:03:36] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:03:36] (INFO)    Querying last file for Xaeros WorldMap (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:03:40] (INFO)    A file has been found!
+[13.08.2022 - 19:03:40] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:03:40] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:03:40] (INFO)    Querying last file for Zoomify (Loader: Fabric; MC Version: 1.19)...
+[13.08.2022 - 19:03:40] (INFO)    A file has been found!
+[13.08.2022 - 19:03:40] (INFO)    A previous download exist. We will check if the mods was updated.
+[13.08.2022 - 19:03:40] (INFO)    There is no modification for this mod. We will not download it again.
+
+[13.08.2022 - 19:03:40] (INFO)    Export mods session information to CSV 'E:\Games\Minecraft\#Setup_Minecraft\#Scripts\Minecraft-Mods\csv\MC_1.19.0-2022.08.13_18.56.csv'
+[13.08.2022 - 19:03:40] (SUCCESS) Mods list has been exported successfully!
+
+[13.08.2022 - 19:03:40] (INFO)    Export Discord markdown lines to files...
+
+[13.08.2022 - 19:03:40] (INFO)    Export website text lines to files...
+
+------------------------------------------------------------
+
+[13.08.2022 - 19:03:40] (INFO)    Summary:
+	Mods GoC:
+		architectury-5.12.42-fabric.jar
+		BetterF3-1.3.2-Fabric-1.19.jar
+		cloth-config-8.0.75-fabric.jar
+		fabric-api-0.58.0+1.19.jar
+		fabric-installer-0.11.0.jar
+		litematica-fabric-1.19.0-0.12.0.jar
+		optifabric-1.13.10.jar
+		OptiFine_1.19_HD_U_H9.jar
+		replaymod-1.19-2.6.8.jar
+		shulkerboxtooltip-3.1.1+1.19.jar
+		worldedit-mod-7.2.11-beta-02-dist.jar
+
+	Mods GoC No Optifine:
+		continuity-2.0.1+1.19.jar
+		fabric-language-kotlin-1.8.2+kotlin.1.7.10.jar
+		indium-1.0.7+mc1.19.jar
+		iris-mc1.19.1-1.2.6.jar
+		reeses_sodium_options-1.4.5+mc1.19.2-build.51.jar
+		sodium-extra-0.4.6+mc1.19-build.47.jar
+
+	Ressources GoC:
+		Faithful 32x - 1.19.2.zip
+
+	Shaders GoC:
+
+------------------------------------------------------------
+
