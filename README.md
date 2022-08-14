@@ -45,13 +45,18 @@ It takes **at least the Minecraft Version with 3-digits format** as parameter.
 You have one more optional parameters:
 
 - **NoDownload** *(switch)*: if you want to run the script without downloading any mods, like a dry run.
+- **Discord** *(switch)*: generate markdown files to copy/paste on Discord
+- **Website** *(switch)*: generate text files to update the GoC Website
 
 You can also use the common parameters of PowerShell (-Debug, -Verbose, etc.).
 
 The Get-Help command works too:
 `Get-Help .\Get-ModsNewVersion.ps1`
 
-The script will generate a log file for each run, a csv file with the list of mods and some useful information for the next run or you, a markdown file to post it on Discord (in French only for the moment) and a text file for easy copy'n'paste for a website.
+The script will generate a log file for each run, a csv file with the list of mods and some useful information for the next run or you.
+And only with associated parameter markdown files to post it on Discord (in French only for the moment) and text files for easy copy'n'paste for a website.
+
+If you already download mods for the same version of Minecraft, the previous file will be renamed with appending *.old* at the end of the file.
 
 #### Prerequisites
 
@@ -68,6 +73,8 @@ The most important part of this Readme!
     2. ModLoaderType: if you want to download the mod for a specific loader (eg: Fabric, Forge, Quilt)
     3. McBaseFolder: the base folder where the script will download all files.
 
+        **All this parameters must be surrounded with double quote mark**
+
         *At the beginning, the script will generate a folder named with the version, and subfolder for Mods, Ressources and Shaders*. See *[Appendix I.](#i-folders-organization)* for more details.
 
 4. Modify or create your file `csv\00_main_listing.csv`. Use the existing one to help yourself
@@ -82,7 +89,7 @@ The most important part of this Readme!
 
     *Will download all the mods updated for the Minecraft 1.18.2 version*
 
-2. .\Get-ModsNewVersion.ps1 -MCVersion "1.19.0" -NoDowload
+2. .\Get-ModsNewVersion.ps1 -MCVersion "1.19.0" -NoDownload
 
     *Will check the mods update but without download anything*
 
