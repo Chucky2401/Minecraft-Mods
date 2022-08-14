@@ -874,7 +874,7 @@ $aMainModsList | ForEach-Object {
     $bAdd               = $False
     $bPreviousModFound  = $False
 
-    ShowLogMessage "INFO" "Querying last file for $($PSItem.name) (Loader: $($htSettings['ModLoaderType']); MC Version: $($sCurseForgeVersion))..." ([ref]$sLogFile)
+    ShowLogMessage "INFO" "Querying last file for $($sModName) (Loader: $($htSettings['ModLoaderType']); MC Version: $($sCurseForgeVersion))..." ([ref]$sLogFile)
 
     switch ($PSItem.sourceWebsite) {
         "curseforge" {
