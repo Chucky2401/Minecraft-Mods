@@ -409,17 +409,59 @@ BEGIN {
 }
 
 PROCESS {
-    
-    #foreach ($mod in $Mods) {                                                                                           # Obligatoire si non utilisation du Pipeline + Array
-    #    Write-Host "$($counter): $($mod.Name) - $($mod.FileName)"
-    #    $counter++
-    #}
 
     $Mods | Sort-Object Name | Where-Object { [System.Convert]::ToBoolean($PSItem.Update) -and $PSItem.InternalCategory -notmatch $sFilterInternalCategory } | ForEach-Object {
         $sName = $PSItem.Name
         $sFileName = $PSItem.FileName
+        $sSourceFile = $PSItem.FilePath
+        $sPreviousFileName = $PSItem.PreviousFileName
 
-        Write-Host "$($counter): $($sName) - $($sFileName)"
-        $counter++
+        switch ($PSItem.Type) {
+            "Mods" {
+                $sDestinationFile = "$($sInstanceModsPath)\$($sFileName)"
+                If ( -not [System.Convert]::ToBoolean($PSItem.Add)) {
+                    $sPreviousFilePath = "$($sInstanceModsPath)\$($sPreviousFileName)"
+                    $sNewPreivousFilePath = "$($sPreviousFilePath).disabled"
+                }
+                Break
+            }
+            "Ressources" {
+                $sDestinationFile = "$($sInstanceRessourcesPath)\$($sFileName)"
+                If ( -not [System.Convert]::ToBoolean($PSItem.Add)) {
+                    $sPreviousFilePath = "$($sInstanceRessourcesPath)\$($sPreviousFileName)"
+                    $sNewPreivousFilePath = "$($sPreviousFilePath).disabled"
+                }
+                Break
+            }
+            "Shaders" {
+                $sDestinationFile = "$($sInstanceShadersPath)\$($sFileName)"
+                If ( -not [System.Convert]::ToBoolean($PSItem.Add)) {
+                    $sPreviousFilePath = "$($sInstanceShadersPath)\$($sPreviousFileName)"
+                    $sNewPreivousFilePath = "$($sPreviousFilePath).disabled"
+                }
+                Break
+            }
+            Default {
+                $sDestinationFile = "$($sInstanceModsPath)\$($sFileName)"
+                If ( -not [System.Convert]::ToBoolean($PSItem.Add)) {
+                    $sPreviousFilePath = "$($sInstanceModsPath)\$($sPreviousFileName)"
+                    $sNewPreivousFilePath = "$($sPreviousFilePath).disabled"
+                }
+            }
+        }
+
+        # TODO: Rename previous file if Add -eq $True
+        If ( -not [System.Convert]::ToBoolean($PSItem.Add)) {
+            ShowMessage "DEBUG" "Rename $($sPreviousFilePath) to $($sNewPreivousFilePath)"
+        } Else {
+            ShowMessage "DEBUG" "Adding, nothing to rename."
+        }
+
+        # TODO: Copy new mods
+        ShowMessage "DEBUG" "Copy $($sSourceFile) to $($sDestinationFile)"
+
+        #Write-Host "$($counter): $($sName) - $($sFileName)"
+        #$counter++
+        ShowMessage "OTHER" "^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ "
     }
 }
