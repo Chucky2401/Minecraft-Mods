@@ -26,18 +26,21 @@
 
 #---------------------------------------------------------[Script Parameters]------------------------------------------------------
 
-[CmdletBinding(SupportsShouldProcess, ConfirmImpact = "Low", DefaultParameterSetName = "Piped")]
+[CmdletBinding(SupportsShouldProcess, ConfirmImpact = "Low", DefaultParameterSetName = "Pipeline")]
 Param (
-    [Parameter(ValueFromPipeline, ParameterSetName = "Piped", Mandatory)]
+    [Parameter(ValueFromPipeline, ParameterSetName = "Pipeline", Mandatory)]
     [Object[]]$Mods,                                                                                                    # Mettre sous forme d'array pour l'appel sans Pipeline
     [Parameter(ParameterSetName = "File")]
     [Switch]$FromFile,
     [Parameter(ParameterSetName = "File")]
     [String]$CsvFile = "",
-    [Parameter(ParameterSetName = "Piped")]
+    [Parameter(ParameterSetName = "Pipeline")]
     [Parameter(ParameterSetName = "File")]
     [String]$InstancePath = "",
-    [Parameter(ParameterSetName = "Piped")]
+    [Parameter(ParameterSetName = "Pipeline")]
+    [Parameter(ParameterSetName = "File")]
+    [String[]]$InternalCategoryExclude = "",
+    [Parameter(ParameterSetName = "Pipeline")]
     [String]$LogFile = ""
 )
 
@@ -378,6 +381,10 @@ BEGIN {
         $InstancePath = $oFolderBrowser.SelectedPath
     }
 
+    $sInstanceModsPath       = "$($InstancePath)\mods"
+    $sInstanceRessourcesPath = "$($InstancePath)\resourcepacks"
+    $sInstanceShadersPath    = "$($InstancePath)\shaderpacks"
+
     If ($PSCmdlet.ParameterSetName -eq "File" -and $CsvFile -eq "") {
         $oFileBrowser = New-Object System.Windows.Forms.OpenFileDialog -Property @{
             InitialDirectory = "$($PSScriptRoot)"
@@ -388,6 +395,12 @@ BEGIN {
         $CsvFile = $oFileBrowser.FileName
 
         $Mods = Import-Csv -Path $CsvFile -Delimiter ";" -Encoding UTF8
+    }
+
+    If ($InternalCategoryExclude.Count -ge 1) {
+        $sFilterInternalCategory = "\b$([String]::Join("\b|\b", $InternalCategoryExclude))\b"
+    } Else {
+        $sFilterInternalCategory = "\bNO_EXCLUSION\b"
     }
 
     ShowMessage "DEBUG" "Set use      : $($PSCmdlet.ParameterSetName)"
@@ -402,7 +415,7 @@ PROCESS {
     #    $counter++
     #}
 
-    $Mods | Sort-Object Name | Where-Object { [System.Convert]::ToBoolean($PSItem.Update) } | ForEach-Object {
+    $Mods | Sort-Object Name | Where-Object { [System.Convert]::ToBoolean($PSItem.Update) -and $PSItem.InternalCategory -notmatch $sFilterInternalCategory } | ForEach-Object {
         $sName = $PSItem.Name
         $sFileName = $PSItem.FileName
 
