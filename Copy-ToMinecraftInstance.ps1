@@ -26,22 +26,34 @@
 
 #---------------------------------------------------------[Script Parameters]------------------------------------------------------
 
-[CmdletBinding(SupportsShouldProcess, ConfirmImpact = "Low")]
+[CmdletBinding(SupportsShouldProcess, ConfirmImpact = "Low", DefaultParameterSetName = "Piped")]
 Param (
-    [Parameter(ValueFromPipeline)]
-    [Object[]]$Mods                                                                                                     # Mettre sous forme d'array pour l'appel sans Pipeline
+    [Parameter(ValueFromPipeline, ParameterSetName = "Piped", Mandatory)]
+    [Object[]]$Mods,                                                                                                    # Mettre sous forme d'array pour l'appel sans Pipeline
+    [Parameter(ParameterSetName = "File")]
+    [Switch]$FromFile,
+    [Parameter(ParameterSetName = "File")]
+    [String]$CsvFile = "",
+    [Parameter(ParameterSetName = "Piped")]
+    [Parameter(ParameterSetName = "File")]
+    [String]$InstancePath = "",
+    [Parameter(ParameterSetName = "Piped")]
+    [String]$LogFile = ""
 )
 
 BEGIN {
     #---------------------------------------------------------[Initialisations]--------------------------------------------------------
 
     #Set Error Action to Silently Continue
-    $ErrorActionPreference      = "SilentlyContinue"
+    #$ErrorActionPreference      = "SilentlyContinue"
+    $ErrorActionPreference      = "Stop"
     If ($PSBoundParameters['Debug']) {
         $DebugPreference = "Continue"
     } Else {
         $DebugPreference = "SilentlyContinue"
     }
+
+    Add-Type -AssemblyName System.Windows.Forms
 
     #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
@@ -356,11 +368,45 @@ BEGIN {
     $counter = 1
 
     #-----------------------------------------------------------[Execution]------------------------------------------------------------
+
+    If ($InstancePath -eq "") {
+        $oFolderBrowser = New-Object System.Windows.Forms.FolderBrowserDialog -Property @{
+            InitialDirectory = "$([System.Environment]::GetFolderPath("ApplicationData"))\.minecraft"
+            Description = "Select the instance folder only! Not mods or others subfolders!"
+        }
+        $null = $oFolderBrowser.ShowDialog()
+        $InstancePath = $oFolderBrowser.SelectedPath
+    }
+
+    If ($PSCmdlet.ParameterSetName -eq "File" -and $CsvFile -eq "") {
+        $oFileBrowser = New-Object System.Windows.Forms.OpenFileDialog -Property @{
+            InitialDirectory = "$($PSScriptRoot)"
+            Title = "Choose CSV file containing mods update information..."
+            Filter = "CSV files (*.csv)|*.csv"
+        }
+        $null = $oFileBrowser.ShowDialog()
+        $CsvFile = $oFileBrowser.FileName
+
+        $Mods = Import-Csv -Path $CsvFile -Delimiter ";" -Encoding UTF8
+    }
+
+    ShowMessage "DEBUG" "Set use      : $($PSCmdlet.ParameterSetName)"
+    ShowMessage "DEBUG" "Instance path: $($InstancePath)"
+    ShowMessage "DEBUG" "Log file     : $($LogFile)"
 }
 
 PROCESS {
-    foreach ($mod in $Mods) {                                                                                           # Obligatoire si non utilisation du Pipeline + Array
-        Write-Host "$($counter): $($mod.Name) - $($mod.FileName)"
+    
+    #foreach ($mod in $Mods) {                                                                                           # Obligatoire si non utilisation du Pipeline + Array
+    #    Write-Host "$($counter): $($mod.Name) - $($mod.FileName)"
+    #    $counter++
+    #}
+
+    $Mods | Sort-Object Name | Where-Object { [System.Convert]::ToBoolean($PSItem.Update) } | ForEach-Object {
+        $sName = $PSItem.Name
+        $sFileName = $PSItem.FileName
+
+        Write-Host "$($counter): $($sName) - $($sFileName)"
         $counter++
     }
 }
