@@ -797,7 +797,7 @@ If (!(Test-Path "$($htSettings['McBaseFolder'])")) {
     ShowLogMessage "INFO" "Creating the folders..." ([ref]$sLogFile)
     Try {
         $aDownloadDirectories.GetEnumerator() | Sort-Object Name | ForEach-Object {
-            New-Item -Path "$($PSItem)" -ItemType Directory -ErrorAction Stop | Out-Null
+            New-Item -Path "$($PSItem.Value)" -ItemType Directory -ErrorAction Stop | Out-Null
         }
         ShowLogMessage "SUCCESS" "Folder and subfolders created successfully!" ([ref]$sLogFile)
     } Catch {
