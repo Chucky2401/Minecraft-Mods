@@ -1,5 +1,14 @@
 # Changelog
 
+## 2022.08.14 - v1.0.4
+
+### Fix
+
+- Typing error for the csv fields *PreviousFileName*
+- Wrong mods display in the progress bar
+
+---
+
 ## 2022.08.14 - v1.0.3
 
 ### New
@@ -13,7 +22,7 @@
 ## Change
 
 - In the settings file, the string parameter must be surrounded with double quote (")
-- 'DEBUG' message are display if you use the parameter '-Debug'
+- 'DEBUG' message are displayed if you use the parameter '-Debug'
 
 ### Fix
 
