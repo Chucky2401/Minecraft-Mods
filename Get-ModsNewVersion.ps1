@@ -874,7 +874,7 @@ $aMainModsList | ForEach-Object {
     $bAdd               = $False
     $bPreviousModFound  = $False
 
-    ShowLogMessage "INFO" "Querying last file for $($PSItem.name) (Loader: $($htSettings['ModLoaderType']); MC Version: $($sCurseForgeVersion))..." ([ref]$sLogFile)
+    ShowLogMessage "INFO" "Querying last file for $($sModName) (Loader: $($htSettings['ModLoaderType']); MC Version: $($sCurseForgeVersion))..." ([ref]$sLogFile)
 
     switch ($PSItem.sourceWebsite) {
         "curseforge" {
@@ -969,7 +969,7 @@ $aMainModsList | ForEach-Object {
                 FileId           = $oFileInfo.id
                 FileName         = $oFileInfo.filename
                 FilePath         = $sFilePath
-                PrevisouFileName = ""
+                PreviousFileName = ""
                 FileDate         = $oFileInfo.fileDate
                 FileLength       = $oFileInfo.fileLength
                 DownloadUrl      = $oFileInfo.downloadUrl
@@ -1013,7 +1013,7 @@ $aMainModsList | ForEach-Object {
                 FileId           = $oFileInfo.id
                 FileName         = $oFileInfo.filename
                 FilePath         = $sFilePath
-                PrevisouFileName = $sPreviousFileName
+                PreviousFileName = $sPreviousFileName
                 FileDate         = $oFileInfo.fileDate
                 FileLength       = $oFileInfo.fileLength
                 DownloadUrl      = $oFileInfo.downloadUrl
@@ -1036,7 +1036,7 @@ $aMainModsList | ForEach-Object {
             FileId           = ""
             FileName         = ""
             FilePath         = ""
-            PrevisouFileName = ""
+            PreviousFileName = ""
             FileDate         = ""
             FileLength       = ""
             DownloadUrl      = ""
@@ -1050,9 +1050,9 @@ $aMainModsList | ForEach-Object {
 
     If ($oModInfo.Update -and !$NoDownload) {
         # Rename previous file if exist
-        If ($oModInfo.PrevisouFileName -ne "") {
+        If ($oModInfo.PreviousFileName -ne "") {
             ShowLogMessage "INFO" "A previous file exist. Renaming..." ([ref]$sLogFile)
-            $sPreviousFilePath = $oModInfo.FilePath -replace "$([Regex]::Escape($oModInfo.FileName))", "$($oModInfo.PrevisouFileName)"
+            $sPreviousFilePath = $oModInfo.FilePath -replace "$([Regex]::Escape($oModInfo.FileName))", "$($oModInfo.PreviousFileName)"
             $sNewPreviousFilePath = "$($sPreviousFilePath).old"
             Try {
                 Rename-Item -Path $sPreviousFilePath -NewName $sNewPreviousFilePath -Force -ErrorAction Stop
