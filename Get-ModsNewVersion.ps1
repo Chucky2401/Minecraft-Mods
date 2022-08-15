@@ -21,12 +21,12 @@
         .\Get-ModsNewVersion.ps1 -MCVersion "1.19.0" -NoDownload
     .NOTES
         Name           : Get-ModsNewVersion
-        Version        : 1.0.3
+        Version        : 1.1.0
         Created by     : Chucky2401
         Date created   : 13/07/2022
         Modified by    : Chucky2401
-        Date modified  : 13/08/2022
-        Change         : Fix settings var wrong file and working. Update message functions
+        Date modified  : 15/08/2022
+        Change         : Add & Update object value set to $False if no file found
     .LINK
         https://github.com/Chucky2401/Minecraft-Mods/blob/main/README.md#get-modsnewversion
 #>
@@ -1043,8 +1043,8 @@ $aMainModsList | ForEach-Object {
             GameVersion      = ""
             Dependencies     = ""
             Copy             = $bCopy
-            Add              = ""
-            Update           = ""
+            Add              = $False
+            Update           = $False
         }
     }
 
