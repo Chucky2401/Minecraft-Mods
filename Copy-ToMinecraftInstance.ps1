@@ -1,25 +1,50 @@
 <#
     .SYNOPSIS
-        Summary of the script
+        Copy mods to Minecraft Instance
     .DESCRIPTION
-        Script description
-    .PARAMETER param1
-        Parameter description
+        Get all updated mods from `Get-ModsNewVersion.ps1` and copy them to the folder instance of your Minecraft.
+        You can alse use the exported csv file of mods to copy them.
+    .PARAMETER Mods
+        Array of updated mods
+    .PARAMETER FromFile
+        Switch to force using a csv file. The script will ask you to choose a file
+    .PARAMETER CsvFile
+        If you prefer to indicate the path to the csv file directly in command line
+    .PARAMETER InstancePath
+        Precise directly the folder to the Minecraft Instance (this folder must contains `mods`, `ressourcepacks` and `shaderpacks` folders)
+    .PARAMETER InternalCategoryExclude
+        Array of string to exclude one or more InternalCategory
+    .PARAMETER GoCOnly
+        Switch that copy only mods with the field GOC equal to True
+    .PARAMETER LogFile
+        Use only with the first parameter (Mods).
+        To log copy to the same log file as `Get-ModsNewVersion.ps1`
     .INPUTS
-        Pipeline input data
-    .OUTPUTS
-        Output data
+        Mods[]
     .EXAMPLE
-        .\template.ps1 param1
+        $Mods | Copy-ToMinecraftInstance.ps1 -InstancePath $env:APPDATA\.minecraft
+
+        Copy all mods to the default instance of Minecraft
+    .EXAMPLE
+        $Mods | Copy-ToMinecraftInstance.ps1 -InstancePath $env:APPDATA\.minecraft -InternalCategoryExclude "Optifine"
+
+        Copy all mods except one in the internal category Optifine to the default instance of Minecraft
+    .EXAMPLE
+        Copy-ToMinecraftInstance.ps1 -Mods $Mods -InstancePath $env:APPDATA\.minecraft -InternalCategoryExclude "Optifine","NoOptifine"
+
+        Copy all mods except one in the internal category Optifine or NoOptifine to the default instance of Minecraft
+    .EXAMPLE
+        Copy-ToMinecraftInstance.ps1 -CsvFile "E:\Games\Minecraft\#Setup_Minecraft\#Scripts\Minecraft-Mods\csv\MC_1.19.0-2022.08.13_18.56.csv" -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-Opti\.minecraft" -InternalCategoryExclude "NoOptifine" -GoCOnly
+
+        Copy all update mods from the .csv file, in the specific instance path, where the internal category is not NoOptifine and where the field GOC is equal to True
     .NOTES
-        Name           : Script-Name
+        Name           : Copy-ToMinecraftInstance
         Version        : 1.0.0
         Created by     : Chucky2401
         Date Created   : 14/08/2022
         Modify by      : Chucky2401
-        Date modified  : 14/08/2022
+        Date modified  : 21/08/2022
         Change         : Creation
-        Copy           : Copy-Item .\Script-Name.ps1 \Final\Path\Script-Name.ps1 -Force
     .LINK
         http://github.com/UserName/RepoName
 #>
@@ -29,7 +54,7 @@
 [CmdletBinding(SupportsShouldProcess, ConfirmImpact = "Low", DefaultParameterSetName = "Pipeline")]
 Param (
     [Parameter(ValueFromPipeline, ParameterSetName = "Pipeline", Mandatory)]
-    [Object[]]$Mods,                                                                                                    # Mettre sous forme d'array pour l'appel sans Pipeline
+    [Object[]]$Mods,
     [Parameter(ParameterSetName = "File")]
     [Switch]$FromFile,
     [Parameter(ParameterSetName = "File")]
@@ -39,7 +64,10 @@ Param (
     [String]$InstancePath = "",
     [Parameter(ParameterSetName = "Pipeline")]
     [Parameter(ParameterSetName = "File")]
-    [String[]]$InternalCategoryExclude = "",
+    [String[]]$InternalCategoryExclude,
+    [Parameter(ParameterSetName = "Pipeline")]
+    [Parameter(ParameterSetName = "File")]
+    [Switch]$GoCOnly,
     [Parameter(ParameterSetName = "Pipeline")]
     [String]$LogFile = ""
 )
@@ -317,8 +345,7 @@ BEGIN {
         If ($bNoDebug -or (-not $bNoDebug -and ($PSBoundParameters['Debug'] -or $DebugPreference -eq "Continue"))) {
             If ($sLogFile.Value.GetType().Name -ne "String") {
                 $sLogFile.Value += $sSortie
-            }
-            Else {
+            } Else {
                 Write-Output $sSortie >> $sLogFile.Value
             }
         }
@@ -366,15 +393,90 @@ BEGIN {
         }
     }
 
+    function Get-Settings {
+        <#
+            .SYNOPSIS
+                Get settings from ini file
+            .DESCRIPTION
+                Return as a hashtable the settings from an ini file
+            .PARAMETER File
+                Path of the settings file
+            .OUTPUTS
+                Settings as a hashtable
+            .EXAMPLE
+                Get-Settings "$($PSScriptRoot)\conf\settings.ini"
+            .NOTES
+                Name           : Get-Settings
+                Created by     : Chucky2401
+                Date created   : 08/07/2022
+                Modified by    : Chucky2401
+                Date modified  : 21/08/2022
+                Change         : Manage a starting and ending position in the settings
+        #>
+        [CmdletBinding()]
+        Param (
+            [Parameter(Position = 0, Mandatory = $True)]
+            [string]$File,
+            [Parameter(Position = 1, Mandatory = $False)]
+            [string]$StartBlock = "",
+            [Parameter(Position = 2, Mandatory = $False)]
+            [string]$EndBlock = ""
+        )
+    
+        $htSettings = @{}
+        If ($StartBlock -eq "") {
+            $bReadSettings = $True
+        } Else {
+            $bReadSettings = $False
+        }
+    
+        Get-Content $File | ForEach-Object {
+            If ($PSItem -match "^;|^\[" -or $PSItem -eq "") {
+                If ($StartBlock -ne "" -and $PSItem -match $StartBlock) {
+                    $bReadSettings = $True
+                }
+                If ($EndBlock -ne "" -and $PSItem -match $EndBlock) {
+                    $bReadSettings = $False
+                }
+
+                return
+            }
+
+            If ($bReadSettings) {
+                $aLine = [regex]::Split($PSItem, '=')
+                If ($aLine[1].Trim() -match "^`".+`"$") {
+                    [String]$value = $aLine[1].Trim() -replace "^`"(.+)`"$", "`$1"
+                }
+                Else {
+                    [Int32]$value = $aLine[1].Trim()
+                }
+                $htSettings.Add($aLine[0].Trim(), $value)
+            }
+        }
+    
+        Return $htSettings
+    }
+
     #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
-    $counter = 1
+    $htSettings = Get-Settings "$($PSScriptRoot)\conf\settings.ini" -StartBlock "Copy"
+
+    # To don't change anything to my snippets! ;-)
+    $sLogFile = $LogFile
+
+    $iCounter = 1
+
+    [ScriptBlock]$sbFilter = {[System.Convert]::ToBoolean($PSItem.Update)}
+
+    If ($GoCOnly) {
+        [ScriptBlock]$sbFilter = [ScriptBlock]::Create("$($sbFilter.ToString()) -and `$PSItem.GoC -eq `$True")
+    }
 
     #-----------------------------------------------------------[Execution]------------------------------------------------------------
 
     If ($InstancePath -eq "") {
         $oFolderBrowser = New-Object System.Windows.Forms.FolderBrowserDialog -Property @{
-            InitialDirectory = "$([System.Environment]::GetFolderPath("ApplicationData"))\.minecraft"
+            InitialDirectory = "$($htSettings['InitialDirectory'])"
             Description = "Select the instance folder only! Not mods or others subfolders!"
         }
         $null = $oFolderBrowser.ShowDialog()
@@ -393,25 +495,28 @@ BEGIN {
         }
         $null = $oFileBrowser.ShowDialog()
         $CsvFile = $oFileBrowser.FileName
-
-        $Mods = Import-Csv -Path $CsvFile -Delimiter ";" -Encoding UTF8
     }
+
+    $Mods = Import-Csv -Path $CsvFile -Delimiter ";" -Encoding UTF8
 
     If ($InternalCategoryExclude.Count -ge 1) {
         $sFilterInternalCategory = "\b$([String]::Join("\b|\b", $InternalCategoryExclude))\b"
-    } Else {
-        $sFilterInternalCategory = "\bNO_EXCLUSION\b"
+        [ScriptBlock]$sbFilter = [ScriptBlock]::Create("$($sbFilter.ToString()) -and `$PSItem.InternalCategory -notmatch `"$($sFilterInternalCategory)`"")
     }
 
-    ShowMessage "DEBUG" "Set use      : $($PSCmdlet.ParameterSetName)"
-    ShowMessage "DEBUG" "Instance path: $($InstancePath)"
-    ShowMessage "DEBUG" "Log file     : $($LogFile)"
+    ShowLogMessage "INFO" "We are going to copy new versions of mods to: $($InstancePath)" ([ref]$sLogFile)
+    ShowLogMessage "DEBUG" "Set use      : $($PSCmdlet.ParameterSetName)" ([ref]$sLogFile)
+    ShowLogMessage "OTHER" "" ([ref]$sLogFile)
 }
 
 PROCESS {
 
-    $Mods | Sort-Object Name | Where-Object { [System.Convert]::ToBoolean($PSItem.Update) -and $PSItem.InternalCategory -notmatch $sFilterInternalCategory } | ForEach-Object {
-        $sName = $PSItem.Name
+    $iNbToCopy = ($Mods | Where-Object $sbFilter).Count
+
+    $Mods | Sort-Object Name | Where-Object $sbFilter | ForEach-Object {
+        $iPercentComplete = [System.Math]::Round(($iCounter/$iNbToCopy) * 100, 2)
+        Write-Progress -Activity "Copy new version of Minecraft Mods ($($iCounter)/$($iNbToCopy) - $($iPercentComplete) %)..." -Status "Mods: $($PSItem.Name)..." -PercentComplete $iPercentComplete
+
         $sFileName = $PSItem.FileName
         $sSourceFile = $PSItem.FilePath
         $sPreviousFileName = $PSItem.PreviousFileName
@@ -450,18 +555,35 @@ PROCESS {
             }
         }
 
-        # TODO: Rename previous file if Add -eq $True
-        If ( -not [System.Convert]::ToBoolean($PSItem.Add)) {
-            ShowMessage "DEBUG" "Rename $($sPreviousFilePath) to $($sNewPreivousFilePath)"
-        } Else {
-            ShowMessage "DEBUG" "Adding, nothing to rename."
+        # Just to be able to see what happens!
+        Start-Sleep -Seconds 1
+
+        Try {
+            # Rename previous file if Add -ne $True
+            If ( -not [System.Convert]::ToBoolean($PSItem.Add)) {
+                ShowMessage "DEBUG" "Rename $($sPreviousFilePath) to $($sNewPreivousFilePath)"
+                If (Test-Path -Path $sPreviousFilePath) {
+                    Rename-Item -Path $sPreviousFilePath -NewName $sNewPreivousFilePath -Force
+                }
+            } Else {
+                ShowMessage "DEBUG" "Adding, nothing to rename."
+            }
+
+            # Copy new mod
+            ShowMessage "DEBUG" "Copy $($sSourceFile) to $($sDestinationFile)"
+            Copy-Item -Path $sSourceFile -Destination $sDestinationFile
+        } Catch {
+            $sErrorMessage = $PSItem.Exception.Message
+            $sStackTrace = $PSItem.StackTrace
+            ShowLogMessage "ERROR" "Error to update mod in the instance!" ([ref]$sLogFile)
+            ShowLogMessage "DEBUG" "Details:" ([ref]$sLogFile)
+            If ($PSBoundParameters['Debug']) {
+                ShowLogMessage "OTHER" "`t$($sErrorMessage)" ([ref]$sLogFile)
+                ShowLogMessage "OTHER" "`t$($sStackTrace)" ([ref]$sLogFile)
+            }
         }
 
-        # TODO: Copy new mods
-        ShowMessage "DEBUG" "Copy $($sSourceFile) to $($sDestinationFile)"
-
-        #Write-Host "$($counter): $($sName) - $($sFileName)"
-        #$counter++
-        ShowMessage "OTHER" "^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ ^°=°^ "
+        $iCounter++
     }
+    Write-Progress -Activity "Copy new version of Minecraft Mods ($($iCounter)/$($iNbToCopy) - $($iPercentComplete) %)..." -Completed
 }

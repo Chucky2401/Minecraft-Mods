@@ -1,8 +1,16 @@
 # Changelog
 
-## Get-ModsNewVersion
+## 2022.08.15
 
-### 2022.08.15 - v1.1
+### Common
+
+#### Change
+
+*Get-Settings*
+
+- Can pass a starting/ending block to select only few settings and not everything
+
+### Get-ModsNewVersion - v1.1
 
 #### Fix
 
@@ -12,11 +20,9 @@
 
 - If the mods cannot be found on the website, the value of **Add** and **Update** are set to *$False* instead of *an empty string*
 
-## Copy-ToMinecraftInstance
+### Copy-ToMinecraftInstance - v1.0
 
-### 2022.08.15 - v1.0
-
-## New
+#### New
 
 - Define all parameters and parameter sets
 
@@ -25,6 +31,10 @@
     - `-FromFile` parameter instead and the script will ask you a CSV file
     - If you use the parameter `-CsvFile "C:\Path\to\the\file\myfile.csv"`, no need to add the `-FromFile` and you will not have to choose the file
   - You can add with the parameter `-InstancePath` the path to your Minecraft instance, or the script will ask you
+  - Parameter `-GoCOnly` switch to choose the mods only GoC approved
+
+- Rename the previous file name with adding *.disabled* to the end
+- Copy the new mod version
 
 ---
 
