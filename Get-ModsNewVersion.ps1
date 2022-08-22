@@ -21,12 +21,12 @@
         .\Get-ModsNewVersion.ps1 -MCVersion "1.19.0" -NoDownload
     .NOTES
         Name           : Get-ModsNewVersion
-        Version        : 1.0.3
+        Version        : 1.1.0
         Created by     : Chucky2401
         Date created   : 13/07/2022
         Modified by    : Chucky2401
-        Date modified  : 13/08/2022
-        Change         : Fix settings var wrong file and working. Update message functions
+        Date modified  : 15/08/2022
+        Change         : Add & Update object value set to $False if no file found
     .LINK
         https://github.com/Chucky2401/Minecraft-Mods/blob/main/README.md#get-modsnewversion
 #>
@@ -377,28 +377,48 @@ function Get-Settings {
             Created by     : Chucky2401
             Date created   : 08/07/2022
             Modified by    : Chucky2401
-            Date modified  : 09/08/2022
-            Change         : Manage string or number
-        .LINK
-            http://git.sterimed.local/-/snippets/10
+            Date modified  : 21/08/2022
+            Change         : Manage a starting and ending position in the settings
     #>
     [CmdletBinding()]
     Param (
-        [Parameter(Position = 0, Mandatory = $true)]
-        [string]$File
+        [Parameter(Position = 0, Mandatory = $True)]
+        [string]$File,
+        [Parameter(Position = 1, Mandatory = $False)]
+        [string]$StartBlock = "",
+        [Parameter(Position = 2, Mandatory = $False)]
+        [string]$EndBlock = ""
     )
 
     $htSettings = @{}
+    If ($StartBlock -eq "") {
+        $bReadSettings = $True
+    } Else {
+        $bReadSettings = $False
+    }
 
-    Get-Content $File | Where-Object { $PSItem -notmatch "^;|^\[" -and $PSItem -ne "" } | ForEach-Object {
-        $aLine = [regex]::Split($PSItem, '=')
-        If ($aLine[1].Trim() -match "^`".+`"$") {
-            [String]$value = $aLine[1].Trim() -replace "^`"(.+)`"$", "`$1"
+    Get-Content $File | ForEach-Object {
+        If ($PSItem -match "^;|^\[" -or $PSItem -eq "") {
+            If ($StartBlock -ne "" -and $PSItem -match $StartBlock) {
+                $bReadSettings = $True
+            }
+            If ($EndBlock -ne "" -and $PSItem -match $EndBlock) {
+                $bReadSettings = $False
+            }
+            
+            return
         }
-        Else {
-            [Int32]$value = $aLine[1].Trim()
+
+        If ($bReadSettings) {
+            $aLine = [regex]::Split($PSItem, '=')
+            If ($aLine[1].Trim() -match "^`".+`"$") {
+                [String]$value = $aLine[1].Trim() -replace "^`"(.+)`"$", "`$1"
+            }
+            Else {
+                [Int32]$value = $aLine[1].Trim()
+            }
+            $htSettings.Add($aLine[0].Trim(), $value)
         }
-        $htSettings.Add($aLine[0].Trim(), $value)
     }
 
     Return $htSettings
@@ -418,7 +438,7 @@ function Get-InfoOptifine {
             .\Get-InfoOptifine -MCVersion "1.18.2"
         .NOTES
             Name           : Get-InfoOptifine
-            Version        : 1.0.1.1
+            Version        : 1.0.1
             Created by     : Chucky2401
             Date created   : 14/07/2022
             Modified by    : Chucky2401
@@ -491,7 +511,7 @@ function Get-InfoReplayMod {
             .\Get-InfoReplayMod -MCVersion "1.18.2"
         .NOTES
             Name           : Get-InfoReplayMod
-            Version        : 1.0.1.1
+            Version        : 1.0.1
             Created by     : Chucky2401
             Date created   : 14/07/2022
             Modified by    : Chucky2401
@@ -556,7 +576,7 @@ function Get-InfoXaeroMod {
             .\Get-InfoXaeroMod -MCVersion "1.19" -Mod "Xaeros WorldMap"
         .NOTES
             Name           : Get-InfoXaeroMod
-            Version        : 1.0.1.1
+            Version        : 1.0.1
             Created by     : Chucky2401
             Date created   : 14/07/2022
             Modified by    : Chucky2401
@@ -633,7 +653,7 @@ function Get-InfoFabricLoader {
             .\Get-InfoFabricLoader -MCVersion "1.18.2" -Mod "Xaeros Minimap"
         .NOTES
             Name           : Get-InfoFabricLoader
-            Version        : 1.0.1.1
+            Version        : 1.0.1
             Created by     : Chucky2401
             Date created   : 14/07/2022
             Modified by    : Chucky2401
@@ -683,7 +703,7 @@ function Get-InfoFabricLoader {
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
 # User settings
-$htSettings = Get-Settings "$($PSScriptRoot)\conf\Get-ModsNewVersion.ps1.ini"
+$htSettings = Get-Settings "$($PSScriptRoot)\conf\settings.ini"
 
 # API
 $sBaseUri         = "https://api.curseforge.com"
@@ -797,7 +817,7 @@ If (!(Test-Path "$($htSettings['McBaseFolder'])")) {
     ShowLogMessage "INFO" "Creating the folders..." ([ref]$sLogFile)
     Try {
         $aDownloadDirectories.GetEnumerator() | Sort-Object Name | ForEach-Object {
-            New-Item -Path "$($PSItem)" -ItemType Directory -ErrorAction Stop | Out-Null
+            New-Item -Path "$($PSItem.Value)" -ItemType Directory -ErrorAction Stop | Out-Null
         }
         ShowLogMessage "SUCCESS" "Folder and subfolders created successfully!" ([ref]$sLogFile)
     } Catch {
@@ -1043,8 +1063,8 @@ $aMainModsList | ForEach-Object {
             GameVersion      = ""
             Dependencies     = ""
             Copy             = $bCopy
-            Add              = ""
-            Update           = ""
+            Add              = $False
+            Update           = $False
         }
     }
 

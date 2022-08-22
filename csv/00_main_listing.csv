@@ -51,8 +51,8 @@
 "MAmbience";MAmbience;"317590";"Mods";"Adding ambient sounds to Minecraft";curseforge;"https://www.curseforge.com/minecraft/mc-mods/mambience";;"True";True;0;-(\d+\.\d+\.\d+)\+.+\.[a-z]{3}$;filename
 "MiniHUD";MiniHUD;"244260";"Mods";"A ""mini F3"" HUD mod, with light level, spawn & slime chunk overlays etc.";curseforge;"https://www.curseforge.com/minecraft/mc-mods/minihud";;"False";True;0;(\d+\.\d+\.\d+)\.[a-z]{3}$;filename
 "Mod Menu";Mod Menu;"308702";"Mods";"Adds a mod menu to view the list of mods you have installed.";curseforge;"https://www.curseforge.com/minecraft/mc-mods/modmenu";;"True";True;0;(\d+\.\d+\.\d+)\.[a-z]{3}$;filename
-"OptiFabric";OptiFabric;"322385";"Mods";"A mod that allows running optifine on fabric.";curseforge;"https://www.curseforge.com/minecraft/mc-mods/optifabric";;"True";True;0;(\d+\.\d+\.\d+)\.[a-z]{3}$;filename
-"OptiFine";OptiFine;"79112116";"Mods";"OptiFine is a Minecraft optimization mod.";optifine;"https://optifine.net/downloads";;"True";True;0;(.+);Version
+"OptiFabric";OptiFabric;"322385";"Mods";"A mod that allows running optifine on fabric.";curseforge;"https://www.curseforge.com/minecraft/mc-mods/optifabric";"Optifine";"True";True;0;(\d+\.\d+\.\d+)\.[a-z]{3}$;filename
+"OptiFine";OptiFine;"79112116";"Mods";"OptiFine is a Minecraft optimization mod.";optifine;"https://optifine.net/downloads";"Optifine";"True";True;0;(.+);Version
 "Phosphor (Fabric)";Phosphor;"372124";"Mods";"Performance improvements for Minecraft's lighting engine";curseforge;"https://www.curseforge.com/minecraft/mc-mods/phosphor";"NoOptifine";"True";True;0;(\d+\.\d+\.\d+)\.[a-z]{3}$;filename
 "Potion Descriptions (Fabric)";Potion Descriptions;"414488";"Mods";" Adds effect descriptions to potion tooltips ";curseforge;"https://www.curseforge.com/minecraft/mc-mods/potion-descriptions-fabric";;"False";True;0;(\d+\.\d+(\.\d+)*)\.[a-z]{3}$;filename
 "Presence Footsteps [Fabric]";Presence Footsteps;"334259";"Mods";"An overly complicated sound mod";curseforge;"https://www.curseforge.com/minecraft/mc-mods/presence-footsteps";;"True";True;0;(\d+\.\d+\.\d+)\.[a-z]{3}$;filename
