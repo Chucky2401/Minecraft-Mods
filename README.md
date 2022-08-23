@@ -242,13 +242,17 @@ Or
 #### Examples
 
 1. `$Mods | Copy-ToMinecraftInstance.ps1 -InstancePath $env:APPDATA\.minecraft`
-  Copy all updated mods to the default instance of Minecraft
+
+Copy all updated mods to the default instance of Minecraft
 
 2. `$Mods | Copy-ToMinecraftInstance.ps1 -InstancePath $env:APPDATA\.minecraft -InternalCategoryExclude "Optifine"`
-  Copy all updated mods except one in the internal category *Optifine* to the default instance of Minecraft
+
+Copy all updated mods except one in the internal category *Optifine* to the default instance of Minecraft
 
 3. `Copy-ToMinecraftInstance.ps1 -Mods $Mods -InstancePath $env:APPDATA\.minecraft -InternalCategoryExclude "Optifine","NoOptifine"`
-  Copy all updated mods except one in the internal category *Optifine* or *NoOptifine* to the default instance of Minecraft
+
+Copy all updated mods except one in the internal category *Optifine* or *NoOptifine* to the default instance of Minecraft
 
 4. `Copy-ToMinecraftInstance.ps1 -CsvFile "E:\Games\Minecraft\#Setup_Minecraft\#Scripts\Minecraft-Mods\csv\MC_1.19.0-2022.08.13_18.56.csv" -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-Opti\.minecraft" -InternalCategoryExclude "NoOptifine" -GoCOnly`
-  Copy all updated mods from the .csv file, in the specific instance path, where the internal category is not *NoOptifine* and where the field GOC is equal to True
+
+Copy all updated mods from the .csv file, in the specific instance path, where the internal category is not *NoOptifine* and where the field GOC is equal to True
