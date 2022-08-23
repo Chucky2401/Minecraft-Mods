@@ -92,10 +92,12 @@ The most important part of this Readme!
 #### Examples
 
 1. .\Get-ModsNewVersion.ps1 -MCVersion "1.18.2"
-  *Will download all the mods updated for the Minecraft 1.18.2 version*
+
+*Will download all the mods updated for the Minecraft 1.18.2 version*
 
 2. .\Get-ModsNewVersion.ps1 -MCVersion "1.19.0" -NoDownload
-  *Will check the mods update but without download anything*
+
+*Will check the mods update but without download anything*
 
 #### Appendix
 
