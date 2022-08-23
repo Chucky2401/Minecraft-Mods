@@ -24,29 +24,29 @@
     .EXAMPLE
         $Mods | Copy-ToMinecraftInstance.ps1 -InstancePath $env:APPDATA\.minecraft
 
-        Copy all mods to the default instance of Minecraft
+        Copy all updated mods to the default instance of Minecraft
     .EXAMPLE
         $Mods | Copy-ToMinecraftInstance.ps1 -InstancePath $env:APPDATA\.minecraft -InternalCategoryExclude "Optifine"
 
-        Copy all mods except one in the internal category Optifine to the default instance of Minecraft
+        Copy all updated mods except one in the internal category Optifine to the default instance of Minecraft
     .EXAMPLE
         Copy-ToMinecraftInstance.ps1 -Mods $Mods -InstancePath $env:APPDATA\.minecraft -InternalCategoryExclude "Optifine","NoOptifine"
 
-        Copy all mods except one in the internal category Optifine or NoOptifine to the default instance of Minecraft
+        Copy all updated mods except one in the internal category Optifine or NoOptifine to the default instance of Minecraft
     .EXAMPLE
         Copy-ToMinecraftInstance.ps1 -CsvFile "E:\Games\Minecraft\#Setup_Minecraft\#Scripts\Minecraft-Mods\csv\MC_1.19.0-2022.08.13_18.56.csv" -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-Opti\.minecraft" -InternalCategoryExclude "NoOptifine" -GoCOnly
 
-        Copy all update mods from the .csv file, in the specific instance path, where the internal category is not NoOptifine and where the field GOC is equal to True
+        Copy all updated mods from the .csv file, in the specific instance path, where the internal category is not NoOptifine and where the field GOC is equal to True
     .NOTES
         Name           : Copy-ToMinecraftInstance
-        Version        : 1.0.0
+        Version        : 1.0.0.beta.1
         Created by     : Chucky2401
         Date Created   : 14/08/2022
         Modify by      : Chucky2401
-        Date modified  : 21/08/2022
+        Date modified  : 23/08/2022
         Change         : Creation
     .LINK
-        http://github.com/UserName/RepoName
+        https://github.com/Chucky2401/Minecraft-Mods/blob/main/README.md#copy-tominecraftinstance
 #>
 
 #---------------------------------------------------------[Script Parameters]------------------------------------------------------

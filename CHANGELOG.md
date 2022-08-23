@@ -20,7 +20,7 @@
 
 - If the mods cannot be found on the website, the value of **Add** and **Update** are set to *$False* instead of *an empty string*
 
-### Copy-ToMinecraftInstance - v1.0
+### Copy-ToMinecraftInstance - v1.0.beta.1
 
 #### New
 
