@@ -24,29 +24,29 @@
     .EXAMPLE
         $Mods | Copy-ToMinecraftInstance.ps1 -InstancePath $env:APPDATA\.minecraft
 
-        Copy all mods to the default instance of Minecraft
+        Copy all updated mods to the default instance of Minecraft
     .EXAMPLE
         $Mods | Copy-ToMinecraftInstance.ps1 -InstancePath $env:APPDATA\.minecraft -InternalCategoryExclude "Optifine"
 
-        Copy all mods except one in the internal category Optifine to the default instance of Minecraft
+        Copy all updated mods except one in the internal category Optifine to the default instance of Minecraft
     .EXAMPLE
         Copy-ToMinecraftInstance.ps1 -Mods $Mods -InstancePath $env:APPDATA\.minecraft -InternalCategoryExclude "Optifine","NoOptifine"
 
-        Copy all mods except one in the internal category Optifine or NoOptifine to the default instance of Minecraft
+        Copy all updated mods except one in the internal category Optifine or NoOptifine to the default instance of Minecraft
     .EXAMPLE
         Copy-ToMinecraftInstance.ps1 -CsvFile "E:\Games\Minecraft\#Setup_Minecraft\#Scripts\Minecraft-Mods\csv\MC_1.19.0-2022.08.13_18.56.csv" -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-Opti\.minecraft" -InternalCategoryExclude "NoOptifine" -GoCOnly
 
-        Copy all update mods from the .csv file, in the specific instance path, where the internal category is not NoOptifine and where the field GOC is equal to True
+        Copy all updated mods from the .csv file, in the specific instance path, where the internal category is not NoOptifine and where the field GOC is equal to True
     .NOTES
         Name           : Copy-ToMinecraftInstance
-        Version        : 1.0.0
+        Version        : 1.0.0.beta.1
         Created by     : Chucky2401
         Date Created   : 14/08/2022
         Modify by      : Chucky2401
-        Date modified  : 21/08/2022
-        Change         : Creation
+        Date modified  : 27/08/2022
+        Change         : Import CSV only with file usage ; Set counter for progress bar in the Process ; Log Every message
     .LINK
-        http://github.com/UserName/RepoName
+        https://github.com/Chucky2401/Minecraft-Mods/blob/main/README.md#copy-tominecraftinstance
 #>
 
 #---------------------------------------------------------[Script Parameters]------------------------------------------------------
@@ -464,8 +464,6 @@ BEGIN {
     # To don't change anything to my snippets! ;-)
     $sLogFile = $LogFile
 
-    $iCounter = 1
-
     [ScriptBlock]$sbFilter = {[System.Convert]::ToBoolean($PSItem.Update)}
 
     If ($GoCOnly) {
@@ -495,9 +493,9 @@ BEGIN {
         }
         $null = $oFileBrowser.ShowDialog()
         $CsvFile = $oFileBrowser.FileName
+        $Mods = Import-Csv -Path $CsvFile -Delimiter ";" -Encoding UTF8
     }
 
-    $Mods = Import-Csv -Path $CsvFile -Delimiter ";" -Encoding UTF8
 
     If ($InternalCategoryExclude.Count -ge 1) {
         $sFilterInternalCategory = "\b$([String]::Join("\b|\b", $InternalCategoryExclude))\b"
@@ -511,6 +509,7 @@ BEGIN {
 
 PROCESS {
 
+    $iCounter = 1
     $iNbToCopy = ($Mods | Where-Object $sbFilter).Count
 
     $Mods | Sort-Object Name | Where-Object $sbFilter | ForEach-Object {
@@ -561,16 +560,16 @@ PROCESS {
         Try {
             # Rename previous file if Add -ne $True
             If ( -not [System.Convert]::ToBoolean($PSItem.Add)) {
-                ShowMessage "DEBUG" "Rename $($sPreviousFilePath) to $($sNewPreivousFilePath)"
+                ShowLogMessage "DEBUG" "Rename $($sPreviousFilePath) to $($sNewPreivousFilePath)" ([ref]$sLogFile)
                 If (Test-Path -Path $sPreviousFilePath) {
                     Rename-Item -Path $sPreviousFilePath -NewName $sNewPreivousFilePath -Force
                 }
             } Else {
-                ShowMessage "DEBUG" "Adding, nothing to rename."
+                ShowLogMessage "DEBUG" "Adding, nothing to rename." ([ref]$sLogFile)
             }
 
             # Copy new mod
-            ShowMessage "DEBUG" "Copy $($sSourceFile) to $($sDestinationFile)"
+            ShowLogMessage "DEBUG" "Copy $($sSourceFile) to $($sDestinationFile)" ([ref]$sLogFile)
             Copy-Item -Path $sSourceFile -Destination $sDestinationFile
         } Catch {
             $sErrorMessage = $PSItem.Exception.Message

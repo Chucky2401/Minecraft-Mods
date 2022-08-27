@@ -25,8 +25,8 @@
         Created by     : Chucky2401
         Date created   : 13/07/2022
         Modified by    : Chucky2401
-        Date modified  : 15/08/2022
-        Change         : Add & Update object value set to $False if no file found
+        Date modified  : 27/08/2022
+        Change         : Add commented copy for my own usage
     .LINK
         https://github.com/Chucky2401/Minecraft-Mods/blob/main/README.md#get-modsnewversion
 #>
@@ -1209,6 +1209,17 @@ $aModListDownload | Where-Object { $PSItem.Update -eq $True -and $PSItem.Type -e
 ShowLogMessage "OTHER" "" ([ref]$sLogFile)
 ShowLogMessage "OTHER" "------------------------------------------------------------" ([ref]$sLogFile)
 ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+
+## My copy
+#ShowLogMessage "INFO" "Copy GoC Mods..." ([ref]$sLogFile)
+#$aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-Opti\.minecraft" -InternalCategoryExclude "NoOptifine" -GoCOnly -LogFile $sLogFile -Debug
+
+#ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+
+#ShowLogMessage "INFO" "Copy not GoC Mods..." ([ref]$sLogFile)
+#$aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-TestMods\.minecraft" -InternalCategoryExclude "Optifine" -LogFile $sLogFile -Debug
+
+#ShowLogMessage "OTHER" "" ([ref]$sLogFile)
 
 Write-CenterText "*************************************" $sLogFile
 Write-CenterText "*                                   *" $sLogFile

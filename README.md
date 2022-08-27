@@ -9,13 +9,18 @@ My scripts to download Minecraft mods
   - [Table of Contents](#table-of-contents)
   - [Why this script](#why-this-script)
   - [Description](#description)
+  - [Prerequisites](#prerequisites)
     - [Get-ModsNewVersion](#get-modsnewversion)
-      - [Prerequisites](#prerequisites)
+      - [Parameters](#parameters)
       - [How to use](#how-to-use)
       - [Examples](#examples)
       - [Appendix](#appendix)
         - [I. Folders organization](#i-folders-organization)
         - [II. Main listing fields description](#ii-main-listing-fields-description)
+    - [Copy-ToMinecraftInstance](#copy-tominecraftinstance)
+      - [Parameters](#parameters-1)
+      - [How to use](#how-to-use-1)
+      - [Examples](#examples-1)
 
 ## Why this script
 
@@ -32,17 +37,22 @@ I will describe each scripts.
 At the moment, there is this script available only:
 
 - Get-ModsNewVersion
+- CopyTo-MinecraftInstance
 
 I plan to do this script (not exhaustive):
 
-- CopyTo-MinecraftInstance
 - CopyTo-GocFolder
+
+## Prerequisites
+
+This script has only been testing with **[PowerShell Core 7.2.5](https://github.com/PowerShell/PowerShell/releases/tag/v7.2.5)**
 
 ### Get-ModsNewVersion
 
 This first script help me to clean check mods update and download if necessary.
 It takes **at least the Minecraft Version with 3-digits format** as parameter.
-You have one more optional parameters:
+
+#### Parameters
 
 - **NoDownload** *(switch)*: if you want to run the script without downloading any mods, like a dry run.
 - **Discord** *(switch)*: generate markdown files to copy/paste on Discord
@@ -57,10 +67,6 @@ The script will generate a log file for each run, a csv file with the list of mo
 And only with associated parameter markdown files to post it on Discord (in French only for the moment) and text files for easy copy'n'paste for a website.
 
 If you already download mods for the same version of Minecraft, the previous file will be renamed with appending *.old* at the end of the file.
-
-#### Prerequisites
-
-This script has only been testing with **[PowerShell Core 7.2.5](https://github.com/PowerShell/PowerShell/releases/tag/v7.2.5)**
 
 #### How to use
 
@@ -87,11 +93,11 @@ The most important part of this Readme!
 
 1. .\Get-ModsNewVersion.ps1 -MCVersion "1.18.2"
 
-    *Will download all the mods updated for the Minecraft 1.18.2 version*
+*Will download all the mods updated for the Minecraft 1.18.2 version*
 
 2. .\Get-ModsNewVersion.ps1 -MCVersion "1.19.0" -NoDownload
 
-    *Will check the mods update but without download anything*
+*Will check the mods update but without download anything*
 
 #### Appendix
 
@@ -191,3 +197,64 @@ I will try to describe you the fields of the main listing csv file.
 - versionField
 
     In which field we have to look for the version of the mod
+
+### Copy-ToMinecraftInstance
+
+The purpose of the script is to take all the updated mods from the previous script *(Get-ModsNewVersion)* and copy them to the Minecraft instance folder.
+Obviously, the mods are copied to the *mods* folder and ressources packs to the *ressourcepacks* folder.
+
+**<span style="color: crimson;">Actually in beta version, because I didn't implemented the use of this script in the Get script yet.</span>**
+
+#### Parameters
+
+For this script I set up 2 set name for parameters. I will regroup them
+
+- <span style="text-decoration: underline;">*Common* parameters</span>:
+  - **InstancePath**: directory of your Minecraft instance. This folder must contains *mods*, *ressourcepack*, etc. folders
+  - **InternalCategoryExclude**: to exclude one or more internal category from the mods list
+  - **GoCOnly**: to include only the mods where the field GOC is equal to True
+- <span style="text-decoration: underline;">*Pipeline* set</span>:
+  - **Mods**: an array of mods. The first purpose of this parameter is to call this script directly from **Get-ModsNewVersion** (not implemented yet) with a pipe, or with the parameter following the script.
+  - **LogFile**: when I will have implemented to call this script from the get script, it will log all the steps to the same log file.
+- <span style="text-decoration: underline;">*File* set</span>:
+  - **FromFile**: switch to force the script to use a file. But, the script will ask you which csv file to use. This parameter is optional with the next parameter
+  - **CsvFile**: path to the csv file. If you use this parameter, you don't have to use the previous parameter, but you must write the absolute path to the csv file.
+
+#### How to use
+
+Two way for this actually:
+
+First one:
+
+1. Import the CSV file to a variable with `Import-Csv`
+2. Pipe this variable: `$Mods | .\Copy-ToMinecraftInstance.ps1`
+
+*You can add `-InstancePath "C:\path\to\mine\Minecraft\.minecraft"`*
+
+Seconde one:
+
+1. Call the script with the `-FromFile` parameter: `.\Copy-ToMinecraftInstance.ps1 -FromFile`
+
+Or
+
+1. Call the script with the `-CsvFile` parameter: `.\Copy-ToMinecraftInstance.ps1 -CsvFile "C:\path\to\the\csv\file\1.19.1_mods.csv"`
+
+*You can also use the parameter `-InstancePath` as above*
+
+#### Examples
+
+1. `$Mods | Copy-ToMinecraftInstance.ps1 -InstancePath $env:APPDATA\.minecraft`
+
+Copy all updated mods to the default instance of Minecraft
+
+2. `$Mods | Copy-ToMinecraftInstance.ps1 -InstancePath $env:APPDATA\.minecraft -InternalCategoryExclude "Optifine"`
+
+Copy all updated mods except one in the internal category *Optifine* to the default instance of Minecraft
+
+3. `Copy-ToMinecraftInstance.ps1 -Mods $Mods -InstancePath $env:APPDATA\.minecraft -InternalCategoryExclude "Optifine","NoOptifine"`
+
+Copy all updated mods except one in the internal category *Optifine* or *NoOptifine* to the default instance of Minecraft
+
+4. `Copy-ToMinecraftInstance.ps1 -CsvFile "E:\Games\Minecraft\#Setup_Minecraft\#Scripts\Minecraft-Mods\csv\MC_1.19.0-2022.08.13_18.56.csv" -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-Opti\.minecraft" -InternalCategoryExclude "NoOptifine" -GoCOnly`
+
+Copy all updated mods from the .csv file, in the specific instance path, where the internal category is not *NoOptifine* and where the field GOC is equal to True
