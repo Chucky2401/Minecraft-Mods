@@ -43,8 +43,8 @@
         Created by     : Chucky2401
         Date Created   : 14/08/2022
         Modify by      : Chucky2401
-        Date modified  : 23/08/2022
-        Change         : Creation
+        Date modified  : 27/08/2022
+        Change         : Import CSV only with file usage ; Set counter for progress bar in the Process ; Log Every message
     .LINK
         https://github.com/Chucky2401/Minecraft-Mods/blob/main/README.md#copy-tominecraftinstance
 #>
@@ -464,8 +464,6 @@ BEGIN {
     # To don't change anything to my snippets! ;-)
     $sLogFile = $LogFile
 
-    $iCounter = 1
-
     [ScriptBlock]$sbFilter = {[System.Convert]::ToBoolean($PSItem.Update)}
 
     If ($GoCOnly) {
@@ -495,9 +493,9 @@ BEGIN {
         }
         $null = $oFileBrowser.ShowDialog()
         $CsvFile = $oFileBrowser.FileName
+        $Mods = Import-Csv -Path $CsvFile -Delimiter ";" -Encoding UTF8
     }
 
-    $Mods = Import-Csv -Path $CsvFile -Delimiter ";" -Encoding UTF8
 
     If ($InternalCategoryExclude.Count -ge 1) {
         $sFilterInternalCategory = "\b$([String]::Join("\b|\b", $InternalCategoryExclude))\b"
@@ -511,6 +509,7 @@ BEGIN {
 
 PROCESS {
 
+    $iCounter = 1
     $iNbToCopy = ($Mods | Where-Object $sbFilter).Count
 
     $Mods | Sort-Object Name | Where-Object $sbFilter | ForEach-Object {
@@ -561,16 +560,16 @@ PROCESS {
         Try {
             # Rename previous file if Add -ne $True
             If ( -not [System.Convert]::ToBoolean($PSItem.Add)) {
-                ShowMessage "DEBUG" "Rename $($sPreviousFilePath) to $($sNewPreivousFilePath)"
+                ShowLogMessage "DEBUG" "Rename $($sPreviousFilePath) to $($sNewPreivousFilePath)" ([ref]$sLogFile)
                 If (Test-Path -Path $sPreviousFilePath) {
                     Rename-Item -Path $sPreviousFilePath -NewName $sNewPreivousFilePath -Force
                 }
             } Else {
-                ShowMessage "DEBUG" "Adding, nothing to rename."
+                ShowLogMessage "DEBUG" "Adding, nothing to rename." ([ref]$sLogFile)
             }
 
             # Copy new mod
-            ShowMessage "DEBUG" "Copy $($sSourceFile) to $($sDestinationFile)"
+            ShowLogMessage "DEBUG" "Copy $($sSourceFile) to $($sDestinationFile)" ([ref]$sLogFile)
             Copy-Item -Path $sSourceFile -Destination $sDestinationFile
         } Catch {
             $sErrorMessage = $PSItem.Exception.Message
