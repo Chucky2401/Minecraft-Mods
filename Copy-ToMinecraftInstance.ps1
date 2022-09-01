@@ -16,6 +16,8 @@
         Array of string to exclude one or more InternalCategory
     .PARAMETER GoCOnly
         Switch that copy only mods with the field GOC equal to True
+    .PARAMETER Update
+        Boolean. If set to false (default) the mods folder is emptying.
     .PARAMETER LogFile
         Use only with the first parameter (Mods).
         To log copy to the same log file as `Get-ModsNewVersion.ps1`
@@ -39,12 +41,12 @@
         Copy all updated mods from the .csv file, in the specific instance path, where the internal category is not NoOptifine and where the field GOC is equal to True
     .NOTES
         Name           : Copy-ToMinecraftInstance
-        Version        : 1.0.0.beta.1
+        Version        : 1.0.0.beta.2
         Created by     : Chucky2401
         Date Created   : 14/08/2022
         Modify by      : Chucky2401
-        Date modified  : 27/08/2022
-        Change         : Import CSV only with file usage ; Set counter for progress bar in the Process ; Log Every message
+        Date modified  : 01/09/2022
+        Change         : Add -Update parameter
     .LINK
         https://github.com/Chucky2401/Minecraft-Mods/blob/main/README.md#copy-tominecraftinstance
 #>
@@ -68,6 +70,9 @@ Param (
     [Parameter(ParameterSetName = "Pipeline")]
     [Parameter(ParameterSetName = "File")]
     [Switch]$GoCOnly,
+    [Parameter(ParameterSetName = "Pipeline")]
+    [Parameter(ParameterSetName = "File")]
+    [Boolean]$Update = $False,
     [Parameter(ParameterSetName = "Pipeline")]
     [String]$LogFile = ""
 )
@@ -501,6 +506,18 @@ BEGIN {
         $sFilterInternalCategory = "\b$([String]::Join("\b|\b", $InternalCategoryExclude))\b"
         [ScriptBlock]$sbFilter = [ScriptBlock]::Create("$($sbFilter.ToString()) -and `$PSItem.InternalCategory -notmatch `"$($sFilterInternalCategory)`"")
     }
+
+    If ( -not $Update -and (Test-Path -Path "$($sInstanceRessourcesPath)\*")) {
+        Remove-Item "$($sInstanceRessourcesPath)\*" -Force
+    }
+
+    If ( -not $Update -and (Test-Path -Path "$($sInstanceRessourcesPath)\*")) {
+        Remove-Item "$($sInstanceRessourcesPath)\*" -Force
+    }
+
+    #If ( -not $Update -and (Test-Path -Path "$($sInstanceShadersPath)\*")) {
+    #    Remove-Item "$($sInstanceShadersPath)\*" -Force
+    #}
 
     ShowLogMessage "INFO" "We are going to copy new versions of mods to: $($InstancePath)" ([ref]$sLogFile)
     ShowLogMessage "DEBUG" "Set use      : $($PSCmdlet.ParameterSetName)" ([ref]$sLogFile)
