@@ -31,6 +31,7 @@ So, I decided to use the API to check them.
 For some mods (ie: OptiFine, ReplayMod), I parse myself the website where the mods are shared.
 By the way, this script help me by generating the markdown text to post it on the Discord Server and generate txt file to help me to update our website.
 
+
 ## Description
 
 I will describe each scripts.
@@ -123,6 +124,7 @@ YourBaseFolder
 ##### II. Main listing fields description
 
 I will try to describe you the fields of the main listing csv file.
+**Important**: As I am French, the csv file must used semicolon ( ; ) as seperator.
 
 - name
 
@@ -183,6 +185,11 @@ I will try to describe you the fields of the main listing csv file.
     *Not used for the moment*
     This field will help me to know if we have to copy the mod to the `mods` folder.
 
+- forceMcVersion
+
+    Use if you want to force a specific Minecraft version for a mod.
+    Example: for Replay Mod 1.19.2, the authors only append 1.19.1 to file name. So the script will not be able to find it.
+
 - skip
 
     This field is a little bit complex.
@@ -203,7 +210,7 @@ I will try to describe you the fields of the main listing csv file.
 The purpose of the script is to take all the updated mods from the previous script *(Get-ModsNewVersion)* and copy them to the Minecraft instance folder.
 Obviously, the mods are copied to the *mods* folder and ressources packs to the *ressourcepacks* folder.
 
-**<span style="color: crimson;">Actually in beta version, because I didn't implemented the use of this script in the Get script yet.</span>**
+**<span style="color: crimson;">I will implement the use of this script in the Get script in a future release.</span>**
 
 #### Parameters
 
@@ -213,6 +220,7 @@ For this script I set up 2 set name for parameters. I will regroup them
   - **InstancePath**: directory of your Minecraft instance. This folder must contains *mods*, *ressourcepack*, etc. folders
   - **InternalCategoryExclude**: to exclude one or more internal category from the mods list
   - **GoCOnly**: to include only the mods where the field GOC is equal to True
+  - **Update**: to specify if you copy updated mods or new mods. In case of new mods, the script will emptying folders before copy. By default is equal to $True
 - <span style="text-decoration: underline;">*Pipeline* set</span>:
   - **Mods**: an array of mods. The first purpose of this parameter is to call this script directly from **Get-ModsNewVersion** (not implemented yet) with a pipe, or with the parameter following the script.
   - **LogFile**: when I will have implemented to call this script from the get script, it will log all the steps to the same log file.
