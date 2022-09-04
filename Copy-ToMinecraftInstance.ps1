@@ -41,7 +41,7 @@
         Copy all updated mods from the .csv file, in the specific instance path, where the internal category is not NoOptifine and where the field GOC is equal to True
     .NOTES
         Name           : Copy-ToMinecraftInstance
-        Version        : 1.0.0.beta.2
+        Version        : 1.0.0
         Created by     : Chucky2401
         Date Created   : 14/08/2022
         Modify by      : Chucky2401
@@ -72,7 +72,7 @@ Param (
     [Switch]$GoCOnly,
     [Parameter(ParameterSetName = "Pipeline")]
     [Parameter(ParameterSetName = "File")]
-    [Boolean]$Update = $False,
+    [Boolean]$Update = $True,
     [Parameter(ParameterSetName = "Pipeline")]
     [String]$LogFile = ""
 )
