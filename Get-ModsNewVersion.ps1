@@ -1216,7 +1216,7 @@ ShowLogMessage "OTHER" "--------------------------------------------------------
 ShowLogMessage "OTHER" "" ([ref]$sLogFile)
 
 ## My copy
-ShowLogMessage "INFO" "Copy GoC Mods..." ([ref]$sLogFile)
+<# ShowLogMessage "INFO" "Copy GoC Mods..." ([ref]$sLogFile)
 $aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-Opti\.minecraft" -InternalCategoryExclude "NoOptifine" -GoCOnly -Update $bPreviousDownload -LogFile $sLogFile -Debug
 
 ShowLogMessage "OTHER" "" ([ref]$sLogFile)
@@ -1224,7 +1224,7 @@ ShowLogMessage "OTHER" "" ([ref]$sLogFile)
 ShowLogMessage "INFO" "Copy not GoC Mods..." ([ref]$sLogFile)
 $aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-TestMods\.minecraft" -InternalCategoryExclude "Optifine" -Update $bPreviousDownload -LogFile $sLogFile -Debug
 
-ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+ShowLogMessage "OTHER" "" ([ref]$sLogFile) #>
 
 Write-CenterText "*************************************" $sLogFile
 Write-CenterText "*                                   *" $sLogFile

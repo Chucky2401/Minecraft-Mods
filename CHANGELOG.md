@@ -15,11 +15,11 @@
 - Add field **ForceMcVersion** for mods. Sometimes, like *Replay Mod*, the author mark the mod compatible for Minecraft 1.19.1 and 1.19.2, but nothing on the website indicate 1.19.2 and only 1.19.1. Or, on CurseForge, the filename indicate both version, but the mods is not tagged compatible. This is a workaround for this.
 - Use the new parameter for **Copy-ToMinecraftInstance**
 
-### Copy-ToMinecraftInstance - 1.0.0.beta.2
+### Copy-ToMinecraftInstance - 1.0.0
 
 #### Change
 
-- Add *Update* (Boolean) parameter. If this parameter is not set or set to $False, the *mods* and *ressourcepacks* folders are emptying at the start of the script.
+- Add *Update* (Boolean) parameter. If this parameter is set to $False, the *mods* and *ressourcepacks* folders are emptying at the start of the script.
 
 ---
 
