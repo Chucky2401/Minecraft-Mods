@@ -21,12 +21,12 @@
         .\Get-ModsNewVersion.ps1 -MCVersion "1.19.0" -NoDownload
     .NOTES
         Name           : Get-ModsNewVersion
-        Version        : 1.1.0
+        Version        : 1.2.0
         Created by     : Chucky2401
         Date created   : 13/07/2022
         Modified by    : Chucky2401
-        Date modified  : 27/08/2022
-        Change         : Add commented copy for my own usage
+        Date modified  : 01/09/2022
+        Change         : Add ForceMcVersion in main listing
     .LINK
         https://github.com/Chucky2401/Minecraft-Mods/blob/main/README.md#get-modsnewversion
 #>
@@ -887,36 +887,41 @@ $aMainModsList | ForEach-Object {
     $sField             = $PSItem.versionField
     $sVersionPattern    = $PSItem.versionPattern
     $iSkip              = [int]$PSItem.skip
+    $sVersionModsMc     = $sCurseForgeVersion
     $sPreviousVersion   = ""
     $sFilePath          = ""
     $sPreviousFileName  = ""
     $aDependencies      = @()
     $bAdd               = $False
     $bPreviousModFound  = $False
+    
+    If ($PSItem.ForceMcVersion -ne "") {
+        $sVersionModsMc = $PSItem.ForceMcVersion
+    }
 
     ShowLogMessage "INFO" "Querying last file for $($sModName) (Loader: $($htSettings['ModLoaderType']); MC Version: $($sCurseForgeVersion))..." ([ref]$sLogFile)
 
     switch ($PSItem.sourceWebsite) {
         "curseforge" {
             If ($sType -eq "Mods") {
-                $oParametersQueryFiles.Uri = "$($sBaseUri)$($sBaseModFilesUri.Replace("{modId}", $sModId))?gameVersion=$($sCurseForgeVersion)&modLoaderType=$($htSettings['ModLoaderType'])"
+                $oParametersQueryFiles.Uri = "$($sBaseUri)$($sBaseModFilesUri.Replace("{modId}", $sModId))?gameVersion=$($sVersionModsMc)&modLoaderType=$($htSettings['ModLoaderType'])"
             } Else {
-                $oParametersQueryFiles.Uri = "$($sBaseUri)$($sBaseModFilesUri.Replace("{modId}", $sModId))?gameVersion=$($sCurseForgeVersion)"
+                $oParametersQueryFiles.Uri = "$($sBaseUri)$($sBaseModFilesUri.Replace("{modId}", $sModId))?gameVersion=$($sVersionModsMc)"
             }
             $oResult = Invoke-RestMethod @oParametersQueryFiles
-            $oFileInfo = $oResult.data | Where-Object { $PSItem.gameVersions -match "$([Regex]::Escape($sCurseForgeVersion))$" } | Sort-Object fileDate -Desc | Select-Object -Skip $iSkip -First 1
+            $oFileInfo = $oResult.data | Where-Object { $PSItem.gameVersions -match "$([Regex]::Escape($sVersionModsMc))$" } | Sort-Object fileDate -Desc | Select-Object -Skip $iSkip -First 1
         }
         "optifine" {
-            $oFileInfo = Get-InfoOptifine -MCVersion $sCurseForgeVersion
+            $oFileInfo = Get-InfoOptifine -MCVersion $sVersionModsMc
         }
         "replaymod" {
-            $oFileInfo = Get-InfoReplayMod -MCVersion $sCurseForgeVersion
+            $oFileInfo = Get-InfoReplayMod -MCVersion $sVersionModsMc
         }
         "chocolateminecraft" {
-            $oFileInfo = Get-InfoXaeroMod -MCVersion $sCurseForgeVersion -Mod $sModName
+            $oFileInfo = Get-InfoXaeroMod -MCVersion $sVersionModsMc -Mod $sModName
         }
         "fabricmc" {
-            $oFileInfo = Get-InfoFabricLoader -MCVersion $sCurseForgeVersion
+            $oFileInfo = Get-InfoFabricLoader -MCVersion $sVersionModsMc
         }
         Default { $oFileInfo = $null }
     }
@@ -978,7 +983,7 @@ $aMainModsList | ForEach-Object {
         }
 
         If (!$bPreviousDownload) {
-            ShowLogMessage "INFO" "No previous download. The file will be download anyway." ([ref]$sLogFile)
+            ShowLogMessage "INFO" "No previous download. The file will be download..." ([ref]$sLogFile)
             $oModInfo = [PSCustomObject]@{
                 Name             = $PSItem.displayName
                 ModId            = $PSItem.id
@@ -1211,15 +1216,15 @@ ShowLogMessage "OTHER" "--------------------------------------------------------
 ShowLogMessage "OTHER" "" ([ref]$sLogFile)
 
 ## My copy
-#ShowLogMessage "INFO" "Copy GoC Mods..." ([ref]$sLogFile)
-#$aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-Opti\.minecraft" -InternalCategoryExclude "NoOptifine" -GoCOnly -LogFile $sLogFile -Debug
+ShowLogMessage "INFO" "Copy GoC Mods..." ([ref]$sLogFile)
+$aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-Opti\.minecraft" -InternalCategoryExclude "NoOptifine" -GoCOnly -Update $bPreviousDownload -LogFile $sLogFile -Debug
 
-#ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+ShowLogMessage "OTHER" "" ([ref]$sLogFile)
 
-#ShowLogMessage "INFO" "Copy not GoC Mods..." ([ref]$sLogFile)
-#$aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-TestMods\.minecraft" -InternalCategoryExclude "Optifine" -LogFile $sLogFile -Debug
+ShowLogMessage "INFO" "Copy not GoC Mods..." ([ref]$sLogFile)
+$aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-TestMods\.minecraft" -InternalCategoryExclude "Optifine" -Update $bPreviousDownload -LogFile $sLogFile -Debug
 
-#ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+ShowLogMessage "OTHER" "" ([ref]$sLogFile)
 
 Write-CenterText "*************************************" $sLogFile
 Write-CenterText "*                                   *" $sLogFile
