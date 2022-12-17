@@ -25,8 +25,8 @@
         Created by     : Chucky2401
         Date created   : 13/07/2022
         Modified by    : Chucky2401
-        Date modified  : 25/09/2022
-        Change         : Add ForceMcVersion in main listing
+        Date modified  : 17/12/2022
+        Change         : Fix typo for 'resourcepacks'
     .LINK
         https://github.com/Chucky2401/Minecraft-Mods/blob/main/README.md#get-modsnewversion
 #>
