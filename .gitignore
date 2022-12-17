@@ -7,7 +7,6 @@ txt/*
 
 # Exclude
 !csv/00_main_listing.csv
-!csv/
-!logs/
-!md/
-!txt/
+!logs/.gitkeep
+!md/.gitkeep
+!txt/.gitkeep
