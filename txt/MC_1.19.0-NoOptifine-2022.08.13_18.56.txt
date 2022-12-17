@@ -1,6 +1,0 @@
-Continuity (2.0.1): https://edge.forgecdn.net/files/3927/270/continuity-2.0.1+1.19.jar
-Fabric Language Kotlin (1.8.2+kotlin.1.7.10): https://edge.forgecdn.net/files/3887/669/fabric-language-kotlin-1.8.2+kotlin.1.7.10.jar
-Indium (1.0.7): https://edge.forgecdn.net/files/3911/818/indium-1.0.7+mc1.19.jar
-Iris Shaders (1.2.6): https://edge.forgecdn.net/files/3899/705/iris-mc1.19.1-1.2.6.jar
-Reese's Sodium Options (1.4.5): https://edge.forgecdn.net/files/3924/703/reeses_sodium_options-1.4.5+mc1.19.2-build.51.jar
-Sodium Extra (0.4.6): https://edge.forgecdn.net/files/3894/489/sodium-extra-0.4.6+mc1.19-build.47.jar
