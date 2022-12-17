@@ -11,7 +11,7 @@
     .PARAMETER CsvFile
         If you prefer to indicate the path to the csv file directly in command line
     .PARAMETER InstancePath
-        Precise directly the folder to the Minecraft Instance (this folder must contains `mods`, `ressourcepacks` and `shaderpacks` folders)
+        Precise directly the folder to the Minecraft Instance (this folder must contains `mods`, `resourcepacks` and `shaderpacks` folders)
     .PARAMETER InternalCategoryExclude
         Array of string to exclude one or more InternalCategory
     .PARAMETER GoCOnly

@@ -19,7 +19,7 @@
 
 #### Change
 
-- Add *Update* (Boolean) parameter. If this parameter is set to $False, the *mods* and *ressourcepacks* folders are emptying at the start of the script.
+- Add *Update* (Boolean) parameter. If this parameter is set to $False, the *mods* and *resourcepacks* folders are emptying at the start of the script.
 
 ---
 

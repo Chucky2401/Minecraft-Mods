@@ -21,12 +21,12 @@
         .\Get-ModsNewVersion.ps1 -MCVersion "1.19.0" -NoDownload
     .NOTES
         Name           : Get-ModsNewVersion
-        Version        : 1.2.0
+        Version        : 1.2.1
         Created by     : Chucky2401
         Date created   : 13/07/2022
         Modified by    : Chucky2401
-        Date modified  : 01/09/2022
-        Change         : Add ForceMcVersion in main listing
+        Date modified  : 17/12/2022
+        Change         : Fix typo for 'resourcepacks'
     .LINK
         https://github.com/Chucky2401/Minecraft-Mods/blob/main/README.md#get-modsnewversion
 #>
@@ -776,7 +776,7 @@ $aDownloadDirectories              = @{
     GocFolder               = "$($htSettings['McBaseFolder'])\#GoC"
     GocModsFolder           = "$($htSettings['McBaseFolder'])\#GoC\mods"
     GocModsNoOptifineFolder = "$($htSettings['McBaseFolder'])\#GoC\modsNoOptifine"
-    GocReesourcesFolder     = "$($htSettings['McBaseFolder'])\#GoC\ressourcepacks"
+    GocReesourcesFolder     = "$($htSettings['McBaseFolder'])\#GoC\resourcepacks"
     GocShadersFolder        = "$($htSettings['McBaseFolder'])\#GoC\shaders"
     ModsFolder              = "$($htSettings['McBaseFolder'])\Mods"
     ModsNoOptifineFolder    = "$($htSettings['McBaseFolder'])\Mods\NoOptifine"
@@ -1216,7 +1216,7 @@ ShowLogMessage "OTHER" "--------------------------------------------------------
 ShowLogMessage "OTHER" "" ([ref]$sLogFile)
 
 ## My copy
-<# ShowLogMessage "INFO" "Copy GoC Mods..." ([ref]$sLogFile)
+ShowLogMessage "INFO" "Copy GoC Mods..." ([ref]$sLogFile)
 $aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-Opti\.minecraft" -InternalCategoryExclude "NoOptifine" -GoCOnly -Update $bPreviousDownload -LogFile $sLogFile -Debug
 
 ShowLogMessage "OTHER" "" ([ref]$sLogFile)
@@ -1224,7 +1224,7 @@ ShowLogMessage "OTHER" "" ([ref]$sLogFile)
 ShowLogMessage "INFO" "Copy not GoC Mods..." ([ref]$sLogFile)
 $aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-TestMods\.minecraft" -InternalCategoryExclude "Optifine" -Update $bPreviousDownload -LogFile $sLogFile -Debug
 
-ShowLogMessage "OTHER" "" ([ref]$sLogFile) #>
+ShowLogMessage "OTHER" "" ([ref]$sLogFile)
 
 Write-CenterText "*************************************" $sLogFile
 Write-CenterText "*                                   *" $sLogFile

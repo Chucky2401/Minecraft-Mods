@@ -111,7 +111,7 @@ YourBaseFolder
     |_#GoC
     |   |_mods
     |   |_modsNoOptifine
-    |   |_ressourcepacks
+    |   |_resourcepacks
     |   |_shaders
     |
     |_Mods
@@ -208,7 +208,7 @@ I will try to describe you the fields of the main listing csv file.
 ### Copy-ToMinecraftInstance
 
 The purpose of the script is to take all the updated mods from the previous script *(Get-ModsNewVersion)* and copy them to the Minecraft instance folder.
-Obviously, the mods are copied to the *mods* folder and ressources packs to the *ressourcepacks* folder.
+Obviously, the mods are copied to the *mods* folder and ressources packs to the *resourcepacks* folder.
 
 **<span style="color: crimson;">I will implement the use of this script in the Get script in a future release.</span>**
 
