@@ -1,1 +1,9 @@
+# Ignoring
 conf/MyToken
+csv/
+logs/
+md/
+txt/
+
+# Exclude
+!csv/00_main_listing.csv
