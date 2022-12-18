@@ -1,5 +1,53 @@
 # Changelog
 
+## 2022.12.18
+
+### Common
+
+#### Change
+
+- Use modules instead of functions directly write in scripts
+
+### Get-ModsNewVersion
+
+#### New
+
+- Add `-Nofile` and `-Copy` parameters
+  - `-Nofile`: to not generate any files, except logs
+  - `-Copy`: to initiate copy to Minecraft instance with `Copy-ToMinecraftInstance.ps1`
+- For the download part, add up to 3 tries.
+  I will add this part in the setting file. But I have another feature for this part
+
+#### Change
+
+- Simplified folders creation and use two hash table different
+
+#### Fix
+
+- Typo
+- Missing 'ressource' replaced by 'resource'
+
+### Copy-ToMinecraftInstance
+
+#### New
+
+- Add `-InternalCategoryInclude` and `-IncludeBaseMods` parameters
+  - `InternalCategoryInclude`: array of *internalCategory* to include for the copy.
+    **Advise**: this will not include any mods with an empty *internalCategory*! Read the next information
+  - `-IncludeBaseMods`: include all base mods (with an empty *internalCategory*) for the copy. Useless with the parameter `-InternalCategoryExclude`, but useful in combination with `-InternalCategoryInclude`
+
+> These two parameters will be very useful with the next feature on the setting file
+
+#### Change
+
+- Unify version number with the other script
+
+### Log
+
+- *7d77fc5*: feat: MAJOR FEAT: Use modules instead of local functions
+- *44def94*: chore: Set regex for Shaders as is now working! Use a conditional regex for CraftPresence
+
+---
 ## 2022.09.01
 
 ### Common

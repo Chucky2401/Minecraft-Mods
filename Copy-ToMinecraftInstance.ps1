@@ -12,8 +12,12 @@
         If you prefer to indicate the path to the csv file directly in command line
     .PARAMETER InstancePath
         Precise directly the folder to the Minecraft Instance (this folder must contains `mods`, `resourcepacks` and `shaderpacks` folders)
+    .PARAMETER IncludeIncludeBaseMods
+        Include base mods (with internal category empty) to the filter
     .PARAMETER InternalCategoryExclude
         Array of string to exclude one or more InternalCategory
+    .PARAMETER InternalCategoryInclude
+        Array of string to include one or more InternalCategory
     .PARAMETER GoCOnly
         Switch that copy only mods with the field GOC equal to True
     .PARAMETER Update
@@ -41,12 +45,14 @@
         Copy all updated mods from the .csv file, in the specific instance path, where the internal category is not NoOptifine and where the field GOC is equal to True
     .NOTES
         Name           : Copy-ToMinecraftInstance
-        Version        : 1.0.0
+        Version        : 1.3
         Created by     : Chucky2401
         Date Created   : 14/08/2022
         Modify by      : Chucky2401
-        Date modified  : 01/09/2022
-        Change         : Add -Update parameter
+        Date modified  : 18/12/2022
+        Change         : Use modules instead of local functions
+                         Add '-InternalCategoryInclude' and '-IncludeBaseMods' parameters
+                         Unify version number
     .LINK
         https://github.com/Chucky2401/Minecraft-Mods/blob/main/README.md#copy-tominecraftinstance
 #>
@@ -66,7 +72,13 @@ Param (
     [String]$InstancePath = "",
     [Parameter(ParameterSetName = "Pipeline")]
     [Parameter(ParameterSetName = "File")]
+    [Switch]$IncludeBaseMods,
+    [Parameter(ParameterSetName = "Pipeline")]
+    [Parameter(ParameterSetName = "File")]
     [String[]]$InternalCategoryExclude,
+    [Parameter(ParameterSetName = "Pipeline")]
+    [Parameter(ParameterSetName = "File")]
+    [String[]]$InternalCategoryInclude,
     [Parameter(ParameterSetName = "Pipeline")]
     [Parameter(ParameterSetName = "File")]
     [Switch]$GoCOnly,
@@ -91,376 +103,10 @@ BEGIN {
 
     Add-Type -AssemblyName System.Windows.Forms
 
+    Import-Module -Name ".\inc\func\Tjvs.Message"
+    Import-Module -Name ".\inc\func\Tjvs.Settings"
+
     #-----------------------------------------------------------[Functions]------------------------------------------------------------
-
-    function LogMessage {
-        <#
-            .SYNOPSIS
-                Adds a message to a log file
-            .DESCRIPTION
-                This function adds a message to a log file.
-                It also displays the date and time at the beginning of the line, followed by the message type in brackets.
-            .PARAMETER type
-                Type de message :
-                    INFO        : Informative message
-                    WARNING     : Warning message
-                    ERROR       : Error message
-                    SUCCESS     : Success message
-                    DEBUG       : Debugging message
-                    OTHER       : Informative message but without the date and type at the beginning of the line
-            .PARAMETER message
-                Message to be logged
-            .PARAMETER sLogFile
-                String or variable reference indicating the location of the log file.
-                It is possible to send a variable of type Array() so that the function returns the string. See Example 3 for usage in this case.
-            .EXAMPLE
-                LogMessage "INFO" "File recovery..." ([ref]sLogFile)
-            .EXAMPLE
-                LogMessage "WARNING" "Process not found" ([ref]sLogFile)
-            .EXAMPLE
-                aTexte = @()
-                LogMessage "WARNING" "Process not found" ([ref]aTexte)
-            .NOTES
-                Name           : LogMessage
-                Created by     : Chucky2401
-                Date created   : 01/01/2019
-                Modified by    : Chucky2401
-                Date modified  : 10/08/2022
-                Change         : For 'DEBUG' case show the message if -Debug parameter is used
-        #>
-        [cmdletbinding()]
-        Param (
-            [Parameter(Mandatory = $true)]
-            [Alias("t")]
-            [ValidateSet("INFO", "WARNING", "ERROR", "SUCCESS", "DEBUG", "OTHER", IgnoreCase = $false)]
-            [string]$type,
-            [Parameter(Mandatory = $true)]
-            [AllowEmptyString()]
-            [Alias("m")]
-            [string]$message,
-            [Parameter(Mandatory = $true)]
-            [Alias("l")]
-            [ref]$sLogFile
-        )
-
-        $sDate = Get-Date -UFormat "%d.%m.%Y - %H:%M:%S"
-
-        Switch ($type) {
-            "INFO" {
-                $sSortie = "[$($sDate)] (INFO)    $($message)"
-                Break
-            }
-            "WARNING" {
-                $sSortie = "[$($sDate)] (WARNING) $($message)"
-                Break
-            }
-            "ERROR" {
-                $sSortie = "[$($sDate)] (ERROR)   $($message)"
-                Break
-            }
-            "SUCCESS" {
-                $sSortie = "[$($sDate)] (SUCCESS) $($message)"
-                Break
-            }
-            "DEBUG" {
-                $sSortie = "[$($sDate)] (DEBUG)   $($message)"
-                Break
-            }
-            "OTHER" {
-                $sSortie = "$($message)"
-                Break
-            }
-        }
-
-        If ($bNoDebug -or (-not $bNoDebug -and ($PSBoundParameters['Debug'] -or $DebugPreference -eq "Continue"))) {
-            If ($sLogFile.Value.GetType().Name -ne "String") {
-                $sLogFile.Value += $sSortie
-            }
-            Else {
-                Write-Output $sSortie >> $sLogFile.Value
-            }
-        }
-    }
-
-    function ShowMessage {
-        <#
-            .SYNOPSIS
-                Displays a message
-            .DESCRIPTION
-                This function displays a message with a different colour depending on the type of message.
-                It also displays the date and time at the beginning of the line, followed by the message type in brackets.
-            .PARAMETER type
-                Type de message :
-                    INFO        : Informative message in blue
-                    WARNING     : Warning message in yellow
-                    ERROR       : Error message in red
-                    SUCCESS     : Success message in green
-                    DEBUG       : Debugging message in blue on black background
-                    OTHER       : Informative message in blue but without the date and type at the beginning of the line
-            .PARAMETER message
-                Message to be displayed
-            .EXAMPLE
-                ShowLogMessage "INFO" "File recovery..."
-            .EXAMPLE
-                ShowLogMessage "WARNING" "Process not found"
-            .NOTES
-                Name           : ShowMessage
-                Created by     : Chucky2401
-                Date created   : 01/01/2019
-                Modified by    : Chucky2401
-                Date modified  : 10/08/2021
-                Change         : For 'DEBUG' case show the message if -Debug parameter is used
-        #>
-        [cmdletbinding()]
-        Param (
-            [Parameter(Mandatory = $true)]
-            [Alias("t")]
-            [ValidateSet("INFO", "WARNING", "ERROR", "SUCCESS", "DEBUG", "OTHER", IgnoreCase = $false)]
-            [string]$type,
-            [Parameter(Mandatory = $true)]
-            [AllowEmptyString()]
-            [Alias("m")]
-            [string]$message
-        )
-
-        $sDate = Get-Date -UFormat "%d.%m.%Y - %H:%M:%S"
-
-        switch ($type) {
-            "INFO" {
-                Write-Host "[$($sDate)] (INFO)    $($message)" -ForegroundColor Cyan
-                Break
-            }
-            "WARNING" {
-                Write-Host "[$($sDate)] (WARNING) $($message)" -ForegroundColor Yellow -BackgroundColor Black
-                Break
-            }
-            "ERROR" {
-                Write-Host "[$($sDate)] (ERROR)   $($message)" -ForegroundColor Red
-                Break
-            }
-            "SUCCESS" {
-                Write-Host "[$($sDate)] (SUCCESS) $($message)" -ForegroundColor Green
-                Break
-            }
-            "DEBUG" {
-                If ($DebugPreference -eq "Continue" -or $PSBoundParameters['Debug']) {
-                    Write-Host "[$($sDate)] (DEBUG)   $($message)" -ForegroundColor White -BackgroundColor Black
-                }
-                Break
-            }
-            "OTHER" {
-                Write-Host "$($message)"
-                Break
-            }
-            default {
-                Write-Host "[$($sDate)] (INFO)    $($message)" -ForegroundColor Cyan
-            }
-        }
-    }
-
-    function ShowLogMessage {
-        <#
-            .SYNOPSIS
-                Displays a message and adds it to a log file
-            .DESCRIPTION
-                This function displays a message with a different colour depending on the type of message, and logs the same message to a log file.
-                It also displays the date and time at the beginning of the line, followed by the type of message in brackets.
-            .PARAMETER type
-                Type de message :
-                    INFO    : Informative message in blue
-                    WARNING : Warning message in yellow
-                    ERROR   : Error message in red
-                    SUCCESS : Success message in green
-                    DEBUG   : Debugging message in blue on black background
-                    OTHER   : Informative message in blue but without the date and type at the beginning of the line
-            .PARAMETER message
-                Message to be displayed
-            .PARAMETER sLogFile
-                String or variable reference indicating the location of the log file.
-                It is possible to send a variable of type Array() so that the function returns the string. See Example 3 for usage in this case.
-            .EXAMPLE
-                ShowLogMessage "INFO" "File recovery..." ([ref]sLogFile)
-            .EXAMPLE
-                ShowLogMessage "WARNING" "Process not found" ([ref]sLogFile)
-            .EXAMPLE
-                aTexte = @()
-                ShowLogMessage "WARNING" "Processus introuvable" ([ref]aTexte)
-            .NOTES
-                Name           : ShowLogMessage
-                Created by     : Chucky2401
-                Date created   : 01/01/2019
-                Modified by    : Chucky2401
-                Date modified  : 10/08/2022
-                Change         : For 'DEBUG' case show the message if -Debug parameter is used
-    #>
-        [cmdletbinding()]
-        Param (
-            [Parameter(Mandatory = $true)]
-            [Alias("t")]
-            [ValidateSet("INFO", "WARNING", "ERROR", "SUCCESS", "DEBUG", "OTHER", IgnoreCase = $false)]
-            [string]$type,
-            [Parameter(Mandatory = $true)]
-            [AllowEmptyString()]
-            [Alias("m")]
-            [string]$message,
-            [Parameter(Mandatory = $true)]
-            [Alias("l")]
-            [ref]$sLogFile
-        )
-
-        $sDate = Get-Date -UFormat "%d.%m.%Y - %H:%M:%S"
-        $bNoDebug = $True
-
-        Switch ($type) {
-            "INFO" {
-                $sSortie = "[$($sDate)] (INFO)    $($message)"
-                Write-Host $sSortie -ForegroundColor Cyan
-                Break
-            }
-            "WARNING" {
-                $sSortie = "[$($sDate)] (WARNING) $($message)"
-                Write-Host $sSortie -ForegroundColor White -BackgroundColor Black
-                Break
-            }
-            "ERROR" {
-                $sSortie = "[$($sDate)] (ERROR)   $($message)"
-                Write-Host $sSortie -ForegroundColor Red
-                Break
-            }
-            "SUCCESS" {
-                $sSortie = "[$($sDate)] (SUCCESS) $($message)"
-                Write-Host $sSortie -ForegroundColor Green
-                Break
-            }
-            "DEBUG" {
-                $sSortie = "[$($sDate)] (DEBUG)   $($message)"
-                $bNoDebug = $False
-                If ($DebugPreference -eq "Continue" -or $PSBoundParameters['Debug']) {
-                    Write-Host $sSortie -ForegroundColor White -BackgroundColor Black
-                }
-                Break
-            }
-            "OTHER" {
-                $sSortie = "$($message)"
-                Write-Host $sSortie
-                Break
-            }
-        }
-
-        If ($bNoDebug -or (-not $bNoDebug -and ($PSBoundParameters['Debug'] -or $DebugPreference -eq "Continue"))) {
-            If ($sLogFile.Value.GetType().Name -ne "String") {
-                $sLogFile.Value += $sSortie
-            } Else {
-                Write-Output $sSortie >> $sLogFile.Value
-            }
-        }
-    }
-
-    function Write-CenterText {
-        <#
-            .SYNOPSIS
-                Displays a centred message on the screen
-            .DESCRIPTION
-                This function takes care of displaying a message by centring it on the screen.
-                It is also possible to add it to a log.
-            .PARAMETER sString
-                Character string to be centred on the screen
-            .PARAMETER sLogFile
-                String indicating the location of the log file
-            .EXAMPLE
-                Write-CenterText "File Recovery..."
-            .EXAMPLE
-                Write-CenterText "Process not found" C:\Temp\restauration.log
-            .NOTES
-                Name           : Write-CenterText
-                Created by     : Chucky2401
-                Date created   : 01/01/2021
-                Modified by    : Chucky2401
-                Date modified  : 02/06/2022
-                Change         : Translate to english
-        #>
-        [CmdletBinding()]
-        Param (
-            [Parameter(Position=0,Mandatory=$true)]
-            [string]$sString,
-            [Parameter(Position=1,Mandatory=$false)]
-            [string]$sLogFile = $null
-        )
-        $nConsoleWidth    = (Get-Host).UI.RawUI.MaxWindowSize.Width
-        $nStringLength    = $sString.Length
-        $nPaddingSize     = "{0:N0}" -f (($nConsoleWidth - $nStringLength) / 2)
-        $nSizePaddingLeft = $nPaddingSize / 1 + $nStringLength
-        $sFinalString     = $sString.PadLeft($nSizePaddingLeft, " ").PadRight($nSizePaddingLeft, " ")
-
-        Write-Host $sFinalString
-        If ($null -ne $sLogFile) {
-            Write-Output $sFinalString >> $sLogFile
-        }
-    }
-
-    function Get-Settings {
-        <#
-            .SYNOPSIS
-                Get settings from ini file
-            .DESCRIPTION
-                Return as a hashtable the settings from an ini file
-            .PARAMETER File
-                Path of the settings file
-            .OUTPUTS
-                Settings as a hashtable
-            .EXAMPLE
-                Get-Settings "$($PSScriptRoot)\conf\settings.ini"
-            .NOTES
-                Name           : Get-Settings
-                Created by     : Chucky2401
-                Date created   : 08/07/2022
-                Modified by    : Chucky2401
-                Date modified  : 21/08/2022
-                Change         : Manage a starting and ending position in the settings
-        #>
-        [CmdletBinding()]
-        Param (
-            [Parameter(Position = 0, Mandatory = $True)]
-            [string]$File,
-            [Parameter(Position = 1, Mandatory = $False)]
-            [string]$StartBlock = "",
-            [Parameter(Position = 2, Mandatory = $False)]
-            [string]$EndBlock = ""
-        )
-    
-        $htSettings = @{}
-        If ($StartBlock -eq "") {
-            $bReadSettings = $True
-        } Else {
-            $bReadSettings = $False
-        }
-    
-        Get-Content $File | ForEach-Object {
-            If ($PSItem -match "^;|^\[" -or $PSItem -eq "") {
-                If ($StartBlock -ne "" -and $PSItem -match $StartBlock) {
-                    $bReadSettings = $True
-                }
-                If ($EndBlock -ne "" -and $PSItem -match $EndBlock) {
-                    $bReadSettings = $False
-                }
-
-                return
-            }
-
-            If ($bReadSettings) {
-                $aLine = [regex]::Split($PSItem, '=')
-                If ($aLine[1].Trim() -match "^`".+`"$") {
-                    [String]$value = $aLine[1].Trim() -replace "^`"(.+)`"$", "`$1"
-                }
-                Else {
-                    [Int32]$value = $aLine[1].Trim()
-                }
-                $htSettings.Add($aLine[0].Trim(), $value)
-            }
-        }
-    
-        Return $htSettings
-    }
 
     #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
@@ -503,8 +149,17 @@ BEGIN {
 
 
     If ($InternalCategoryExclude.Count -ge 1) {
-        $sFilterInternalCategory = "\b$([String]::Join("\b|\b", $InternalCategoryExclude))\b"
-        [ScriptBlock]$sbFilter = [ScriptBlock]::Create("$($sbFilter.ToString()) -and `$PSItem.InternalCategory -notmatch `"$($sFilterInternalCategory)`"")
+        $sFilterExcludeInternalCategory = "\b$([String]::Join("\b|\b", $InternalCategoryExclude))\b"
+        [ScriptBlock]$sbFilter = [ScriptBlock]::Create("$($sbFilter.ToString()) -and `$PSItem.InternalCategory -notmatch `"$($sFilterExcludeInternalCategory)`"")
+    }
+
+    If ($InternalCategoryInclude.Count -ge 1) {
+        $sFilterIncludeInternalCategory = "\b$([String]::Join("\b|\b", $InternalCategoryInclude))\b"
+        [ScriptBlock]$sbFilter = [ScriptBlock]::Create("$($sbFilter.ToString()) -and `$PSItem.InternalCategory -match `"$($sFilterIncludeInternalCategory)`" -or [String]::IsNullOrEmpty(`$PSItem.InternalCategory)")
+    }
+
+    If ($IncludeBaseMods) {
+        [ScriptBlock]$sbFilter = [ScriptBlock]::Create("$($sbFilter.ToString()) -or [String]::IsNullOrEmpty(`$PSItem.InternalCategory)")
     }
 
     If ( -not $Update -and (Test-Path -Path "$($sInstanceRessourcesPath)\*")) {
