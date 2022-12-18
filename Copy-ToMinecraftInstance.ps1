@@ -104,6 +104,7 @@ BEGIN {
     Add-Type -AssemblyName System.Windows.Forms
 
     Import-Module -Name ".\inc\func\Tjvs.Message"
+    Import-Module -Name ".\inc\func\Tjvs.Settings"
 
     #-----------------------------------------------------------[Functions]------------------------------------------------------------
 

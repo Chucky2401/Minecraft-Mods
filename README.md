@@ -58,6 +58,8 @@ It takes **at least the Minecraft Version with 3-digits format** as parameter.
 - **NoDownload** *(switch)*: if you want to run the script without downloading any mods, like a dry run.
 - **Discord** *(switch)*: generate markdown files to copy/paste on Discord
 - **Website** *(switch)*: generate text files to update the GoC Website
+- **Copy** *(switch)*: initiate copy to your instance Minecraft with the script `Copy-ToMinecraftInstance.ps1` (need change, plan :wink:)
+- **NoFile** *(switch)*: do not generate any files, except log
 
 You can also use the common parameters of PowerShell (-Debug, -Verbose, etc.).
 
@@ -219,6 +221,8 @@ For this script I set up 2 set name for parameters. I will regroup them
 - <span style="text-decoration: underline;">*Common* parameters</span>:
   - **InstancePath**: directory of your Minecraft instance. This folder must contains *mods*, *ressourcepack*, etc. folders
   - **InternalCategoryExclude**: to exclude one or more internal category from the mods list
+  - **InternalCategoryInclude**: to include one or more internal category from the mods list. **Advise**: all mods with an empty internal category will not be include!
+  - **IncludeBaseMods**: to include mods with an empty internal category when you use the parameter `InternalCategoryInclude`. Useless with the exclude one.
   - **GoCOnly**: to include only the mods where the field GOC is equal to True
   - **Update**: to specify if you copy updated mods or new mods. In case of new mods, the script will emptying folders before copy. By default is equal to $True
 - <span style="text-decoration: underline;">*Pipeline* set</span>:
