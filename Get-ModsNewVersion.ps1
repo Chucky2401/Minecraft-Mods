@@ -11,8 +11,12 @@
         Useful to generate only the markdown or text files and see if everything works fine!
     .PARAMETER Discord
         Generate markdown file to copy/paste for Discord
-    .PARAMETER Discord
+    .PARAMETER Website
         Generate text file to copy/paste for Website
+    .PARAMETER Copy
+        Initiate copy to instance folder
+    .PARAMETER NoFile
+        Do not generate any file except log
     .OUTPUTS
         Log file, markdown file for Gentlemen of Craft Discord server, text file to update the website and a csv with all the mods and information about them.
     .EXAMPLE
@@ -21,12 +25,16 @@
         .\Get-ModsNewVersion.ps1 -MCVersion "1.19.0" -NoDownload
     .NOTES
         Name           : Get-ModsNewVersion
-        Version        : 1.2.1
+        Version        : 1.3
         Created by     : Chucky2401
         Date created   : 13/07/2022
         Modified by    : Chucky2401
-        Date modified  : 17/12/2022
-        Change         : Fix typo for 'resourcepacks'
+        Date modified  : 18/12/2022
+        Change         : Use modules instead of local functions
+                         Add 'NoFile' and 'Copy parameters
+                         Add up to 3 tries to download a mod
+                         Typo fix
+                         Missing 'ressource' replaced by 'resource'
     .LINK
         https://github.com/Chucky2401/Minecraft-Mods/blob/main/README.md#get-modsnewversion
 #>
@@ -43,7 +51,11 @@ Param (
     [Parameter(Mandatory = $False)]
     [switch]$Discord,
     [Parameter(Mandatory = $False)]
-    [switch]$Website
+    [switch]$Website,
+    [Parameter(Mandatory = $False)]
+    [switch]$Copy,
+    [Parameter(Mandatory = $False)]
+    [switch]$NoFile
 )
 
 #---------------------------------------------------------[Initialisations]--------------------------------------------------------
@@ -52,653 +64,11 @@ Param (
 $ErrorActionPreference      = "SilentlyContinue"
 #$ErrorActionPreference      = "Stop"
 
+Import-Module -Name ".\inc\func\Tjvs.Message"
+Import-Module -Name ".\inc\func\Tjvs.Minecraft"
+Import-Module -Name ".\inc\func\Tjvs.Settings"
+
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
-
-function LogMessage {
-    <#
-        .SYNOPSIS
-            Adds a message to a log file
-        .DESCRIPTION
-            This function adds a message to a log file.
-            It also displays the date and time at the beginning of the line, followed by the message type in brackets.
-        .PARAMETER type
-            Type de message :
-                INFO        : Informative message
-                WARNING     : Warning message
-                ERROR       : Error message
-                SUCCESS     : Success message
-                DEBUG       : Debugging message
-                OTHER       : Informative message but without the date and type at the beginning of the line
-        .PARAMETER message
-            Message to be logged
-        .PARAMETER sLogFile
-            String or variable reference indicating the location of the log file.
-            It is possible to send a variable of type Array() so that the function returns the string. See Example 3 for usage in this case.
-        .EXAMPLE
-            LogMessage "INFO" "File recovery..." ([ref]sLogFile)
-        .EXAMPLE
-            LogMessage "WARNING" "Process not found" ([ref]sLogFile)
-        .EXAMPLE
-            aTexte = @()
-            LogMessage "WARNING" "Process not found" ([ref]aTexte)
-        .NOTES
-            Name           : LogMessage
-            Created by     : Chucky2401
-            Date created   : 01/01/2019
-            Modified by    : Chucky2401
-            Date modified  : 10/08/2022
-            Change         : For 'DEBUG' case show the message if -Debug parameter is used
-    #>
-    [cmdletbinding()]
-    Param (
-        [Parameter(Mandatory = $true)]
-        [Alias("t")]
-        [ValidateSet("INFO", "WARNING", "ERROR", "SUCCESS", "DEBUG", "OTHER", IgnoreCase = $false)]
-        [string]$type,
-        [Parameter(Mandatory = $true)]
-        [AllowEmptyString()]
-        [Alias("m")]
-        [string]$message,
-        [Parameter(Mandatory = $true)]
-        [Alias("l")]
-        [ref]$sLogFile
-    )
-
-    $sDate = Get-Date -UFormat "%d.%m.%Y - %H:%M:%S"
-
-    Switch ($type) {
-        "INFO" {
-            $sSortie = "[$($sDate)] (INFO)    $($message)"
-            Break
-        }
-        "WARNING" {
-            $sSortie = "[$($sDate)] (WARNING) $($message)"
-            Break
-        }
-        "ERROR" {
-            $sSortie = "[$($sDate)] (ERROR)   $($message)"
-            Break
-        }
-        "SUCCESS" {
-            $sSortie = "[$($sDate)] (SUCCESS) $($message)"
-            Break
-        }
-        "DEBUG" {
-            $sSortie = "[$($sDate)] (DEBUG)   $($message)"
-            Break
-        }
-        "OTHER" {
-            $sSortie = "$($message)"
-            Break
-        }
-    }
-
-    If ($bNoDebug -or (-not $bNoDebug -and ($PSBoundParameters['Debug'] -or $DebugPreference -eq "Continue"))) {
-        If ($sLogFile.Value.GetType().Name -ne "String") {
-            $sLogFile.Value += $sSortie
-        }
-        Else {
-            Write-Output $sSortie >> $sLogFile.Value
-        }
-    }
-}
-
-function ShowMessage {
-    <#
-        .SYNOPSIS
-            Displays a message
-        .DESCRIPTION
-            This function displays a message with a different colour depending on the type of message.
-            It also displays the date and time at the beginning of the line, followed by the message type in brackets.
-        .PARAMETER type
-            Type de message :
-                INFO        : Informative message in blue
-                WARNING     : Warning message in yellow
-                ERROR       : Error message in red
-                SUCCESS     : Success message in green
-                DEBUG       : Debugging message in blue on black background
-                OTHER       : Informative message in blue but without the date and type at the beginning of the line
-        .PARAMETER message
-            Message to be displayed
-        .EXAMPLE
-            ShowLogMessage "INFO" "File recovery..."
-        .EXAMPLE
-            ShowLogMessage "WARNING" "Process not found"
-        .NOTES
-            Name           : ShowMessage
-            Created by     : Chucky2401
-            Date created   : 01/01/2019
-            Modified by    : Chucky2401
-            Date modified  : 07/04/2021
-            Change         : Translate to english
-    #>
-    [cmdletbinding()]
-    Param (
-        [Parameter(Mandatory = $true)]
-        [Alias("t")]
-        [ValidateSet("INFO", "WARNING", "ERROR", "SUCCESS", "DEBUG", "OTHER", IgnoreCase = $false)]
-        [string]$type,
-        [Parameter(Mandatory = $true)]
-        [AllowEmptyString()]
-        [Alias("m")]
-        [string]$message
-    )
-
-    $sDate = Get-Date -UFormat "%d.%m.%Y - %H:%M:%S"
-
-    switch ($type) {
-        "INFO" {
-            Write-Host "[$($sDate)] (INFO)    $($message)" -ForegroundColor Cyan
-            Break
-        }
-        "WARNING" {
-            Write-Host "[$($sDate)] (WARNING) $($message)" -ForegroundColor Yellow -BackgroundColor Black
-            Break
-        }
-        "ERROR" {
-            Write-Host "[$($sDate)] (ERROR)   $($message)" -ForegroundColor Red
-            Break
-        }
-        "SUCCESS" {
-            Write-Host "[$($sDate)] (SUCCESS) $($message)" -ForegroundColor Green
-            Break
-        }
-        "DEBUG" {
-            If ($DebugPreference -eq "Continue" -or $PSBoundParameters['Debug']) {
-                Write-Host "[$($sDate)] (DEBUG)   $($message)" -ForegroundColor White -BackgroundColor Black
-            }
-            Break
-        }
-        "OTHER" {
-            Write-Host "$($message)"
-            Break
-        }
-        default {
-            Write-Host "[$($sDate)] (INFO)    $($message)" -ForegroundColor Cyan
-        }
-    }
-}
-
-function ShowLogMessage {
-<#
-    .SYNOPSIS
-        Displays a message and adds it to a log file
-    .DESCRIPTION
-        This function displays a message with a different colour depending on the type of message, and logs the same message to a log file.
-        It also displays the date and time at the beginning of the line, followed by the type of message in brackets.
-    .PARAMETER type
-        Type de message :
-            INFO    : Informative message in blue
-            WARNING : Warning message in yellow
-            ERROR   : Error message in red
-            SUCCESS : Success message in green
-            DEBUG   : Debugging message in blue on black background
-            OTHER   : Informative message in blue but without the date and type at the beginning of the line
-    .PARAMETER message
-        Message to be displayed
-    .PARAMETER sLogFile
-        String or variable reference indicating the location of the log file.
-        It is possible to send a variable of type Array() so that the function returns the string. See Example 3 for usage in this case.
-    .EXAMPLE
-        ShowLogMessage "INFO" "File recovery..." ([ref]sLogFile)
-    .EXAMPLE
-        ShowLogMessage "WARNING" "Process not found" ([ref]sLogFile)
-    .EXAMPLE
-        aTexte = @()
-        ShowLogMessage "WARNING" "Processus introuvable" ([ref]aTexte)
-    .NOTES
-        Name           : ShowLogMessage
-        Created by     : Chucky2401
-        Date created   : 01/01/2019
-        Modified by    : Chucky2401
-        Date modified  : 10/08/2022
-        Change         : For 'DEBUG' case show the message if -Debug parameter is used
-#>
-    [cmdletbinding()]
-    Param (
-        [Parameter(Mandatory = $true)]
-        [Alias("t")]
-        [ValidateSet("INFO", "WARNING", "ERROR", "SUCCESS", "DEBUG", "OTHER", IgnoreCase = $false)]
-        [string]$type,
-        [Parameter(Mandatory = $true)]
-        [AllowEmptyString()]
-        [Alias("m")]
-        [string]$message,
-        [Parameter(Mandatory = $true)]
-        [Alias("l")]
-        [ref]$sLogFile
-    )
-
-    $sDate = Get-Date -UFormat "%d.%m.%Y - %H:%M:%S"
-    $bNoDebug = $True
-
-    Switch ($type) {
-        "INFO" {
-            $sSortie = "[$($sDate)] (INFO)    $($message)"
-            Write-Host $sSortie -ForegroundColor Cyan
-            Break
-        }
-        "WARNING" {
-            $sSortie = "[$($sDate)] (WARNING) $($message)"
-            Write-Host $sSortie -ForegroundColor White -BackgroundColor Black
-            Break
-        }
-        "ERROR" {
-            $sSortie = "[$($sDate)] (ERROR)   $($message)"
-            Write-Host $sSortie -ForegroundColor Red
-            Break
-        }
-        "SUCCESS" {
-            $sSortie = "[$($sDate)] (SUCCESS) $($message)"
-            Write-Host $sSortie -ForegroundColor Green
-            Break
-        }
-        "DEBUG" {
-            $sSortie = "[$($sDate)] (DEBUG)   $($message)"
-            $bNoDebug = $False
-            If ($DebugPreference -eq "Continue" -or $PSBoundParameters['Debug']) {
-                Write-Host $sSortie -ForegroundColor White -BackgroundColor Black
-            }
-            Break
-        }
-        "OTHER" {
-            $sSortie = "$($message)"
-            Write-Host $sSortie
-            Break
-        }
-    }
-
-    If ($bNoDebug -or (-not $bNoDebug -and ($PSBoundParameters['Debug'] -or $DebugPreference -eq "Continue"))) {
-        If ($sLogFile.Value.GetType().Name -ne "String") {
-            $sLogFile.Value += $sSortie
-        }
-        Else {
-            Write-Output $sSortie >> $sLogFile.Value
-        }
-    }
-}
-
-function Write-CenterText {
-    <#
-        .SYNOPSIS
-            Displays a centred message on the screen
-        .DESCRIPTION
-            This function takes care of displaying a message by centring it on the screen.
-            It is also possible to add it to a log.
-        .PARAMETER sString
-            Character string to be centred on the screen
-        .PARAMETER sLogFile
-            String indicating the location of the log file
-        .EXAMPLE
-            Write-CenterText "File Recovery..."
-        .EXAMPLE
-            Write-CenterText "Process not found" C:\Temp\restauration.log
-        .NOTES
-            Name           : Write-CenterText
-            Created by     : Chucky2401
-            Date created   : 01/01/2021
-            Modified by    : Chucky2401
-            Date modified  : 02/06/2022
-            Change         : Translate to english
-    #>
-    [CmdletBinding()]
-    Param (
-        [Parameter(Position=0,Mandatory=$true)]
-        [string]$sString,
-        [Parameter(Position=1,Mandatory=$false)]
-        [string]$sLogFile = $null
-    )
-    $nConsoleWidth    = (Get-Host).UI.RawUI.MaxWindowSize.Width
-    $nStringLength    = $sString.Length
-    $nPaddingSize     = "{0:N0}" -f (($nConsoleWidth - $nStringLength) / 2)
-    $nSizePaddingLeft = $nPaddingSize / 1 + $nStringLength
-    $sFinalString     = $sString.PadLeft($nSizePaddingLeft, " ").PadRight($nSizePaddingLeft, " ")
-
-    Write-Host $sFinalString
-    If ($null -ne $sLogFile) {
-        Write-Output $sFinalString >> $sLogFile
-    }
-}
-
-function Get-Settings {
-    <#
-        .SYNOPSIS
-            Get settings from ini file
-        .DESCRIPTION
-            Return as a hashtable the settings from an ini file
-        .PARAMETER File
-            Path of the settings file
-        .OUTPUTS
-            Settings as a hashtable
-        .EXAMPLE
-            Get-Settings "$($PSScriptRoot)\conf\settings.ini"
-        .NOTES
-            Name           : Get-Settings
-            Created by     : Chucky2401
-            Date created   : 08/07/2022
-            Modified by    : Chucky2401
-            Date modified  : 21/08/2022
-            Change         : Manage a starting and ending position in the settings
-    #>
-    [CmdletBinding()]
-    Param (
-        [Parameter(Position = 0, Mandatory = $True)]
-        [string]$File,
-        [Parameter(Position = 1, Mandatory = $False)]
-        [string]$StartBlock = "",
-        [Parameter(Position = 2, Mandatory = $False)]
-        [string]$EndBlock = ""
-    )
-
-    $htSettings = @{}
-    If ($StartBlock -eq "") {
-        $bReadSettings = $True
-    } Else {
-        $bReadSettings = $False
-    }
-
-    Get-Content $File | ForEach-Object {
-        If ($PSItem -match "^;|^\[" -or $PSItem -eq "") {
-            If ($StartBlock -ne "" -and $PSItem -match $StartBlock) {
-                $bReadSettings = $True
-            }
-            If ($EndBlock -ne "" -and $PSItem -match $EndBlock) {
-                $bReadSettings = $False
-            }
-            
-            return
-        }
-
-        If ($bReadSettings) {
-            $aLine = [regex]::Split($PSItem, '=')
-            If ($aLine[1].Trim() -match "^`".+`"$") {
-                [String]$value = $aLine[1].Trim() -replace "^`"(.+)`"$", "`$1"
-            }
-            Else {
-                [Int32]$value = $aLine[1].Trim()
-            }
-            $htSettings.Add($aLine[0].Trim(), $value)
-        }
-    }
-
-    Return $htSettings
-}
-
-function Get-InfoOptifine {
-    <#
-        .SYNOPSIS
-            Retrieve Optifine mods information
-        .DESCRIPTION
-            From the MC Version, query the website https://optifine.net/ to get information on version and download link
-        .PARAMETER MCVersion
-            Version of Minecraft to query on the website
-        .OUTPUTS
-            PSCustomObject with all information needed for the main script
-        .EXAMPLE
-            .\Get-InfoOptifine -MCVersion "1.18.2"
-        .NOTES
-            Name           : Get-InfoOptifine
-            Version        : 1.0.1
-            Created by     : Chucky2401
-            Date created   : 14/07/2022
-            Modified by    : Chucky2401
-            Date modified  : 19/07/2022
-            Change         : Return null object if nothing has been found
-    #>
-    [cmdletbinding()]
-    Param (
-        [Parameter(Mandatory = $true)]
-        [string]$MCVersion
-    )
-
-    $sRegexMCVersion  = [Regex]::Escape($MCVersion)
-    $sDownloadUrl     = "https://optifine.net/"
-    $sPatternOptifine = "^.+url=(.+f=(Optifine_$($sRegexMCVersion)_(.+_.+_(.+))\.jar).+)`">Download<\/a>$"
-
-    $oWebReponse = Invoke-WebRequest https://optifine.net/downloads -SessionVariable oSession -UserAgent "Mozilla/5.0 (Windows NT x.y; Win64; x64; rv:10.0) Gecko/20100101 Firefox/10.0"
-
-    $oDownloadUrl  = @{Label = "DownloadUrl" ; Expression = {($_.outerHTML | Select-String -Pattern $sPatternOptifine).Matches.Groups[1].Value}}
-    $oFileName     = @{Label = "FileName" ; Expression = {($_.outerHTML | Select-String -Pattern $sPatternOptifine).Matches.Groups[2].Value}}
-    $oVersion      = @{Label = "Version" ; Expression = {($_.outerHTML | Select-String -Pattern $sPatternOptifine).Matches.Groups[3].Value}}
-    $oMinorVersion = @{Label = "MinorVersion" ; Expression = {($_.outerHTML | Select-String -Pattern $sPatternOptifine).Matches.Groups[4].Value}}
-
-    $oFirstInfo = $oWebReponse.Links | Where-Object { $PSItem.outerHTML -match $sPatternOptifine } | Select-Object $oDownloadUrl, $oVersion, $oMinorVersion, $oFileName | Sort-Object MinorVersion -Desc | Select-Object -First 1
-
-    If ($null -ne $oFirstInfo) {
-        $sFileName        = [Regex]::Escape($oFirstInfo.FileName)
-        $sPatternDownload = "^.+'(downloadx\?f=$($sFileName).+)' onclick=.+>Download<\/a>"
-    
-        $oWebReponse = Invoke-WebRequest $oFirstInfo.DownloadUrl -WebSession $oSession -UserAgent "Mozilla/5.0 (Windows NT x.y; Win64; x64; rv:10.0) Gecko/20100101 Firefox/10.0"
-    
-        $sDownloadUrl += (($oWebReponse.Links | Where-Object { $PSItem.outerHTML -match $sPatternDownload }).outerHTML | Select-String -Pattern $sPatternDownload).Matches.Groups[1].Value
-        $fileLength    = (Invoke-WebRequest -Uri $sDownloadUrl -WebSession $oSession).RawContentLength
-    
-        $htDepend = @{
-            modId        = 322385
-            relationType = 3
-        }
-    
-        $sId = [String]::Join("", $oFirstInfo.Version.ToCharArray().ToByte($null))
-    
-        $oInformation = [PSCustomObject]@{
-            Version      = $oFirstInfo.Version
-            id           = $sId
-            filename     = $oFirstInfo.FileName
-            fileDate     = Get-Date
-            fileLength   = $fileLength
-            downloadUrl  = $sDownloadUrl
-            dependencies = $htDepend
-        }
-    } Else {
-        $oInformation = $null
-    }
-
-
-    return $oInformation
-}
-
-function Get-InfoReplayMod {
-    <#
-        .SYNOPSIS
-            Retrieve ReplayMod mods information
-        .DESCRIPTION
-            From the MC Version, query the website https://www.replaymod.com/ to get information on version and download link
-        .PARAMETER MCVersion
-            Version of Minecraft to query on the website
-        .OUTPUTS
-            PSCustomObject with all information needed for the main script
-        .EXAMPLE
-            .\Get-InfoReplayMod -MCVersion "1.18.2"
-        .NOTES
-            Name           : Get-InfoReplayMod
-            Version        : 1.0.1
-            Created by     : Chucky2401
-            Date created   : 14/07/2022
-            Modified by    : Chucky2401
-            Date modified  : 19/07/2022
-            Change         : Return null object if nothing has been found
-    #>
-    [cmdletbinding()]
-    Param (
-        [Parameter(Mandatory = $true)]
-        [string]$MCVersion
-    )
-
-    $sRegexMCVersion  = [Regex]::Escape($MCVersion)
-    $sDownloadUrl = "https://www.replaymod.com"
-    $sFileName = "replaymod-"
-    $sPatternReplayMod = "^.+(\/download\/download_new\.php\?version=($($sRegexMCVersion)-(\d\.\d\.\d))).+>Download<.+<\/a>$"
-
-    $oWebReponse = Invoke-WebRequest https://www.replaymod.com/download/ -SessionVariable oSession -UserAgent "Mozilla/5.0 (Windows NT x.y; Win64; x64; rv:10.0) Gecko/20100101 Firefox/10.0"
-
-    $oDownloadUrl = @{Label = "DownloadUrl" ; Expression = {"$($sDownloadUrl)$(($_.outerHTML | Select-String -Pattern $sPatternReplayMod).Matches.Groups[1].Value)"}}
-    $oFileName = @{Label = "FileName" ; Expression = {"$($sFileName)$(($_.outerHTML | Select-String -Pattern $sPatternReplayMod).Matches.Groups[2].Value).jar"}}
-    $oVersion = @{Label = "Version" ; Expression = {($_.outerHTML | Select-String -Pattern $sPatternReplayMod).Matches.Groups[3].Value}}
-
-    $oFirstInfo = $oWebReponse.Links | Where-Object { $PSItem.outerHTML -match $sPatternReplayMod } | Select-Object $oDownloadUrl, $oVersion, $oFileName | Sort-Object Version -Desc | Select-Object -First 1
-
-    If ($null -ne $oFirstInfo) {
-        $fileLength = (Invoke-WebRequest -Uri $oFirstInfo.DownloadUrl -WebSession $oSession).RawContentLength
-    
-        $sId = [String]::Join("", $oFirstInfo.Version.ToCharArray().ToByte($null))
-    
-        $oInformation = [PSCustomObject]@{
-            Version      = $oFirstInfo.Version
-            id           = $sId
-            filename     = $oFirstInfo.FileName
-            fileDate     = Get-Date
-            fileLength   = $fileLength
-            downloadUrl  = $oFirstInfo.DownloadUrl
-            dependencies = ""
-        }
-    } Else {
-        $oInformation = $null
-    }
-
-    return $oInformation
-}
-
-function Get-InfoXaeroMod {
-    <#
-        .SYNOPSIS
-            Retrieve Xaeros mods information (Minimap and Worldmap)
-        .DESCRIPTION
-            From the MC Version, query the website https://chocolateminecraft.com/ to get information on version and download link
-        .PARAMETER MCVersion
-            Version of Minecraft to query on the website
-        .PARAMETER Mod
-            The mod you want to retrieve information ("Xaeros Minimap" or "Xaeros WorldMap")
-        .OUTPUTS
-            PSCustomObject with all information needed for the main script
-        .EXAMPLE
-            .\Get-InfoXaeroMod -MCVersion "1.18.2" -Mod "Xaeros Minimap"
-        .EXAMPLE
-            .\Get-InfoXaeroMod -MCVersion "1.19" -Mod "Xaeros WorldMap"
-        .NOTES
-            Name           : Get-InfoXaeroMod
-            Version        : 1.0.1
-            Created by     : Chucky2401
-            Date created   : 14/07/2022
-            Modified by    : Chucky2401
-            Date modified  : 19/07/2022
-            Change         : Return null object if nothing has been found
-    #>
-    [cmdletbinding()]
-    Param (
-        [Parameter(Mandatory = $true)]
-        [string]$MCVersion,
-        [Parameter(Mandatory = $true)]
-        [ValidateSet("Xaeros Minimap", "Xaeros WorldMap", IgnoreCase = $false)]
-        [string]$Mod
-    )
-
-    $sRegexMCVersion  = [Regex]::Escape($MCVersion)
-    $sPatternXaeros = ""
-    $sUrl = ""
-    switch ($Mod) {
-        "Xaeros Minimap" {
-            $sPatternXaeros = "(^https:\/\/.+(Xaeros_.+_((\d+)\.(\d+)\.(\d+))_Fabric_$($sRegexMCVersion)\.jar))$"
-            $sUrl = "https://chocolateminecraft.com/minimapdownload.php"
-        }
-        "Xaeros WorldMap" {
-            $sPatternXaeros = "(^https:\/\/.+(XaerosWorldMap_((\d+)\.(\d+)\.(\d+))_Fabric_$($sRegexMCVersion)\.jar))$"
-            $sUrl = "https://chocolateminecraft.com/worldmapdownload.php"
-        }
-        Default {}
-    }
-
-    $oWebReponse = Invoke-WebRequest $sUrl -SessionVariable oSession -UserAgent "Mozilla/5.0 (Windows NT x.y; Win64; x64; rv:10.0) Gecko/20100101 Firefox/10.0" -Method Post
-
-    $oDownloadUrl = @{Label = "DownloadUrl" ; Expression = {($_.href | Select-String -Pattern $sPatternXaeros).Matches.Groups[1].Value}}
-    $oFileName = @{Label = "FileName" ; Expression = {($_.href | Select-String -Pattern $sPatternXaeros).Matches.Groups[2].Value}}
-    $oVersion = @{Label = "Version" ; Expression = {($_.href | Select-String -Pattern $sPatternXaeros).Matches.Groups[3].Value}}
-    $oMajorVersion = @{Label = "MajorVersion" ; Expression = {[int]($_.href | Select-String -Pattern $sPatternXaeros).Matches.Groups[4].Value}}
-    $oMinorVersion = @{Label = "MinorVersion" ; Expression = {[int]($_.href | Select-String -Pattern $sPatternXaeros).Matches.Groups[5].Value}}
-    $oHotFixVersion = @{Label = "HotFixVersion" ; Expression = {[int]($_.href | Select-String -Pattern $sPatternXaeros).Matches.Groups[6].Value}}
-
-    $oFirstInfo = $oWebReponse.Links | Where-Object { $PSItem.href -match $sPatternXaeros } | Select-Object $oDownloadUrl, $oVersion, $oFileName, $oMajorVersion, $oMinorVersion, $oHotFixVersion | Sort-Object -Property @{Expression = "MajorVersion"; Descending = $true}, @{Expression = "MinorVersion"; Descending = $true}, @{Expression = "HotFixVersion"; Descending = $true} | Select-Object -First 1
-
-    If ($null -ne $oFirstInfo) {
-        $fileLength = (Invoke-WebRequest -Uri $oFirstInfo.DownloadUrl -WebSession $oSession).RawContentLength
-    
-        $sId = [String]::Join("", $oFirstInfo.Version.ToCharArray().ToByte($null))
-    
-        $oInformation = [PSCustomObject]@{
-            Version      = $oFirstInfo.Version
-            id           = $sId
-            filename     = $oFirstInfo.FileName
-            fileDate     = Get-Date
-            fileLength   = $fileLength
-            downloadUrl  = $oFirstInfo.DownloadUrl
-            dependencies = ""
-        }
-    } Else {
-        $oInformation = $null
-    }
-
-    return $oInformation
-}
-
-function Get-InfoFabricLoader {
-    <#
-        .SYNOPSIS
-            Retrieve Fabric loader mods information
-        .DESCRIPTION
-            From the MC Version, query the website https://meta.fabricmc.net to get information on version and download link
-        .PARAMETER MCVersion
-            Version of Minecraft to query on the website
-        .OUTPUTS
-            PSCustomObject with all information needed for the main script
-        .EXAMPLE
-            .\Get-InfoFabricLoader -MCVersion "1.18.2" -Mod "Xaeros Minimap"
-        .NOTES
-            Name           : Get-InfoFabricLoader
-            Version        : 1.0.1
-            Created by     : Chucky2401
-            Date created   : 14/07/2022
-            Modified by    : Chucky2401
-            Date modified  : 19/07/2022
-            Change         : Return null object if nothing has been found
-    #>
-    [cmdletbinding()]
-    Param (
-        [Parameter(Mandatory = $true)]
-        [string]$MCVersion
-    )
-
-    $oResult = Invoke-RestMethod https://meta.fabricmc.net/v2/versions/game
-    $sVersionAvailableStable = ($oResult | Where-Object { $PSItem.version -eq $MCVersion -and $PSItem.stable -eq "True" }).version
-
-    If ($sVersionAvailableStable -eq $MCVersion) {
-        $oResult           = Invoke-RestMethod https://meta.fabricmc.net/v2/versions/installer
-        $sVersionInstaller = ($oResult | Where-Object { $PSItem.stable -eq "True" }).version
-        $sDownloadLink     = ($oResult | Where-Object { $PSItem.stable -eq "True" }).url
-    
-        $oResult        = Invoke-RestMethod https://meta.fabricmc.net/v2/versions/loader
-        $sVersionLoader = ($oResult | Where-Object { $PSItem.stable -eq "True" }).version
-    
-        $sVersion   = "$($sVersionLoader)($($sVersionInstaller))"
-        $sFileName  = "fabric-installer-$($sVersionInstaller).jar"
-        $fileLength = (Invoke-WebRequest -Uri $sDownloadLink).RawContentLength
-    
-        $sId = [String]::Join("", $sVersion.ToCharArray().ToByte($null))
-    
-        $oInformation = [PSCustomObject]@{
-            Version      = $sVersion
-            id           = $sId
-            filename     = $sFileName
-            fileDate     = Get-Date
-            fileLength   = $fileLength
-            downloadUrl  = $sDownloadLink
-            dependencies = ""
-        }
-    } Else {
-        $oInformation = $null
-    }
-
-
-    return $oInformation
-}
 
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
@@ -771,17 +141,20 @@ If ($MCVersion -match "^(.+)\.0$") {
 }
 
 $htSettings['McBaseFolder']       += $MCVersion
-$aDownloadDirectories              = @{
+$htDownloadDirectories = [ordered]@{
     BaseFolder              = "$($htSettings['McBaseFolder'])"
+    ModsFolder              = "$($htSettings['McBaseFolder'])\Mods"
+    ModsNoOptifineFolder    = "$($htSettings['McBaseFolder'])\Mods\NoOptifine"
+    ResourcesFolder         = "$($htSettings['McBaseFolder'])\Resources"
+    ShadersFolder           = "$($htSettings['McBaseFolder'])\Shaders"
+}
+
+$htComplementFolders = [ordered]@{
     GocFolder               = "$($htSettings['McBaseFolder'])\#GoC"
     GocModsFolder           = "$($htSettings['McBaseFolder'])\#GoC\mods"
     GocModsNoOptifineFolder = "$($htSettings['McBaseFolder'])\#GoC\modsNoOptifine"
-    GocReesourcesFolder     = "$($htSettings['McBaseFolder'])\#GoC\resourcepacks"
+    GocResourcesFolder      = "$($htSettings['McBaseFolder'])\#GoC\resourcepacks"
     GocShadersFolder        = "$($htSettings['McBaseFolder'])\#GoC\shaders"
-    ModsFolder              = "$($htSettings['McBaseFolder'])\Mods"
-    ModsNoOptifineFolder    = "$($htSettings['McBaseFolder'])\Mods\NoOptifine"
-    RessourcesFolder        = "$($htSettings['McBaseFolder'])\Ressources"
-    ShadersFolder           = "$($htSettings['McBaseFolder'])\Shaders"
 }
 
 # Logs
@@ -797,6 +170,7 @@ $htBoolean         = @{
     True  = $True
     False = $False
 }
+$iMaxDownloadTry = 3
 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
 
@@ -812,48 +186,92 @@ ShowLogMessage "OTHER" "" ([ref]$sLogFile)
 
 # Version directory exist
 ShowLogMessage "INFO" "Testing if directory exist..." ([ref]$sLogFile)
-If (!(Test-Path "$($htSettings['McBaseFolder'])")) {
-    ShowLogMessage "WARNING" "Folder '$($htSettings['McBaseFolder'])' does not exist !" ([ref]$sLogFile)
-    ShowLogMessage "INFO" "Creating the folders..." ([ref]$sLogFile)
-    Try {
-        $aDownloadDirectories.GetEnumerator() | Sort-Object Name | ForEach-Object {
+## Mandatory folders
+$htDownloadDirectories.GetEnumerator() | ForEach-Object {
+    If (!(Test-Path "$($PSItem.Value)")) {
+        ShowLogMessage "WARNING" "Folder '$($PSItem.Value)' does not exist !" ([ref]$sLogFile)
+        ShowLogMessage "INFO" "Creating the folder..." ([ref]$sLogFile)
+        Try {
             New-Item -Path "$($PSItem.Value)" -ItemType Directory -ErrorAction Stop | Out-Null
-        }
-        ShowLogMessage "SUCCESS" "Folder and subfolders created successfully!" ([ref]$sLogFile)
-    } Catch {
-        $sErrorMessage = $_.Exception.Message
-        ShowLogMessage "ERROR" "Folders has not been created!" ([ref]$sLogFile)
-        If ($PSBoundParameters['Debug']) {
-            ShowLogMessage "DEBUG" "Error detail:" ([ref]$sLogFile)
-            ShowLogMessage "OTHER" "`$($sErrorMessage)" ([ref]$sLogFile)
-        }
-
-        exit 0
-    }
-} Else {
-    ShowLogMessage "INFO" "Base folder '$($htSettings['McBaseFolder'])' exists. We check subfolders..." ([ref]$sLogFile)
-    $aDownloadDirectories.GetEnumerator() | Sort-Object Name | Select-Object -Skip 1 | ForEach-Object {
-        If (!(Test-Path "$($PSItem.Value)")) {
-            ShowLogMessage "WARNING" "Folder '$($PSItem.Value)' does not exist !" ([ref]$sLogFile)
-            ShowLogMessage "INFO" "Creating the folder..." ([ref]$sLogFile)
-            Try {
-                New-Item -Path "$($PSItem.Value)" -ItemType Directory -ErrorAction Stop | Out-Null
-                ShowLogMessage "SUCCESS" "Folder '$($PSItem.Value)' created successfully!" ([ref]$sLogFile)
-            } Catch {
-                $sErrorMessage = $_.Exception.Message
-                ShowLogMessage "ERROR" "Folder '$($PSItem.Value)' has not been created!" ([ref]$sLogFile)
-                If ($PSBoundParameters['Debug']) {
-                    ShowLogMessage "DEBUG" "Error detail:" ([ref]$sLogFile)
-                    ShowLogMessage "OTHER" "`$($sErrorMessage)" ([ref]$sLogFile)
-                }
-        
-                exit 0
+            ShowLogMessage "SUCCESS" "Folder '$($PSItem.Value)' created successfully!" ([ref]$sLogFile)
+        } Catch {
+            $sErrorMessage = $_.Exception.Message
+            ShowLogMessage "ERROR" "Folder '$($PSItem.Value)' has not been created!" ([ref]$sLogFile)
+            If ($PSBoundParameters['Debug']) {
+                ShowLogMessage "DEBUG" "Error detail:" ([ref]$sLogFile)
+                ShowLogMessage "OTHER" "`$($sErrorMessage)" ([ref]$sLogFile)
             }
-        } Else {
-            ShowLogMessage "SUCCESS" "Folder '$($PSItem.Value)' exists!" ([ref]$sLogFile)
+    
+            exit 0
         }
+    } Else {
+        ShowLogMessage "SUCCESS" "Folder '$($PSItem.Value)' exists!" ([ref]$sLogFile)
     }
 }
+## Optional folders
+$htComplementFolders.GetEnumerator() | ForEach-Object {
+    If (!(Test-Path "$($PSItem.Value)")) {
+        ShowLogMessage "WARNING" "Folder '$($PSItem.Value)' does not exist !" ([ref]$sLogFile)
+        ShowLogMessage "INFO" "Creating the folder..." ([ref]$sLogFile)
+        Try {
+            New-Item -Path "$($PSItem.Value)" -ItemType Directory -ErrorAction Stop | Out-Null
+            ShowLogMessage "SUCCESS" "Folder '$($PSItem.Value)' created successfully!" ([ref]$sLogFile)
+        } Catch {
+            $sErrorMessage = $_.Exception.Message
+            ShowLogMessage "ERROR" "Folder '$($PSItem.Value)' has not been created!" ([ref]$sLogFile)
+            If ($PSBoundParameters['Debug']) {
+                ShowLogMessage "DEBUG" "Error detail:" ([ref]$sLogFile)
+                ShowLogMessage "OTHER" "`$($sErrorMessage)" ([ref]$sLogFile)
+            }
+    
+            exit 0
+        }
+    } Else {
+        ShowLogMessage "SUCCESS" "Folder '$($PSItem.Value)' exists!" ([ref]$sLogFile)
+    }
+}
+#If (!(Test-Path "$($htSettings['McBaseFolder'])")) {
+#    ShowLogMessage "WARNING" "Folder '$($htSettings['McBaseFolder'])' does not exist !" ([ref]$sLogFile)
+#    ShowLogMessage "INFO" "Creating the folders..." ([ref]$sLogFile)
+#    Try {
+#        $aDownloadDirectories.GetEnumerator() | Sort-Object Name | ForEach-Object {
+#            New-Item -Path "$($PSItem.Value)" -ItemType Directory -ErrorAction Stop | Out-Null
+#        }
+#        ShowLogMessage "SUCCESS" "Folder and subfolders created successfully!" ([ref]$sLogFile)
+#    } Catch {
+#        $sErrorMessage = $_.Exception.Message
+#        ShowLogMessage "ERROR" "Folders has not been created!" ([ref]$sLogFile)
+#        If ($PSBoundParameters['Debug']) {
+#            ShowLogMessage "DEBUG" "Error detail:" ([ref]$sLogFile)
+#            ShowLogMessage "OTHER" "`$($sErrorMessage)" ([ref]$sLogFile)
+#        }
+#
+#        exit 0
+#    }
+#} Else {
+#    ShowLogMessage "INFO" "Base folder '$($htSettings['McBaseFolder'])' exists. We check subfolders..." ([ref]$sLogFile)
+#    $aDownloadDirectories.GetEnumerator() | Sort-Object Name | Select-Object -Skip 1 | ForEach-Object {
+#        If (!(Test-Path "$($PSItem.Value)")) {
+#            ShowLogMessage "WARNING" "Folder '$($PSItem.Value)' does not exist !" ([ref]$sLogFile)
+#            ShowLogMessage "INFO" "Creating the folder..." ([ref]$sLogFile)
+#            Try {
+#                New-Item -Path "$($PSItem.Value)" -ItemType Directory -ErrorAction Stop | Out-Null
+#                ShowLogMessage "SUCCESS" "Folder '$($PSItem.Value)' created successfully!" ([ref]$sLogFile)
+#            } Catch {
+#                $sErrorMessage = $_.Exception.Message
+#                ShowLogMessage "ERROR" "Folder '$($PSItem.Value)' has not been created!" ([ref]$sLogFile)
+#                If ($PSBoundParameters['Debug']) {
+#                    ShowLogMessage "DEBUG" "Error detail:" ([ref]$sLogFile)
+#                    ShowLogMessage "OTHER" "`$($sErrorMessage)" ([ref]$sLogFile)
+#                }
+#        
+#                exit 0
+#            }
+#        } Else {
+#            ShowLogMessage "SUCCESS" "Folder '$($PSItem.Value)' exists!" ([ref]$sLogFile)
+#        }
+#    }
+#}
 
 ShowLogMessage "OTHER" "" ([ref]$sLogFile)
 
@@ -873,6 +291,9 @@ ShowLogMessage "OTHER" "" ([ref]$sLogFile)
 ShowLogMessage "INFO" "Download updated mods" ([ref]$sLogFile)
 # Downloading
 $aMainModsList | ForEach-Object {
+    $bDownloadSuccess     = $False
+    $iNumberDownloadTried = 1
+
     $iPercentComplete = [Math]::Round(($iCompteur/$aMainModsList.Length)*100,2)
     Write-Progress -Activity "Download updated mods ($($iPercentComplete)%)..." -PercentComplete $iPercentComplete -Status "Querying source Website for $($PSItem.name)..."
 
@@ -900,6 +321,10 @@ $aMainModsList | ForEach-Object {
     }
 
     ShowLogMessage "INFO" "Querying last file for $($sModName) (Loader: $($htSettings['ModLoaderType']); MC Version: $($sCurseForgeVersion))..." ([ref]$sLogFile)
+
+    If ($sModName -eq "Dramatic Skys") {
+        $dummy = 1
+    }
 
     switch ($PSItem.sourceWebsite) {
         "curseforge" {
@@ -966,19 +391,19 @@ $aMainModsList | ForEach-Object {
         switch ($sType) {
             "Mods" {
                 If ($sInternalCategory -eq "NoOptifine") {
-                    $sFilePath = "$($aDownloadDirectories['ModsNoOptifineFolder'])\$($oFileInfo.filename)"
+                    $sFilePath = "$($htDownloadDirectories['ModsNoOptifineFolder'])\$($oFileInfo.filename)"
                 } Else {
-                    $sFilePath = "$($aDownloadDirectories['ModsFolder'])\$($oFileInfo.filename)"
+                    $sFilePath = "$($htDownloadDirectories['ModsFolder'])\$($oFileInfo.filename)"
                 }
             }
             "Ressources" {
-                $sFilePath = "$($aDownloadDirectories['RessourcesFolder'])\$($oFileInfo.filename)"
+                $sFilePath = "$($htDownloadDirectories['ResourcesFolder'])\$($oFileInfo.filename)"
             }
             "Shaders" {
-                $sFilePath = "$($aDownloadDirectories['ShadersFolder'])\$($oFileInfo.filename)"
+                $sFilePath = "$($htDownloadDirectories['ShadersFolder'])\$($oFileInfo.filename)"
             }
             Default {
-                $sFilePath = "$($aDownloadDirectories['ModsFolder'])\$($oFileInfo.filename)"
+                $sFilePath = "$($htDownloadDirectories['ModsFolder'])\$($oFileInfo.filename)"
             }
         }
 
@@ -1085,7 +510,7 @@ $aMainModsList | ForEach-Object {
             } Catch {
                 $sErrorMessage = $_.Exception.Message
                 $sStackTrace = $_.ScriptStackTrace
-                ShowLogMessage "WARNING" "Preivous file has not been renamed!" ([ref]$sLogFile)
+                ShowLogMessage "WARNING" "Previous file has not been renamed!" ([ref]$sLogFile)
                 ShowLogMessage "DEBUG" "Details:" ([ref]$sLogFile)
                 If ($PSBoundParameters['Debug']) {
                     ShowLogMessage "OTHER" "`t$($sErrorMessage)`n`t$($sStackTrace)" ([ref]$sLogFile)
@@ -1095,23 +520,29 @@ $aMainModsList | ForEach-Object {
         
         # Downloading
         Write-Progress -Activity "Download updated mods..." -PercentComplete $iPercentComplete -Status "Downloading $($PSItem.name)..."
-        ShowLogMessage "INFO" "Downloading the new version of the mod..." ([ref]$sLogFile)
-        Try {
-            If ($PSItem.sourceWebsite -ne "chocolateminecraft") {
-                Start-BitsTransfer -Source $oModInfo.DownloadUrl -Destination $oModInfo.FilePath -Description "Downloading $($oModInfo.filename)"
-            } Else {
-                Invoke-WebRequest -Uri $oModInfo.DownloadUrl -OutFile $oModInfo.FilePath -Method Post
+        do {
+            ShowLogMessage "INFO" "(Try #$($iNumberDownloadTried)) Downloading the new version of the mod..." ([ref]$sLogFile)
+            Try {
+                If ($PSItem.sourceWebsite -ne "chocolateminecraft") {
+                    Start-BitsTransfer -Source $oModInfo.DownloadUrl -Destination $oModInfo.FilePath -Description "Downloading $($oModInfo.filename)" -ErrorAction Stop
+                } Else {
+                    Invoke-WebRequest -Uri $oModInfo.DownloadUrl -OutFile $oModInfo.FilePath -Method Post -ErrorAction Stop
+                }
+                # We change LastWriteTime to today
+                ([System.IO.FileInfo]$oModInfo.FilePath).LastWriteTime = Get-Date
+                ShowLogMessage "SUCCESS" "The mod has been downloaded successfully!" ([ref]$sLogFile)
+            } Catch {
+                $sErrorMessage = $PSItem.Exception.Message
+                ShowLogMessage "ERROR" "The mod has not been downloaded!" ([ref]$sLogFile)
+                If ($PSBoundParameters['Debug']) {
+                    ShowLogMessage "DEBUG" "Error detail:" ([ref]$sLogFile)
+                    ShowLogMessage "OTHER" "`$($sErrorMessage)" ([ref]$sLogFile)
+                }
             }
-            # We change LastWriteTime to today
-            ([System.IO.FileInfo]$oModInfo.FilePath).LastWriteTime = Get-Date
-            ShowLogMessage "SUCCESS" "The mod has been downloaded successfully!" ([ref]$sLogFile)
-        } Catch {
-            $sErrorMessage = $_.Exception.Message
-            ShowLogMessage "ERROR" "The mod has not been downloaded!" ([ref]$sLogFile)
-            If ($PSBoundParameters['Debug']) {
-                ShowLogMessage "DEBUG" "Error detail:" ([ref]$sLogFile)
-                ShowLogMessage "OTHER" "`$($sErrorMessage)" ([ref]$sLogFile)
-            }
+        } While (-not $bDownloadSuccess -and $iNumberDownloadTried -le $iMaxDownloadTry)
+
+        If (-not $bDownloadSuccess -and $iNumberDownloadTried -gt $iMaxDownloadTry) {
+            ShowLogMessage "ERROR" "Too many tries!" ([ref]$sLogFile)
         }
     } ElseIf ($oModInfo.Update -and $NoDownload) {
         ShowLogMessage "DEBUG" "We should download $($oModInfo.DownloadUrl) to $($oModInfo.FilePath)" ([ref]$sLogFile)
@@ -1150,20 +581,22 @@ $aMarkdownModsOptifine += "`t* ``M à J`` : Archive contenant tous les **mods** 
 $aMarkdownModsNoOptifine += "`t* ``M à J`` : Archive contenant tous les mods"
 $aMarkdownModsNoOptifine += "`t* ``M à J`` : Archive contenant tous les **mods** et toutes les **textures**"
 
-ShowLogMessage "INFO" "Export mods session information to CSV '$($aVersionModsListFile)'" ([ref]$sLogFile)
-Try {
-    $aModListDownload | Export-CSV -Path $aVersionModsListFile -Delimiter ";" -Encoding utf8 -NoTypeInformation -ErrorAction Stop
-    ShowLogMessage "SUCCESS" "Mods list has been exported successfully!" ([ref]$sLogFile)
-} Catch {
-    $sErrorMessage = $_.Exception.Message
-    ShowLogMessage "ERROR" "Mods list has not been exported!" ([ref]$sLogFile)
-    If ($PSBoundParameters['Debug']) {
-        ShowLogMessage "DEBUG" "Error detail:" ([ref]$sLogFile)
-        ShowLogMessage "OTHER" "`$($sErrorMessage)" ([ref]$sLogFile)
+If (-not $NoFile) {
+    ShowLogMessage "INFO" "Export mods session information to CSV '$($aVersionModsListFile)'" ([ref]$sLogFile)
+    Try {
+        $aModListDownload | Export-CSV -Path $aVersionModsListFile -Delimiter ";" -Encoding utf8 -NoTypeInformation -ErrorAction Stop
+        ShowLogMessage "SUCCESS" "Mods list has been exported successfully!" ([ref]$sLogFile)
+    } Catch {
+        $sErrorMessage = $_.Exception.Message
+        ShowLogMessage "ERROR" "Mods list has not been exported!" ([ref]$sLogFile)
+        If ($PSBoundParameters['Debug']) {
+            ShowLogMessage "DEBUG" "Error detail:" ([ref]$sLogFile)
+            ShowLogMessage "OTHER" "`$($sErrorMessage)" ([ref]$sLogFile)
+        }
     }
 }
 
-If ($Discord) {
+If ($Discord -and -not $NoFile) {
     ShowLogMessage "OTHER" "" ([ref]$sLogFile)
     
     ShowLogMessage "INFO" "Export Discord markdown lines to files..." ([ref]$sLogFile)
@@ -1171,7 +604,7 @@ If ($Discord) {
     $aMarkdownModsNoOptifine | Out-File -FilePath $sMarkdownNoOptifine
 }
 
-If ($Website) {
+If ($Website -and -not $NoFile) {
     ShowLogMessage "OTHER" "" ([ref]$sLogFile)
     
     ShowLogMessage "INFO" "Export website text lines to files..." ([ref]$sLogFile)
@@ -1200,14 +633,14 @@ $aModListDownload | Where-Object { $PSItem.Update -eq $True -and $PSItem.Type -e
 ShowLogMessage "OTHER" "" ([ref]$sLogFile)
 
 ShowLogMessage "OTHER" "`tRessources GoC:" ([ref]$sLogFile)
-$aModListDownload | Where-Object { $PSItem.Update -eq $True -and $PSItem.Type -eq "Ressources" -and $PSItem.GOC -eq $True } |ForEach-Object {
+$aModListDownload | Where-Object { $PSItem.Update -eq $True -and $PSItem.Type -eq "Ressources" -and $PSItem.GOC -eq $True } | ForEach-Object {
     ShowLogMessage "OTHER" "`t`t$($PSItem.FileName)" ([ref]$sLogFile)
 }
 
 ShowLogMessage "OTHER" "" ([ref]$sLogFile)
 
 ShowLogMessage "OTHER" "`tShaders GoC:" ([ref]$sLogFile)
-$aModListDownload | Where-Object { $PSItem.Update -eq $True -and $PSItem.Type -eq "Shaders" -and $PSItem.GOC -eq $True } |ForEach-Object {
+$aModListDownload | Where-Object { $PSItem.Update -eq $True -and $PSItem.Type -eq "Shaders" -and $PSItem.GOC -eq $True } | ForEach-Object {
     ShowLogMessage "OTHER" "`t`t$($PSItem.FileName)" ([ref]$sLogFile)
 }
 
@@ -1216,15 +649,17 @@ ShowLogMessage "OTHER" "--------------------------------------------------------
 ShowLogMessage "OTHER" "" ([ref]$sLogFile)
 
 ## My copy
-ShowLogMessage "INFO" "Copy GoC Mods..." ([ref]$sLogFile)
-$aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-Opti\.minecraft" -InternalCategoryExclude "NoOptifine" -GoCOnly -Update $bPreviousDownload -LogFile $sLogFile -Debug
-
-ShowLogMessage "OTHER" "" ([ref]$sLogFile)
-
-ShowLogMessage "INFO" "Copy not GoC Mods..." ([ref]$sLogFile)
-$aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-TestMods\.minecraft" -InternalCategoryExclude "Optifine" -Update $bPreviousDownload -LogFile $sLogFile -Debug
-
-ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+If ($Copy) {
+    ShowLogMessage "INFO" "Copy GoC Mods..." ([ref]$sLogFile)
+    $aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-Opti\.minecraft" -InternalCategoryExclude "NoOptifine" -GoCOnly -Update $bPreviousDownload -LogFile $sLogFile -Debug
+    
+    ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+    
+    ShowLogMessage "INFO" "Copy not GoC Mods..." ([ref]$sLogFile)
+    $aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-TestMods\.minecraft" -InternalCategoryExclude "Optifine" -Update $bPreviousDownload -LogFile $sLogFile -Debug
+    
+    ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+}
 
 Write-CenterText "*************************************" $sLogFile
 Write-CenterText "*                                   *" $sLogFile
