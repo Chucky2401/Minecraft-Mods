@@ -11,5 +11,5 @@ Get-ChildItem (Split-Path $Script:MyInvocation.MyCommand.Path) -Filter 'var_*.ps
 }
 
 Get-ChildItem "$(Split-Path $Script:MyInvocation.MyCommand.Path)\Public\*" -Filter 'var_*.ps1' -Recurse | ForEach-Object {
-    Export-ModuleMember -Variable ($PSItem.BaseName -Split "_")[1]
+    Export-ModuleMember -Variable ($PSItem.BaseName -Split "_")[2]
 }

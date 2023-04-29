@@ -15,18 +15,14 @@ $DefaultSettings = [PSCustomObject]@{
     }
     copy = @(
         [PSCustomObject]@{
-            Config = [PSCustomObject]@{
-                includeBaseMods = $True
-                gocOnly         = $True
-                category        = @("Optifine")
-            }
+            includeBaseMods = $True
+            gocOnly         = $True
+            category        = @("Optifine")
         },
         [PSCustomObject]@{
-            Config = [PSCustomObject]@{
-                includeBaseMods = $True
-                gocOnly         = $False
-                category        = @("NoOptifine")
-            }
+            includeBaseMods = $True
+            gocOnly         = $False
+            category        = @("NoOptifine")
         }
     )
 }
