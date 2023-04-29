@@ -25,7 +25,7 @@
         .\Get-ModsNewVersion.ps1 -MCVersion "1.19.0" -NoDownload
     .NOTES
         Name           : Get-ModsNewVersion
-        Version        : 1.3
+        Version        : 2.0b
         Created by     : Chucky2401
         Date created   : 13/07/2022
         Modified by    : Chucky2401
@@ -68,24 +68,6 @@ Import-Module -Name ".\inc\modules\Tjvs.Message", ".\inc\modules\Tjvs.Minecraft"
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
-
-# User settings
-#$htSettings = Get-Settings "$($PSScriptRoot)\conf\settings.ini"
-
-# API
-#$sBaseUri         = "https://api.curseforge.com"
-#$sBaseModFilesUri = "/v1/mods/{modId}/files"
-#$oHeadersQuery    = @{
-#    "Accept"    = "application/json"
-#    "x-api-key" = $global:settings.curseforge.tokenValue
-#}
-#$oParametersQueryFiles = @{
-#    Header      = $oHeadersQuery
-#    Method      = "GET"
-#    Uri         = ""
-#    ContentType = "application/json"
-#}
-
 # Fichiers
 ## Directories
 $sModsCsvListDirectory  = "$($PSScriptRoot)\csv"
@@ -105,15 +87,6 @@ $sInfoWebSiteNoOptifine = "$($sModsTexteDirectory)\MC_$($MCVersion)-NoOptifine-$
 $aMainModsList            = Import-Csv -Path $aMainModsListFile -Delimiter ";" -Encoding utf8
 $aPreviousModListDownload = $null
 $aModListDownload         = @()
-#$aRelationType            = @(
-#    'None'
-#    'Embedded Library'
-#    'Optional Dependency'
-#    'Required Dependency'
-#    'Tool'
-#    'Incompatible'
-#    'Include'
-#)
 $aMarkdownModsOptifine    = @()
 $aMarkdownModsOptifine   += "Mise à jour de **Nos Ressources Minecraft** - *$($mojangFormatVersion)* - (__{RECOMMANDATION}__)"
 $aMarkdownModsNoOptifine  = @()
@@ -171,71 +144,71 @@ Write-CenterText "*            Start $(Get-Date -Format 'HH:mm')            *" $
 Write-CenterText "*                                   *" $sLogFile
 Write-CenterText "*************************************" $sLogFile
 
-ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
 
 # Version directory exist
-ShowLogMessage "INFO" "Testing if directory exist..." ([ref]$sLogFile)
+ShowLogMessage -type "INFO" -message "Testing if directory exist..." -sLogFile ([ref]$sLogFile)
 ## Mandatory folders
 $htDownloadDirectories.GetEnumerator() | ForEach-Object {
     If (!(Test-Path "$($PSItem.Value)")) {
-        ShowLogMessage "WARNING" "Folder '$($PSItem.Value)' does not exist !" ([ref]$sLogFile)
-        ShowLogMessage "INFO" "Creating the folder..." ([ref]$sLogFile)
+        ShowLogMessage -type "WARNING" -message "Folder '$($PSItem.Value)' does not exist !" -sLogFile ([ref]$sLogFile)
+        ShowLogMessage -type "INFO" -message "Creating the folder..." -sLogFile ([ref]$sLogFile)
         Try {
             New-Item -Path "$($PSItem.Value)" -ItemType Directory -ErrorAction Stop | Out-Null
-            ShowLogMessage "SUCCESS" "Folder '$($PSItem.Value)' created successfully!" ([ref]$sLogFile)
+            ShowLogMessage -type "SUCCESS" -message "Folder '$($PSItem.Value)' created successfully!" -sLogFile ([ref]$sLogFile)
         } Catch {
             $sErrorMessage = $_.Exception.Message
-            ShowLogMessage "ERROR" "Folder '$($PSItem.Value)' has not been created!" ([ref]$sLogFile)
+            ShowLogMessage -type "ERROR" -message "Folder '$($PSItem.Value)' has not been created!" -sLogFile ([ref]$sLogFile)
             If ($PSBoundParameters['Debug']) {
-                ShowLogMessage "DEBUG" "Error detail:" ([ref]$sLogFile)
-                ShowLogMessage "OTHER" "`$($sErrorMessage)" ([ref]$sLogFile)
+                ShowLogMessage -type "DEBUG" -message "Error detail:" -sLogFile ([ref]$sLogFile)
+                ShowLogMessage -type "OTHER" -message "`$($sErrorMessage)" -sLogFile ([ref]$sLogFile)
             }
     
             exit 0
         }
     } Else {
-        ShowLogMessage "SUCCESS" "Folder '$($PSItem.Value)' exists!" ([ref]$sLogFile)
+        ShowLogMessage -type "SUCCESS" -message "Folder '$($PSItem.Value)' exists!" -sLogFile ([ref]$sLogFile)
     }
 }
 ## Optional folders
 $htComplementFolders.GetEnumerator() | ForEach-Object {
     If (!(Test-Path "$($PSItem.Value)")) {
-        ShowLogMessage "WARNING" "Folder '$($PSItem.Value)' does not exist !" ([ref]$sLogFile)
-        ShowLogMessage "INFO" "Creating the folder..." ([ref]$sLogFile)
+        ShowLogMessage -type "WARNING" -message "Folder '$($PSItem.Value)' does not exist !" -sLogFile ([ref]$sLogFile)
+        ShowLogMessage -type "INFO" -message "Creating the folder..." -sLogFile ([ref]$sLogFile)
         Try {
             New-Item -Path "$($PSItem.Value)" -ItemType Directory -ErrorAction Stop | Out-Null
-            ShowLogMessage "SUCCESS" "Folder '$($PSItem.Value)' created successfully!" ([ref]$sLogFile)
+            ShowLogMessage -type "SUCCESS" -message "Folder '$($PSItem.Value)' created successfully!" -sLogFile ([ref]$sLogFile)
         } Catch {
             $sErrorMessage = $_.Exception.Message
-            ShowLogMessage "ERROR" "Folder '$($PSItem.Value)' has not been created!" ([ref]$sLogFile)
+            ShowLogMessage -type "ERROR" -message "Folder '$($PSItem.Value)' has not been created!" -sLogFile ([ref]$sLogFile)
             If ($PSBoundParameters['Debug']) {
-                ShowLogMessage "DEBUG" "Error detail:" ([ref]$sLogFile)
-                ShowLogMessage "OTHER" "`$($sErrorMessage)" ([ref]$sLogFile)
+                ShowLogMessage -type "DEBUG" -message "Error detail:" -sLogFile ([ref]$sLogFile)
+                ShowLogMessage -type "OTHER" -message "`$($sErrorMessage)" -sLogFile ([ref]$sLogFile)
             }
     
             exit 0
         }
     } Else {
-        ShowLogMessage "SUCCESS" "Folder '$($PSItem.Value)' exists!" ([ref]$sLogFile)
+        ShowLogMessage -type "SUCCESS" -message "Folder '$($PSItem.Value)' exists!" -sLogFile ([ref]$sLogFile)
     }
 }
 
-ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
 
 # Previous download?
-ShowLogMessage "INFO" "Checking if we already download mods..." ([ref]$sLogFile)
+ShowLogMessage -type "INFO" -message "Checking if we already download mods..." -sLogFile ([ref]$sLogFile)
 $oPreviousDownload = Get-ChildItem $($sModsCsvListDirectory) -Filter "MC_$($MCVersion)-*.csv" | Sort-Object LastWriteTime -Desc | Select-Object -First 1
 If ($null -eq $oPreviousDownload) {
-    ShowLogMessage "INFO" "No previous download..." ([ref]$sLogFile)
+    ShowLogMessage -type "INFO" -message "No previous download..." -sLogFile ([ref]$sLogFile)
 } Else {
-    ShowLogMessage "INFO" "We already downloaded mods. We will download only new version" ([ref]$sLogFile)
+    ShowLogMessage -type "INFO" -message "We already downloaded mods. We will download only new version" -sLogFile ([ref]$sLogFile)
     $aPreviousModListDownload = Import-Csv -Path $oPreviousDownload.FullName -Delimiter ";" -Encoding utf8
     $bPreviousDownload = $True
 }
 
-ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
 
-ShowLogMessage "INFO" "Download updated mods" ([ref]$sLogFile)
+ShowLogMessage -type "INFO" -message "Download updated mods" -sLogFile ([ref]$sLogFile)
 # Downloading
 $aMainModsList | ForEach-Object {
     $bDownloadSuccess     = $False
@@ -254,12 +227,11 @@ $aMainModsList | ForEach-Object {
     $bCopy              = $htBoolean[$PSItem.copy]
     $sField             = $PSItem.versionField
     $sVersionPattern    = $PSItem.versionPattern
-    #$iSkip              = [int]$PSItem.skip
+    $iSkip              = [int]$PSItem.skip
     $sVersionModsMc     = $mojangFormatVersion
     $sPreviousVersion   = ""
     $sFilePath          = ""
     $sPreviousFileName  = ""
-    #$aDependencies      = @()
     $bAdd               = $False
     $bPreviousModFound  = $False
     
@@ -267,19 +239,15 @@ $aMainModsList | ForEach-Object {
         $sVersionModsMc = $PSItem.ForceMcVersion
     }
 
-    ShowLogMessage "INFO" "Querying last file for $($sModName) (Loader: $($global:settings.general.modLoaderType); MC Version: $($mojangFormatVersion))..." ([ref]$sLogFile)
+    ShowLogMessage -type "INFO" -message "Querying last file for $($sModName) (Loader: $($global:settings.general.modLoaderType); MC Version: $($mojangFormatVersion))..." -sLogFile ([ref]$sLogFile)
 
     switch ($PSItem.sourceWebsite) {
         "curseforge" {
             If ($sType -eq "Mods") {
-                #$oParametersQueryFiles.Uri = "$($sBaseUri)$($sBaseModFilesUri.Replace("{modId}", $sModId))?gameVersion=$($sVersionModsMc)&modLoaderType=$($global:settings.general.modLoaderType)"
-                $oFileInfo = Get-InfoFromCruseForge -ModId $sModId -VersionPattern $sVersionPattern -FieldVersion $sField -MCVersion $sVersionModsMc -MainModList $aMainModsList
+                $oFileInfo = Get-InfoFromCurseForge -ModId $sModId -Skip $iSkip -VersionPattern $sVersionPattern -FieldVersion $sField -MCVersion $sVersionModsMc -MainModList $aMainModsList
             } Else {
-                #$oParametersQueryFiles.Uri = "$($sBaseUri)$($sBaseModFilesUri.Replace("{modId}", $sModId))?gameVersion=$($sVersionModsMc)"
-                $oFileInfo = Get-InfoFromCruseForge -ModId $sModId -VersionPattern $sVersionPattern -FieldVersion $sField -MCVersion $sVersionModsMc -MainModList $aMainModsList -Resources 
+                $oFileInfo = Get-InfoFromCurseForge -ModId $sModId -Skip $iSkip -VersionPattern $sVersionPattern -FieldVersion $sField -MCVersion $sVersionModsMc -MainModList $aMainModsList -Resources 
             }
-            #$oResult = Invoke-RestMethod @oParametersQueryFiles
-            #$oFileInfo = $oResult.data | Where-Object { $PSItem.gameVersions -match "$([Regex]::Escape($sVersionModsMc))$" } | Sort-Object fileDate -Desc | Select-Object -Skip #$iSkip -First 1
         }
         "optifine" {
             $oFileInfo = Get-InfoOptifine -MCVersion $sVersionModsMc
@@ -298,39 +266,7 @@ $aMainModsList | ForEach-Object {
 
     Write-Progress -Activity "Download updated mods ($($iPercentComplete)%)..." -PercentComplete $iPercentComplete -Status "Checking update for $($PSItem.name)..."
     If ($null -ne $oFileInfo) {
-        ShowLogMessage "INFO" "A file has been found!" ([ref]$sLogFile)
-
-        # Format dependencies
-        #$oFileInfo.dependencies | Where-Object { $PSItem.relationType -match "3|4" } | ForEach-Object {
-        #    $iModId = $PSItem.modId
-        #    $sModName = ($aMainModsList | Where-Object { $PSItem.id -eq $iModId }).displayName
-        #    If ($sModName -eq "" -or $null -eq $sModName) {
-        #        $sModName = "{Unknow_$($iModId)}"
-        #    }
-        #    $sRelation = $aRelationType[$PSItem.relationType]
-        #    $aDependencies += "$($sModName)($($sRelation))"
-        #}
-        #$sDependencies = [String]::Join("/", $aDependencies)
-
-        # Get mod version
-        #If ($sVersionPattern -ne "" -or $null -eq $sVersionPattern) {
-        #    $aMatchesVersion = $oFileInfo.$($sField) | Select-String -Pattern $sVersionPattern
-        #    If ($aMatchesVersion.Length -ge 1) {
-        #        $sVersion = $aMatchesVersion.Matches.Groups[1].Value
-        #    } Else {
-        #        ShowLogMessage "ERROR" "Cannot found version from $($sField) with pattern $($sVersionPattern)!" ([ref]$sLogFile)
-        #        $sVersion = "x.x.x"
-        #    }
-        #} Else {
-        #    $sVersion = ""
-        #}
-
-        # Check download URL
-        #If ($oFileInfo.downloadUrl -eq "" -or $null -eq $oFileInfo.downloadUrl) {
-        #    $sIdFirstPart = ($oFileInfo.id).ToString().Substring(0, 4)
-        #    $sIdSecondPart = ($oFileInfo.id).ToString().Substring(4)
-        #    $oFileInfo.downloadUrl = "https://edge.forgecdn.net/files/$($sIdFirstPart)/$($sIdSecondPart)/$($oFileInfo.fileName)"
-        #}
+        ShowLogMessage -type "INFO" -message "A file has been found!" -sLogFile ([ref]$sLogFile)
 
         # Mod path for download destination
         switch ($sType) {
@@ -353,11 +289,11 @@ $aMainModsList | ForEach-Object {
         }
 
         If (!$bPreviousDownload) {
-            ShowLogMessage "INFO" "No previous download. The file will be download..." ([ref]$sLogFile)
+            ShowLogMessage -type "INFO" -message "No previous download. The file will be download..." -sLogFile ([ref]$sLogFile)
             $oModInfo = [PSCustomObject]@{
                 Name             = $PSItem.displayName
                 ModId            = $PSItem.id
-                Version          = $sVersion
+                Version          = $oFileInfo.Version
                 Type             = $sType
                 InternalCategory = $sInternalCategory
                 GOC              = $bGoc
@@ -375,7 +311,7 @@ $aMainModsList | ForEach-Object {
                 Update           = $True
             }
         } Else {
-            ShowLogMessage "INFO" "A previous download exist. We will check if the mods was updated." ([ref]$sLogFile)
+            ShowLogMessage -type "INFO" -message "A previous download exist. We will check if the mods was updated." -sLogFile ([ref]$sLogFile)
             If ($aPreviousModListDownload.FileId.IndexOf($oFileInfo.id.ToString()) -eq -1) {
                 $aPreviousModListDownload | Where-Object { $PSItem.ModId -eq $sModId -and $PSItem.name -eq $sModDisplayName } | ForEach-Object {
                     If ($PSItem.FileId -ne "") {
@@ -384,26 +320,26 @@ $aMainModsList | ForEach-Object {
                         $sPreviousFileName = $PSItem.FileName
                         $bPreviousModFound | Out-Null #To remove Warning
                         $sPreviousFileName | Out-Null #To remove Warning
-                        ShowLogMessage "INFO" "The mods has been updated! ($($sPreviousVersion) -> $($sVersion))" ([ref]$sLogFile)
+                        ShowLogMessage -type "INFO" -message "The mods has been updated! ($($sPreviousVersion) -> $($oFileInfo.Version))" -sLogFile ([ref]$sLogFile)
                     } Else {
-                        ShowLogMessage "INFO" "The mods has been updated for Minecraft $($mojangFormatVersion)!" ([ref]$sLogFile)
+                        ShowLogMessage -type "INFO" -message "The mods has been updated for Minecraft $($mojangFormatVersion)!" -sLogFile ([ref]$sLogFile)
                     }
                 }
                 
                 If (!$bPreviousModFound) {
                     $bAdd = $True
-                    ShowLogMessage "INFO" "This is a new mod to download!" ([ref]$sLogFile)
+                    ShowLogMessage -type "INFO" -message "This is a new mod to download!" -sLogFile ([ref]$sLogFile)
                 }
                 $bFileUpdate = $True
             } Else {
-                ShowLogMessage "INFO" "There is no modification for this mod. We will not download it again." ([ref]$sLogFile)
+                ShowLogMessage -type "INFO" -message "There is no modification for this mod. We will not download it again." -sLogFile ([ref]$sLogFile)
                 $bFileUpdate = $False
             }
 
             $oModInfo = [PSCustomObject]@{
                 Name             = $PSItem.displayName
                 ModId            = $PSItem.id
-                Version          = $sVersion
+                Version          = $oFileInfo.Version
                 Type             = $sType
                 InternalCategory = $sInternalCategory
                 GOC              = $bGoc
@@ -422,7 +358,7 @@ $aMainModsList | ForEach-Object {
             }
         }
     } Else {
-        ShowLogMessage "WARNING" "No files found." ([ref]$sLogFile)
+        ShowLogMessage -type "WARNING" -message "No files found." -sLogFile ([ref]$sLogFile)
         $oModInfo = [PSCustomObject]@{
             Name             = $PSItem.displayName
             ModId            = $PSItem.id
@@ -448,19 +384,19 @@ $aMainModsList | ForEach-Object {
     If ($oModInfo.Update -and !$NoDownload) {
         # Rename previous file if exist
         If ($oModInfo.PreviousFileName -ne "") {
-            ShowLogMessage "INFO" "A previous file exist. Renaming..." ([ref]$sLogFile)
+            ShowLogMessage -type "INFO" -message "A previous file exist. Renaming..." -sLogFile ([ref]$sLogFile)
             $sPreviousFilePath = $oModInfo.FilePath -replace "$([Regex]::Escape($oModInfo.FileName))", "$($oModInfo.PreviousFileName)"
             $sNewPreviousFilePath = "$($sPreviousFilePath).old"
             Try {
                 Rename-Item -Path $sPreviousFilePath -NewName $sNewPreviousFilePath -Force -ErrorAction Stop
-                ShowLogMessage "SUCCESS" "Previous file has been renamed!" ([ref]$sLogFile)
+                ShowLogMessage -type "SUCCESS" -message "Previous file has been renamed!" -sLogFile ([ref]$sLogFile)
             } Catch {
                 $sErrorMessage = $_.Exception.Message
                 $sStackTrace = $_.ScriptStackTrace
-                ShowLogMessage "WARNING" "Previous file has not been renamed!" ([ref]$sLogFile)
-                ShowLogMessage "DEBUG" "Details:" ([ref]$sLogFile)
+                ShowLogMessage -type "WARNING" -message "Previous file has not been renamed!" -sLogFile ([ref]$sLogFile)
+                ShowLogMessage -type "DEBUG" -message "Details:" -sLogFile ([ref]$sLogFile)
                 If ($PSBoundParameters['Debug']) {
-                    ShowLogMessage "OTHER" "`t$($sErrorMessage)`n`t$($sStackTrace)" ([ref]$sLogFile)
+                    ShowLogMessage -type "OTHER" -message "`t$($sErrorMessage)`n`t$($sStackTrace)" -sLogFile ([ref]$sLogFile)
                 }
             }
         }
@@ -468,7 +404,7 @@ $aMainModsList | ForEach-Object {
         # Downloading
         Write-Progress -Activity "Download updated mods..." -PercentComplete $iPercentComplete -Status "Downloading $($PSItem.name)..."
         do {
-            ShowLogMessage "INFO" "(Try #$($iNumberDownloadTried)) Downloading the new version of the mod..." ([ref]$sLogFile)
+            ShowLogMessage -type "INFO" -message "(Try #$($iNumberDownloadTried)) Downloading the new version of the mod..." -sLogFile ([ref]$sLogFile)
             Try {
                 If ($PSItem.sourceWebsite -ne "chocolateminecraft") {
                     Start-BitsTransfer -Source $oModInfo.DownloadUrl -Destination $oModInfo.FilePath -Description "Downloading $($oModInfo.filename)" -ErrorAction Stop
@@ -477,22 +413,22 @@ $aMainModsList | ForEach-Object {
                 }
                 # We change LastWriteTime to today
                 ([System.IO.FileInfo]$oModInfo.FilePath).LastWriteTime = Get-Date
-                ShowLogMessage "SUCCESS" "The mod has been downloaded successfully!" ([ref]$sLogFile)
+                ShowLogMessage -type "SUCCESS" -message "The mod has been downloaded successfully!" -sLogFile ([ref]$sLogFile)
             } Catch {
                 $sErrorMessage = $PSItem.Exception.Message
-                ShowLogMessage "ERROR" "The mod has not been downloaded!" ([ref]$sLogFile)
+                ShowLogMessage -type "ERROR" -message "The mod has not been downloaded!" -sLogFile ([ref]$sLogFile)
                 If ($PSBoundParameters['Debug']) {
-                    ShowLogMessage "DEBUG" "Error detail:" ([ref]$sLogFile)
-                    ShowLogMessage "OTHER" "`$($sErrorMessage)" ([ref]$sLogFile)
+                    ShowLogMessage -type "DEBUG" -message "Error detail:" -sLogFile ([ref]$sLogFile)
+                    ShowLogMessage -type "OTHER" -message "`$($sErrorMessage)" -sLogFile ([ref]$sLogFile)
                 }
             }
         } While (-not $bDownloadSuccess -and $iNumberDownloadTried -le $iMaxDownloadTry)
 
         If (-not $bDownloadSuccess -and $iNumberDownloadTried -gt $iMaxDownloadTry) {
-            ShowLogMessage "ERROR" "Too many tries!" ([ref]$sLogFile)
+            ShowLogMessage -type "ERROR" -message "Too many tries!" -sLogFile ([ref]$sLogFile)
         }
     } ElseIf ($oModInfo.Update -and $NoDownload) {
-        ShowLogMessage "DEBUG" "We should download $($oModInfo.DownloadUrl) to $($oModInfo.FilePath)" ([ref]$sLogFile)
+        ShowLogMessage -type "DEBUG" -message "We should download $($oModInfo.DownloadUrl) to $($oModInfo.FilePath)" -sLogFile ([ref]$sLogFile)
     }
 
     # Fill the array for the markdown text and text for the website depending InternalCategory and Add only if the object has 'Update' is True
@@ -518,7 +454,7 @@ $aMainModsList | ForEach-Object {
     $aModListDownload += $oModInfo
     $iCompteur++
 
-    ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+    ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
 }
 Write-Progress -Activity "Download updated mods ($($iPercentComplete)%)..." -Completed
 
@@ -529,83 +465,83 @@ $aMarkdownModsNoOptifine += "`t* ``M à J`` : Archive contenant tous les mods"
 $aMarkdownModsNoOptifine += "`t* ``M à J`` : Archive contenant tous les **mods** et toutes les **textures**"
 
 If ($Files) {
-    ShowLogMessage "INFO" "Export mods session information to CSV '$($aVersionModsListFile)'" ([ref]$sLogFile)
+    ShowLogMessage -type "INFO" -message "Export mods session information to CSV '$($aVersionModsListFile)'" -sLogFile ([ref]$sLogFile)
     Try {
         $aModListDownload | Export-CSV -Path $aVersionModsListFile -Delimiter ";" -Encoding utf8 -NoTypeInformation -ErrorAction Stop
-        ShowLogMessage "SUCCESS" "Mods list has been exported successfully!" ([ref]$sLogFile)
+        ShowLogMessage -type "SUCCESS" -message "Mods list has been exported successfully!" -sLogFile ([ref]$sLogFile)
     } Catch {
         $sErrorMessage = $_.Exception.Message
-        ShowLogMessage "ERROR" "Mods list has not been exported!" ([ref]$sLogFile)
+        ShowLogMessage -type "ERROR" -message "Mods list has not been exported!" -sLogFile ([ref]$sLogFile)
         If ($PSBoundParameters['Debug']) {
-            ShowLogMessage "DEBUG" "Error detail:" ([ref]$sLogFile)
-            ShowLogMessage "OTHER" "`$($sErrorMessage)" ([ref]$sLogFile)
+            ShowLogMessage -type "DEBUG" -message "Error detail:" -sLogFile ([ref]$sLogFile)
+            ShowLogMessage -type "OTHER" -message "`$($sErrorMessage)" -sLogFile ([ref]$sLogFile)
         }
     }
 }
 
 If ($Discord -and $Files) {
-    ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+    ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
     
-    ShowLogMessage "INFO" "Export Discord markdown lines to files..." ([ref]$sLogFile)
+    ShowLogMessage -type "INFO" -message "Export Discord markdown lines to files..." -sLogFile ([ref]$sLogFile)
     $aMarkdownModsOptifine | Out-File -FilePath $sMarkdownOptifine
     $aMarkdownModsNoOptifine | Out-File -FilePath $sMarkdownNoOptifine
 }
 
 If ($Website -and $Files) {
-    ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+    ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
     
-    ShowLogMessage "INFO" "Export website text lines to files..." ([ref]$sLogFile)
+    ShowLogMessage -type "INFO" -message "Export website text lines to files..." -sLogFile ([ref]$sLogFile)
     $aTexteModsOptifine | Out-File -FilePath $sInfoWebSiteOptifine
     $aTexteModsNoOptifine | Out-File -FilePath $sInfoWebSiteNoOptifine
 }
 
-ShowLogMessage "OTHER" "" ([ref]$sLogFile)
-ShowLogMessage "OTHER" "------------------------------------------------------------" ([ref]$sLogFile)
-ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
+ShowLogMessage -type "OTHER" -message "------------------------------------------------------------" -sLogFile ([ref]$sLogFile)
+ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
 
 # Show Summary for manual copy
-ShowLogMessage "INFO" "Summary:" ([ref]$sLogFile)
-ShowLogMessage "OTHER" "`tMods GoC:" ([ref]$sLogFile)
+ShowLogMessage -type "INFO" -message "Summary:" -sLogFile ([ref]$sLogFile)
+ShowLogMessage -type "OTHER" -message "`tMods GoC:" -sLogFile ([ref]$sLogFile)
 $aModListDownload | Where-Object { $PSItem.Update -eq $True -and $PSItem.Type -eq "Mods" -and $PSItem.InternalCategory -ne "NoOptifine" -and $PSItem.GOC -eq $True } | ForEach-Object {
-    ShowLogMessage "OTHER" "`t`t$($PSItem.FileName)" ([ref]$sLogFile)
+    ShowLogMessage -type "OTHER" -message "`t`t$($PSItem.FileName)" -sLogFile ([ref]$sLogFile)
 }
 
-ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
 
-ShowLogMessage "OTHER" "`tMods GoC No Optifine:" ([ref]$sLogFile)
+ShowLogMessage -type "OTHER" -message "`tMods GoC No Optifine:" -sLogFile ([ref]$sLogFile)
 $aModListDownload | Where-Object { $PSItem.Update -eq $True -and $PSItem.Type -eq "Mods" -and $PSItem.InternalCategory -eq "NoOptifine" -and $PSItem.GOC -eq $True } | ForEach-Object {
-    ShowLogMessage "OTHER" "`t`t$($PSItem.FileName)" ([ref]$sLogFile)
+    ShowLogMessage -type "OTHER" -message "`t`t$($PSItem.FileName)" -sLogFile ([ref]$sLogFile)
 }
 
-ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
 
-ShowLogMessage "OTHER" "`tRessources GoC:" ([ref]$sLogFile)
+ShowLogMessage -type "OTHER" -message "`tRessources GoC:" -sLogFile ([ref]$sLogFile)
 $aModListDownload | Where-Object { $PSItem.Update -eq $True -and $PSItem.Type -eq "Ressources" -and $PSItem.GOC -eq $True } | ForEach-Object {
-    ShowLogMessage "OTHER" "`t`t$($PSItem.FileName)" ([ref]$sLogFile)
+    ShowLogMessage -type "OTHER" -message "`t`t$($PSItem.FileName)" -sLogFile ([ref]$sLogFile)
 }
 
-ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
 
-ShowLogMessage "OTHER" "`tShaders GoC:" ([ref]$sLogFile)
+ShowLogMessage -type "OTHER" -message "`tShaders GoC:" -sLogFile ([ref]$sLogFile)
 $aModListDownload | Where-Object { $PSItem.Update -eq $True -and $PSItem.Type -eq "Shaders" -and $PSItem.GOC -eq $True } | ForEach-Object {
-    ShowLogMessage "OTHER" "`t`t$($PSItem.FileName)" ([ref]$sLogFile)
+    ShowLogMessage -type "OTHER" -message "`t`t$($PSItem.FileName)" -sLogFile ([ref]$sLogFile)
 }
 
-ShowLogMessage "OTHER" "" ([ref]$sLogFile)
-ShowLogMessage "OTHER" "------------------------------------------------------------" ([ref]$sLogFile)
-ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
+ShowLogMessage -type "OTHER" -message "------------------------------------------------------------" -sLogFile ([ref]$sLogFile)
+ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
 
 ## My copy
 If ($Copy) {
-    ShowLogMessage "INFO" "Copy GoC Mods..." ([ref]$sLogFile)
+    ShowLogMessage -type "INFO" -message "Copy GoC Mods..." -sLogFile ([ref]$sLogFile)
     $aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-Opti\.minecraft" -InternalCategoryExclude "NoOptifine" -GoCOnly -Update $bPreviousDownload -LogFile $sLogFile -Debug
     
-    ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+    ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
     
-    ShowLogMessage "INFO" "Copy not GoC Mods..." ([ref]$sLogFile)
+    ShowLogMessage -type "INFO" -message "Copy not GoC Mods..." -sLogFile ([ref]$sLogFile)
     $aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-TestMods\.minecraft" -InternalCategoryExclude "Optifine" -Update $bPreviousDownload -LogFile $sLogFile -Debug
     
-    ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+    ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
 }
 
 Write-CenterText "*************************************" $sLogFile
