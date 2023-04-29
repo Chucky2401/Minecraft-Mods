@@ -15,8 +15,8 @@
         Generate text file to copy/paste for Website
     .PARAMETER Copy
         Initiate copy to instance folder
-    .PARAMETER NoFile
-        Do not generate any file except log
+    .PARAMETER Files
+        Generate files for Discord and website
     .OUTPUTS
         Log file, markdown file for Gentlemen of Craft Discord server, text file to update the website and a csv with all the mods and information about them.
     .EXAMPLE
@@ -55,42 +55,31 @@ Param (
     [Parameter(Mandatory = $False)]
     [switch]$Copy,
     [Parameter(Mandatory = $False)]
-    [switch]$NoFile
+    [Switch]$Files
 )
 
 #---------------------------------------------------------[Initialisations]--------------------------------------------------------
 
-#Set Error Action to Silently Continue
-$ErrorActionPreference      = "SilentlyContinue"
-#$ErrorActionPreference      = "Stop"
+#Set Error Action
+$ErrorActionPreference = "Stop"
 
-Import-Module -Name ".\inc\func\Tjvs.Message"
-Import-Module -Name ".\inc\func\Tjvs.Minecraft"
-Import-Module -Name ".\inc\func\Tjvs.Settings"
+Import-Module -Name ".\inc\modules\Tjvs.Message", ".\inc\modules\Tjvs.Minecraft", ".\inc\modules\Tjvs.Settings"
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
 #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
 # User settings
-$htSettings = Get-Settings "$($PSScriptRoot)\conf\settings.ini"
+#$htSettings = Get-Settings "$($PSScriptRoot)\conf\settings.ini"
 
 # API
-$sBaseUri         = "https://api.curseforge.com"
-$sBaseModFilesUri = "/v1/mods/{modId}/files"
-$oHeadersQuery    = @{
-    "Accept"    = "application/json"
-    "x-api-key" = $htSettings['Token']
-}
-$oParametersQueryFiles = @{
-    Header      = $oHeadersQuery
-    Method      = "GET"
-    Uri         = ""
-    ContentType = "application/json"
-}
-
-#$sBaseModUri      = "/v1/mods/{modId}"
-#$oParametersQueryMod = @{
+#$sBaseUri         = "https://api.curseforge.com"
+#$sBaseModFilesUri = "/v1/mods/{modId}/files"
+#$oHeadersQuery    = @{
+#    "Accept"    = "application/json"
+#    "x-api-key" = $global:settings.curseforge.tokenValue
+#}
+#$oParametersQueryFiles = @{
 #    Header      = $oHeadersQuery
 #    Method      = "GET"
 #    Uri         = ""
@@ -116,45 +105,45 @@ $sInfoWebSiteNoOptifine = "$($sModsTexteDirectory)\MC_$($MCVersion)-NoOptifine-$
 $aMainModsList            = Import-Csv -Path $aMainModsListFile -Delimiter ";" -Encoding utf8
 $aPreviousModListDownload = $null
 $aModListDownload         = @()
-$aRelationType            = @(
-    'None'
-    'Embedded Library'
-    'Optional Dependency'
-    'Required Dependency'
-    'Tool'
-    'Incompatible'
-    'Include'
-)
+#$aRelationType            = @(
+#    'None'
+#    'Embedded Library'
+#    'Optional Dependency'
+#    'Required Dependency'
+#    'Tool'
+#    'Incompatible'
+#    'Include'
+#)
 $aMarkdownModsOptifine    = @()
-$aMarkdownModsOptifine   += "Mise à jour de **Nos Ressources Minecraft** - *$($sCurseForgeVersion)* - (__{RECOMMANDATION}__)"
+$aMarkdownModsOptifine   += "Mise à jour de **Nos Ressources Minecraft** - *$($mojangFormatVersion)* - (__{RECOMMANDATION}__)"
 $aMarkdownModsNoOptifine  = @()
-$aMarkdownModsNoOptifine += "Mise à jour de **Nos Ressources Minecraft Sans Optifine** - *$($sCurseForgeVersion)* - (__{RECOMMANDATION}__)"
+$aMarkdownModsNoOptifine += "Mise à jour de **Nos Ressources Minecraft Sans Optifine** - *$($mojangFormatVersion)* - (__{RECOMMANDATION}__)"
 $aTexteModsOptifine       = @()
 $aTexteModsNoOptifine     = @()
 
 # Minecraft
-$sCurseForgeVersion = ""
+$mojangFormatVersion = ""
 If ($MCVersion -match "^(.+)\.0$") {
-    $sCurseForgeVersion = $MCVersion -replace "\.0$", ""
+    $mojangFormatVersion = $MCVersion -replace "\.0$", ""
 } Else {
-    $sCurseForgeVersion = $MCVersion
+    $mojangFormatVersion = $MCVersion
 }
 
-$htSettings['McBaseFolder']       += $MCVersion
+$global:settings.general.baseFolder += $MCVersion
 $htDownloadDirectories = [ordered]@{
-    BaseFolder              = "$($htSettings['McBaseFolder'])"
-    ModsFolder              = "$($htSettings['McBaseFolder'])\Mods"
-    ModsNoOptifineFolder    = "$($htSettings['McBaseFolder'])\Mods\NoOptifine"
-    ResourcesFolder         = "$($htSettings['McBaseFolder'])\Resources"
-    ShadersFolder           = "$($htSettings['McBaseFolder'])\Shaders"
+    BaseFolder              = "$($global:settings.general.baseFolder)"
+    ModsFolder              = "$($global:settings.general.baseFolder)\Mods"
+    ModsNoOptifineFolder    = "$($global:settings.general.baseFolder)\Mods\NoOptifine"
+    ResourcesFolder         = "$($global:settings.general.baseFolder)\Resources"
+    ShadersFolder           = "$($global:settings.general.baseFolder)\Shaders"
 }
 
 $htComplementFolders = [ordered]@{
-    GocFolder               = "$($htSettings['McBaseFolder'])\#GoC"
-    GocModsFolder           = "$($htSettings['McBaseFolder'])\#GoC\mods"
-    GocModsNoOptifineFolder = "$($htSettings['McBaseFolder'])\#GoC\modsNoOptifine"
-    GocResourcesFolder      = "$($htSettings['McBaseFolder'])\#GoC\resourcepacks"
-    GocShadersFolder        = "$($htSettings['McBaseFolder'])\#GoC\shaders"
+    GocFolder               = "$($global:settings.general.baseFolder)\#GoC"
+    GocModsFolder           = "$($global:settings.general.baseFolder)\#GoC\mods"
+    GocModsNoOptifineFolder = "$($global:settings.general.baseFolder)\#GoC\modsNoOptifine"
+    GocResourcesFolder      = "$($global:settings.general.baseFolder)\#GoC\resourcepacks"
+    GocShadersFolder        = "$($global:settings.general.baseFolder)\#GoC\shaders"
 }
 
 # Logs
@@ -230,48 +219,6 @@ $htComplementFolders.GetEnumerator() | ForEach-Object {
         ShowLogMessage "SUCCESS" "Folder '$($PSItem.Value)' exists!" ([ref]$sLogFile)
     }
 }
-#If (!(Test-Path "$($htSettings['McBaseFolder'])")) {
-#    ShowLogMessage "WARNING" "Folder '$($htSettings['McBaseFolder'])' does not exist !" ([ref]$sLogFile)
-#    ShowLogMessage "INFO" "Creating the folders..." ([ref]$sLogFile)
-#    Try {
-#        $aDownloadDirectories.GetEnumerator() | Sort-Object Name | ForEach-Object {
-#            New-Item -Path "$($PSItem.Value)" -ItemType Directory -ErrorAction Stop | Out-Null
-#        }
-#        ShowLogMessage "SUCCESS" "Folder and subfolders created successfully!" ([ref]$sLogFile)
-#    } Catch {
-#        $sErrorMessage = $_.Exception.Message
-#        ShowLogMessage "ERROR" "Folders has not been created!" ([ref]$sLogFile)
-#        If ($PSBoundParameters['Debug']) {
-#            ShowLogMessage "DEBUG" "Error detail:" ([ref]$sLogFile)
-#            ShowLogMessage "OTHER" "`$($sErrorMessage)" ([ref]$sLogFile)
-#        }
-#
-#        exit 0
-#    }
-#} Else {
-#    ShowLogMessage "INFO" "Base folder '$($htSettings['McBaseFolder'])' exists. We check subfolders..." ([ref]$sLogFile)
-#    $aDownloadDirectories.GetEnumerator() | Sort-Object Name | Select-Object -Skip 1 | ForEach-Object {
-#        If (!(Test-Path "$($PSItem.Value)")) {
-#            ShowLogMessage "WARNING" "Folder '$($PSItem.Value)' does not exist !" ([ref]$sLogFile)
-#            ShowLogMessage "INFO" "Creating the folder..." ([ref]$sLogFile)
-#            Try {
-#                New-Item -Path "$($PSItem.Value)" -ItemType Directory -ErrorAction Stop | Out-Null
-#                ShowLogMessage "SUCCESS" "Folder '$($PSItem.Value)' created successfully!" ([ref]$sLogFile)
-#            } Catch {
-#                $sErrorMessage = $_.Exception.Message
-#                ShowLogMessage "ERROR" "Folder '$($PSItem.Value)' has not been created!" ([ref]$sLogFile)
-#                If ($PSBoundParameters['Debug']) {
-#                    ShowLogMessage "DEBUG" "Error detail:" ([ref]$sLogFile)
-#                    ShowLogMessage "OTHER" "`$($sErrorMessage)" ([ref]$sLogFile)
-#                }
-#        
-#                exit 0
-#            }
-#        } Else {
-#            ShowLogMessage "SUCCESS" "Folder '$($PSItem.Value)' exists!" ([ref]$sLogFile)
-#        }
-#    }
-#}
 
 ShowLogMessage "OTHER" "" ([ref]$sLogFile)
 
@@ -307,12 +254,12 @@ $aMainModsList | ForEach-Object {
     $bCopy              = $htBoolean[$PSItem.copy]
     $sField             = $PSItem.versionField
     $sVersionPattern    = $PSItem.versionPattern
-    $iSkip              = [int]$PSItem.skip
-    $sVersionModsMc     = $sCurseForgeVersion
+    #$iSkip              = [int]$PSItem.skip
+    $sVersionModsMc     = $mojangFormatVersion
     $sPreviousVersion   = ""
     $sFilePath          = ""
     $sPreviousFileName  = ""
-    $aDependencies      = @()
+    #$aDependencies      = @()
     $bAdd               = $False
     $bPreviousModFound  = $False
     
@@ -320,21 +267,19 @@ $aMainModsList | ForEach-Object {
         $sVersionModsMc = $PSItem.ForceMcVersion
     }
 
-    ShowLogMessage "INFO" "Querying last file for $($sModName) (Loader: $($htSettings['ModLoaderType']); MC Version: $($sCurseForgeVersion))..." ([ref]$sLogFile)
-
-    If ($sModName -eq "Dramatic Skys") {
-        $dummy = 1
-    }
+    ShowLogMessage "INFO" "Querying last file for $($sModName) (Loader: $($global:settings.general.modLoaderType); MC Version: $($mojangFormatVersion))..." ([ref]$sLogFile)
 
     switch ($PSItem.sourceWebsite) {
         "curseforge" {
             If ($sType -eq "Mods") {
-                $oParametersQueryFiles.Uri = "$($sBaseUri)$($sBaseModFilesUri.Replace("{modId}", $sModId))?gameVersion=$($sVersionModsMc)&modLoaderType=$($htSettings['ModLoaderType'])"
+                #$oParametersQueryFiles.Uri = "$($sBaseUri)$($sBaseModFilesUri.Replace("{modId}", $sModId))?gameVersion=$($sVersionModsMc)&modLoaderType=$($global:settings.general.modLoaderType)"
+                $oFileInfo = Get-InfoFromCruseForge -ModId $sModId -VersionPattern $sVersionPattern -FieldVersion $sField -MCVersion $sVersionModsMc -MainModList $aMainModsList
             } Else {
-                $oParametersQueryFiles.Uri = "$($sBaseUri)$($sBaseModFilesUri.Replace("{modId}", $sModId))?gameVersion=$($sVersionModsMc)"
+                #$oParametersQueryFiles.Uri = "$($sBaseUri)$($sBaseModFilesUri.Replace("{modId}", $sModId))?gameVersion=$($sVersionModsMc)"
+                $oFileInfo = Get-InfoFromCruseForge -ModId $sModId -VersionPattern $sVersionPattern -FieldVersion $sField -MCVersion $sVersionModsMc -MainModList $aMainModsList -Resources 
             }
-            $oResult = Invoke-RestMethod @oParametersQueryFiles
-            $oFileInfo = $oResult.data | Where-Object { $PSItem.gameVersions -match "$([Regex]::Escape($sVersionModsMc))$" } | Sort-Object fileDate -Desc | Select-Object -Skip $iSkip -First 1
+            #$oResult = Invoke-RestMethod @oParametersQueryFiles
+            #$oFileInfo = $oResult.data | Where-Object { $PSItem.gameVersions -match "$([Regex]::Escape($sVersionModsMc))$" } | Sort-Object fileDate -Desc | Select-Object -Skip #$iSkip -First 1
         }
         "optifine" {
             $oFileInfo = Get-InfoOptifine -MCVersion $sVersionModsMc
@@ -356,36 +301,36 @@ $aMainModsList | ForEach-Object {
         ShowLogMessage "INFO" "A file has been found!" ([ref]$sLogFile)
 
         # Format dependencies
-        $oFileInfo.dependencies | Where-Object { $PSItem.relationType -match "3|4" } | ForEach-Object {
-            $iModId = $PSItem.modId
-            $sModName = ($aMainModsList | Where-Object { $PSItem.id -eq $iModId }).displayName
-            If ($sModName -eq "" -or $null -eq $sModName) {
-                $sModName = "{Unknow_$($iModId)}"
-            }
-            $sRelation = $aRelationType[$PSItem.relationType]
-            $aDependencies += "$($sModName)($($sRelation))"
-        }
-        $sDependencies = [String]::Join("/", $aDependencies)
+        #$oFileInfo.dependencies | Where-Object { $PSItem.relationType -match "3|4" } | ForEach-Object {
+        #    $iModId = $PSItem.modId
+        #    $sModName = ($aMainModsList | Where-Object { $PSItem.id -eq $iModId }).displayName
+        #    If ($sModName -eq "" -or $null -eq $sModName) {
+        #        $sModName = "{Unknow_$($iModId)}"
+        #    }
+        #    $sRelation = $aRelationType[$PSItem.relationType]
+        #    $aDependencies += "$($sModName)($($sRelation))"
+        #}
+        #$sDependencies = [String]::Join("/", $aDependencies)
 
         # Get mod version
-        If ($sVersionPattern -ne "" -or $null -eq $sVersionPattern) {
-            $aMatchesVersion = $oFileInfo.$($sField) | Select-String -Pattern $sVersionPattern
-            If ($aMatchesVersion.Length -ge 1) {
-                $sVersion = $aMatchesVersion.Matches.Groups[1].Value
-            } Else {
-                ShowLogMessage "ERROR" "Cannot found version from $($sField) with pattern $($sVersionPattern)!" ([ref]$sLogFile)
-                $sVersion = "x.x.x"
-            }
-        } Else {
-            $sVersion = ""
-        }
+        #If ($sVersionPattern -ne "" -or $null -eq $sVersionPattern) {
+        #    $aMatchesVersion = $oFileInfo.$($sField) | Select-String -Pattern $sVersionPattern
+        #    If ($aMatchesVersion.Length -ge 1) {
+        #        $sVersion = $aMatchesVersion.Matches.Groups[1].Value
+        #    } Else {
+        #        ShowLogMessage "ERROR" "Cannot found version from $($sField) with pattern $($sVersionPattern)!" ([ref]$sLogFile)
+        #        $sVersion = "x.x.x"
+        #    }
+        #} Else {
+        #    $sVersion = ""
+        #}
 
         # Check download URL
-        If ($oFileInfo.downloadUrl -eq "" -or $null -eq $oFileInfo.downloadUrl) {
-            $sIdFirstPart = ($oFileInfo.id).ToString().Substring(0, 4)
-            $sIdSecondPart = ($oFileInfo.id).ToString().Substring(4)
-            $oFileInfo.downloadUrl = "https://edge.forgecdn.net/files/$($sIdFirstPart)/$($sIdSecondPart)/$($oFileInfo.fileName)"
-        }
+        #If ($oFileInfo.downloadUrl -eq "" -or $null -eq $oFileInfo.downloadUrl) {
+        #    $sIdFirstPart = ($oFileInfo.id).ToString().Substring(0, 4)
+        #    $sIdSecondPart = ($oFileInfo.id).ToString().Substring(4)
+        #    $oFileInfo.downloadUrl = "https://edge.forgecdn.net/files/$($sIdFirstPart)/$($sIdSecondPart)/$($oFileInfo.fileName)"
+        #}
 
         # Mod path for download destination
         switch ($sType) {
@@ -423,7 +368,7 @@ $aMainModsList | ForEach-Object {
                 FileDate         = $oFileInfo.fileDate
                 FileLength       = $oFileInfo.fileLength
                 DownloadUrl      = $oFileInfo.downloadUrl
-                GameVersion      = $sCurseForgeVersion
+                GameVersion      = $mojangFormatVersion
                 Dependencies     = $sDependencies
                 Copy             = $bCopy
                 Add              = $True
@@ -437,9 +382,11 @@ $aMainModsList | ForEach-Object {
                         $bPreviousModFound = $True
                         $sPreviousVersion  = $PSItem.Version
                         $sPreviousFileName = $PSItem.FileName
+                        $bPreviousModFound | Out-Null #To remove Warning
+                        $sPreviousFileName | Out-Null #To remove Warning
                         ShowLogMessage "INFO" "The mods has been updated! ($($sPreviousVersion) -> $($sVersion))" ([ref]$sLogFile)
                     } Else {
-                        ShowLogMessage "INFO" "The mods has been updated for Minecraft $($sCurseForgeVersion)!" ([ref]$sLogFile)
+                        ShowLogMessage "INFO" "The mods has been updated for Minecraft $($mojangFormatVersion)!" ([ref]$sLogFile)
                     }
                 }
                 
@@ -467,7 +414,7 @@ $aMainModsList | ForEach-Object {
                 FileDate         = $oFileInfo.fileDate
                 FileLength       = $oFileInfo.fileLength
                 DownloadUrl      = $oFileInfo.downloadUrl
-                GameVersion      = $sCurseForgeVersion
+                GameVersion      = $mojangFormatVersion
                 Dependencies     = $sDependencies
                 Copy             = $bCopy
                 Add              = $bAdd
@@ -581,7 +528,7 @@ $aMarkdownModsOptifine += "`t* ``M à J`` : Archive contenant tous les **mods** 
 $aMarkdownModsNoOptifine += "`t* ``M à J`` : Archive contenant tous les mods"
 $aMarkdownModsNoOptifine += "`t* ``M à J`` : Archive contenant tous les **mods** et toutes les **textures**"
 
-If (-not $NoFile) {
+If ($Files) {
     ShowLogMessage "INFO" "Export mods session information to CSV '$($aVersionModsListFile)'" ([ref]$sLogFile)
     Try {
         $aModListDownload | Export-CSV -Path $aVersionModsListFile -Delimiter ";" -Encoding utf8 -NoTypeInformation -ErrorAction Stop
@@ -596,7 +543,7 @@ If (-not $NoFile) {
     }
 }
 
-If ($Discord -and -not $NoFile) {
+If ($Discord -and $Files) {
     ShowLogMessage "OTHER" "" ([ref]$sLogFile)
     
     ShowLogMessage "INFO" "Export Discord markdown lines to files..." ([ref]$sLogFile)
@@ -604,7 +551,7 @@ If ($Discord -and -not $NoFile) {
     $aMarkdownModsNoOptifine | Out-File -FilePath $sMarkdownNoOptifine
 }
 
-If ($Website -and -not $NoFile) {
+If ($Website -and $Files) {
     ShowLogMessage "OTHER" "" ([ref]$sLogFile)
     
     ShowLogMessage "INFO" "Export website text lines to files..." ([ref]$sLogFile)
