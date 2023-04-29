@@ -1,0 +1,34 @@
+{
+    "general": {
+        "modLoaderType": "Fabric",
+        "baseFolder": "E:\\Games\\Minecraft\\#Setup_Minecraft\\"
+    },
+    "curseforge": {
+        "tokenValue": "$2a$10$aQVrafk./C1ahFnuIUShBux7c7Wq5MQy.rXFFi8ScpxjSFdp4DYxm",
+        "urlMod": "https://api.curseforge.com/v1/mods/{modId}/files?gameVersion={versionMc}&modLoaderType={modLoader}",
+        "urlResources": "https://api.curseforge.com/v1/mods/{modId}/files?gameVersion={versionMc}"
+    },
+    "minecraft": {
+        "baseFolder": "E:\\Games\\Minecraft\\#MultiMC\\instances\\"
+    },
+    "copy": [
+        {
+            "Config": {
+                "includeBaseMods": true,
+                "gocOnly": true,
+                "category": [
+                    "Optifine"
+                ]
+            }
+        },
+        {
+            "Config": {
+                "includeBaseMods": true,
+                "gocOnly": false,
+                "category": [
+                    "NoOptifine"
+                ]
+            }
+        }
+    ]
+}
