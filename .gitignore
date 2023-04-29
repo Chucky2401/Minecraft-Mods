@@ -4,6 +4,7 @@ csv/*
 logs/*
 md/*
 txt/*
+doc/*
 
 # Exclude
 !csv/00_main_listing.csv
