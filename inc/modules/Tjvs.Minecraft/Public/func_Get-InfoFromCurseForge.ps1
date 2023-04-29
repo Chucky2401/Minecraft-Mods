@@ -6,6 +6,8 @@ function Get-InfoFromCurseForge {
             Get mods information from Curseforge and return an object with useful information
         .PARAMETER ModId
             Id of the mod
+        .PARAMETER Skip
+            Number of line in the response to skip
         .PARAMETER VersionPattern
             Regex pattern to get the version of the mod
         .PARAMETER FieldVersion
@@ -38,6 +40,8 @@ function Get-InfoFromCurseForge {
     Param (
         [Parameter(Mandatory = $True)]
         [String]$ModId,
+        [Parameter(Mandatory = $True)]
+        [Int]$Skip,
         [Parameter(Mandatory = $True)]
         [String]$VersionPattern,
         [Parameter(Mandatory = $True)]
@@ -80,7 +84,11 @@ function Get-InfoFromCurseForge {
 
     $sVersion = ""
 
-    $oResult   = Invoke-RestMethod @oParametersQueryFiles
+    $oResult = Invoke-RestMethod @oParametersQueryFiles
+    If ($oResult.pagination.resultCount -eq 0) {
+        return $null
+    }
+
     $oFileInfo = $oResult.data | Where-Object { $PSItem.gameVersions -match "$([Regex]::Escape($MCVersion))$" } | Sort-Object fileDate -Desc | Select-Object -Skip $iSkip -First 1
 
     $oFileInfo.dependencies | Where-Object { $PSItem.relationType -match "3|4" } | ForEach-Object {
@@ -99,7 +107,7 @@ function Get-InfoFromCurseForge {
         If ($aMatchesVersion.Length -ge 1) {
             $sVersion = $aMatchesVersion.Matches.Groups[1].Value
         } Else {
-            ShowLogMessage "ERROR" "Cannot found version from $($FieldVersion) with pattern $($VersionPattern)!" ([ref]$sLogFile)
+            #ShowLogMessage -type "ERROR" -message "Cannot found version from $($FieldVersion) with pattern $($VersionPattern)!" -sLogFile ([ref]$sLogFile)
             $sVersion = "x.x.x"
         }
     }
