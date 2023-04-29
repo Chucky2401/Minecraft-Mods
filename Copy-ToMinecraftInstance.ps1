@@ -92,8 +92,7 @@ Param (
 BEGIN {
     #---------------------------------------------------------[Initialisations]--------------------------------------------------------
 
-    #Set Error Action to Silently Continue
-    #$ErrorActionPreference      = "SilentlyContinue"
+    #Set Error Action
     $ErrorActionPreference      = "Stop"
     If ($PSBoundParameters['Debug']) {
         $DebugPreference = "Continue"
@@ -110,7 +109,7 @@ BEGIN {
 
     #----------------------------------------------------------[Declarations]----------------------------------------------------------
 
-    $htSettings = Get-Settings "$($PSScriptRoot)\conf\settings.ini" -StartBlock "Copy"
+    #$htSettings = Get-Settings "$($PSScriptRoot)\conf\settings.ini" -StartBlock "Copy"
 
     # To don't change anything to my snippets! ;-)
     $sLogFile = $LogFile
@@ -125,7 +124,7 @@ BEGIN {
 
     If ($InstancePath -eq "") {
         $oFolderBrowser = New-Object System.Windows.Forms.FolderBrowserDialog -Property @{
-            InitialDirectory = "$($htSettings['InitialDirectory'])"
+            InitialDirectory = "$($global:settings.minecraft.baseFolder)"
             Description = "Select the instance folder only! Not mods or others subfolders!"
         }
         $null = $oFolderBrowser.ShowDialog()
