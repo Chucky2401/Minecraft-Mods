@@ -13,22 +13,18 @@
     },
     "copy": [
         {
-            "Config": {
-                "includeBaseMods": true,
-                "gocOnly": true,
-                "category": [
-                    "Optifine"
-                ]
-            }
+            "includeBaseMods": true,
+            "gocOnly": true,
+            "category": [
+                "Optifine"
+            ]
         },
         {
-            "Config": {
-                "includeBaseMods": true,
-                "gocOnly": false,
-                "category": [
-                    "NoOptifine"
-                ]
-            }
+            "includeBaseMods": true,
+            "gocOnly": false,
+            "category": [
+                "NoOptifine"
+            ]
         }
     ]
 }
