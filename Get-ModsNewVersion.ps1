@@ -416,10 +416,12 @@ $aMainModsList | Where-Object { $PSItem.isEnabled } | ForEach-Object {
                 } Else {
                     Invoke-WebRequest -Uri $oModInfo.DownloadUrl -OutFile $oModInfo.FilePath -Method Post -ErrorAction Stop
                 }
+                $bDownloadSuccess = $True
                 # We change LastWriteTime to today
                 ([System.IO.FileInfo]$oModInfo.FilePath).LastWriteTime = Get-Date
                 ShowLogMessage -type "SUCCESS" -message "The mod has been downloaded successfully!" -sLogFile ([ref]$sLogFile)
             } Catch {
+                $iNumberDownloadTried++
                 $sErrorMessage = $PSItem.Exception.Message
                 ShowLogMessage -type "ERROR" -message "The mod has not been downloaded!" -sLogFile ([ref]$sLogFile)
                 If ($PSBoundParameters['Debug']) {
