@@ -86,7 +86,7 @@ Param (
     [Parameter(ParameterSetName = "File")]
     [Boolean]$Update = $True,
     [Parameter(ParameterSetName = "Pipeline")]
-    [String]$LogFile = ""
+    [String]$LogFile = (New-TemporaryFile)
 )
 
 BEGIN {
@@ -102,8 +102,7 @@ BEGIN {
 
     Add-Type -AssemblyName System.Windows.Forms
 
-    Import-Module -Name ".\inc\func\Tjvs.Message"
-    Import-Module -Name ".\inc\func\Tjvs.Settings"
+    Import-Module -Name ".\inc\modules\Tjvs.Message", ".\inc\modules\Tjvs.Settings"
 
     #-----------------------------------------------------------[Functions]------------------------------------------------------------
 
@@ -173,9 +172,9 @@ BEGIN {
     #    Remove-Item "$($sInstanceShadersPath)\*" -Force
     #}
 
-    ShowLogMessage "INFO" "We are going to copy new versions of mods to: $($InstancePath)" ([ref]$sLogFile)
-    ShowLogMessage "DEBUG" "Set use      : $($PSCmdlet.ParameterSetName)" ([ref]$sLogFile)
-    ShowLogMessage "OTHER" "" ([ref]$sLogFile)
+    ShowLogMessage -type "INFO" -message "We are going to copy new versions of mods to: $($InstancePath)" -sLogFile ([ref]$sLogFile)
+    ShowLogMessage -type "DEBUG" -message "Set use      : $($PSCmdlet.ParameterSetName)" -sLogFile ([ref]$sLogFile)
+    ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
 }
 
 PROCESS {
@@ -231,25 +230,25 @@ PROCESS {
         Try {
             # Rename previous file if Add -ne $True
             If ( -not [System.Convert]::ToBoolean($PSItem.Add)) {
-                ShowLogMessage "DEBUG" "Rename $($sPreviousFilePath) to $($sNewPreivousFilePath)" ([ref]$sLogFile)
+                ShowLogMessage -type "DEBUG" -message "Rename $($sPreviousFilePath) to $($sNewPreivousFilePath)" -sLogFile ([ref]$sLogFile)
                 If (Test-Path -Path $sPreviousFilePath) {
                     Rename-Item -Path $sPreviousFilePath -NewName $sNewPreivousFilePath -Force
                 }
             } Else {
-                ShowLogMessage "DEBUG" "Adding, nothing to rename." ([ref]$sLogFile)
+                ShowLogMessage -type "DEBUG" -message "Adding, nothing to rename." -sLogFile ([ref]$sLogFile)
             }
 
             # Copy new mod
-            ShowLogMessage "DEBUG" "Copy $($sSourceFile) to $($sDestinationFile)" ([ref]$sLogFile)
-            Copy-Item -Path $sSourceFile -Destination $sDestinationFile
+            ShowLogMessage -type "DEBUG" -message "Copy $($sSourceFile) to $($sDestinationFile)" -sLogFile ([ref]$sLogFile)
+            Copy-Item -Path $sSourceFile -Destination $sDestinationFile -Force
         } Catch {
             $sErrorMessage = $PSItem.Exception.Message
             $sStackTrace = $PSItem.StackTrace
-            ShowLogMessage "ERROR" "Error to update mod in the instance!" ([ref]$sLogFile)
-            ShowLogMessage "DEBUG" "Details:" ([ref]$sLogFile)
+            ShowLogMessage -type "ERROR" -message "Error to update mod in the instance!" -sLogFile ([ref]$sLogFile)
+            ShowLogMessage -type "DEBUG" -message "Details:" -sLogFile ([ref]$sLogFile)
             If ($PSBoundParameters['Debug']) {
-                ShowLogMessage "OTHER" "`t$($sErrorMessage)" ([ref]$sLogFile)
-                ShowLogMessage "OTHER" "`t$($sStackTrace)" ([ref]$sLogFile)
+                ShowLogMessage -type "OTHER" -message "`t$($sErrorMessage)" -sLogFile ([ref]$sLogFile)
+                ShowLogMessage -type "OTHER" -message "`t$($sStackTrace)" -sLogFile ([ref]$sLogFile)
             }
         }
 
