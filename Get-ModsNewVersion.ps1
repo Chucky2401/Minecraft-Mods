@@ -128,10 +128,6 @@ $sLogFile = "$($sLogPath)\$($sLogName)"
 $iCompteur         = 0
 $bPreviousDownload = $False
 $bPreviousModFound = $null
-$htBoolean         = @{
-    True  = $True
-    False = $False
-}
 $iMaxDownloadTry = 3
 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
@@ -209,8 +205,14 @@ If ($null -eq $oPreviousDownload) {
 ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
 
 ShowLogMessage -type "INFO" -message "Download updated mods" -sLogFile ([ref]$sLogFile)
+# Formatting boolean object
+$isEnabled = @{ Label = "isEnabled" ; Expression = { [Boolean]::Parse($PSItem.enabled) } }
+$isGoc     = @{ Label = "isGoc" ; Expression = { [Boolean]::Parse($PSItem.goc) } }
+$toCopy    = @{ Label = "toCopy" ; Expression = { [Boolean]::Parse($PSItem.copy) } }
+$aMainModsList = $aMainModsList | Select-Object -Property *, $isEnabled, $isGoc, $toCopy -ExcludeProperty enabled, goc, copy
+
 # Downloading
-$aMainModsList | ForEach-Object {
+$aMainModsList | Where-Object { $PSItem.isEnabled } | ForEach-Object {
     $bDownloadSuccess     = $False
     $iNumberDownloadTried = 1
 
@@ -220,11 +222,11 @@ $aMainModsList | ForEach-Object {
     # Wroking variables
     $sModId             = $PSItem.id
     $sModName           = $PSItem.name
-    $bGoc               = $htBoolean[$PSItem.goc]
+    $bGoc               = $PSItem.isGoc
     $sModDisplayName    = $PSItem.displayName
     $sType              = $PSItem.type
     $sInternalCategory  = $PSItem.internalCategory
-    $bCopy              = $htBoolean[$PSItem.copy]
+    $bCopy              = $PSItem.toCopy
     $sField             = $PSItem.versionField
     $sVersionPattern    = $PSItem.versionPattern
     $iSkip              = [int]$PSItem.skip
@@ -247,6 +249,13 @@ $aMainModsList | ForEach-Object {
                 $oFileInfo = Get-InfoFromCurseForge -ModId $sModId -Skip $iSkip -VersionPattern $sVersionPattern -FieldVersion $sField -MCVersion $sVersionModsMc -MainModList $aMainModsList
             } Else {
                 $oFileInfo = Get-InfoFromCurseForge -ModId $sModId -Skip $iSkip -VersionPattern $sVersionPattern -FieldVersion $sField -MCVersion $sVersionModsMc -MainModList $aMainModsList -Resources 
+            }
+        }
+        "modrinth" {
+            If ($sType -eq "Mods") {
+                $oFileInfo = Get-InfoFromModrinth -ModId $sModId -Skip $iSkip -VersionPattern $sVersionPattern -FieldVersion $sField -MCVersion $sVersionModsMc -MainModList $aMainModsList
+            } Else {
+                $oFileInfo = Get-InfoFromModrinth -ModId $sModId -Skip $iSkip -VersionPattern $sVersionPattern -FieldVersion $sField -MCVersion $sVersionModsMc -MainModList $aMainModsList -Resources 
             }
         }
         "optifine" {
@@ -277,7 +286,7 @@ $aMainModsList | ForEach-Object {
                     $sFilePath = "$($htDownloadDirectories['ModsFolder'])\$($oFileInfo.filename)"
                 }
             }
-            "Ressources" {
+            "Resources" {
                 $sFilePath = "$($htDownloadDirectories['ResourcesFolder'])\$($oFileInfo.filename)"
             }
             "Shaders" {
@@ -516,7 +525,7 @@ $aModListDownload | Where-Object { $PSItem.Update -eq $True -and $PSItem.Type -e
 ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
 
 ShowLogMessage -type "OTHER" -message "`tRessources GoC:" -sLogFile ([ref]$sLogFile)
-$aModListDownload | Where-Object { $PSItem.Update -eq $True -and $PSItem.Type -eq "Ressources" -and $PSItem.GOC -eq $True } | ForEach-Object {
+$aModListDownload | Where-Object { $PSItem.Update -eq $True -and $PSItem.Type -eq "Resources" -and $PSItem.GOC -eq $True } | ForEach-Object {
     ShowLogMessage -type "OTHER" -message "`t`t$($PSItem.FileName)" -sLogFile ([ref]$sLogFile)
 }
 
