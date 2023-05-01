@@ -29,12 +29,8 @@
         Created by     : Chucky2401
         Date created   : 13/07/2022
         Modified by    : Chucky2401
-        Date modified  : 18/12/2022
-        Change         : Use modules instead of local functions
-                         Add 'NoFile' and 'Copy parameters
-                         Add up to 3 tries to download a mod
-                         Typo fix
-                         Missing 'ressource' replaced by 'resource'
+        Date modified  : 01/05/2023
+        Change         : Add Modrinth source
     .LINK
         https://github.com/Chucky2401/Minecraft-Mods/blob/main/README.md#get-modsnewversion
 #>
