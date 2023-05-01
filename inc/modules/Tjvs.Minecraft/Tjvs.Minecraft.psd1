@@ -68,7 +68,7 @@
     # NestedModules = @()
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport = 'Get-InfoFabricLoader', 'Get-InfoFromCurseForge', 'Get-InfoOptifine', 'Get-InfoReplayMod', 'Get-InfoXaeroMod'
+    FunctionsToExport = 'Get-InfoFabricLoader', 'Get-InfoFromCurseForge', 'Get-InfoFromModrinth', 'Get-InfoOptifine', 'Get-InfoReplayMod', 'Get-InfoXaeroMod'
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport = @()
