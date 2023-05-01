@@ -8,6 +8,10 @@
         "urlMod": "https://api.curseforge.com/v1/mods/{modId}/files?gameVersion={versionMc}&modLoaderType={modLoader}",
         "urlResources": "https://api.curseforge.com/v1/mods/{modId}/files?gameVersion={versionMc}"
     },
+    "modrinth": {
+        "urlMod": "https://api.modrinth.com/v2/project/{modId}/version?game_versions=[\"{versionMc}\"]&loaders=[\"{modLoader}\"]",
+        "urlresources": "https://api.modrinth.com/v2/project/{modId}/version?game_versions=[\"{versionMc}\"]"
+    },
     "minecraft": {
         "baseFolder": "E:\\Games\\Minecraft\\#MultiMC\\instances\\"
     },
