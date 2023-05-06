@@ -540,15 +540,24 @@ ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
 
 ## My copy
 If ($Copy) {
-    ShowLogMessage -type "INFO" -message "Copy GoC Mods..." -sLogFile ([ref]$sLogFile)
-    $aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-Opti\.minecraft" -InternalCategoryExclude "NoOptifine" -GoCOnly -Update $bPreviousDownload -LogFile $sLogFile -Debug
-    
-    ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
-    
-    ShowLogMessage -type "INFO" -message "Copy not GoC Mods..." -sLogFile ([ref]$sLogFile)
-    $aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-TestMods\.minecraft" -InternalCategoryExclude "Optifine" -Update $bPreviousDownload -LogFile $sLogFile -Debug
-    
-    ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
+    #ShowLogMessage -type "INFO" -message "Copy GoC Mods..." -sLogFile ([ref]$sLogFile)
+    #$aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-Opti\.minecraft" -InternalCategoryExclude "NoOptifine" -GoCOnly -Update $bPreviousDownload -LogFile $sLogFile -Debug
+
+    #ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
+    #
+    #ShowLogMessage -type "INFO" -message "Copy not GoC Mods..." -sLogFile ([ref]$sLogFile)
+    #$aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-TestMods\.minecraft" -InternalCategoryExclude "Optifine" -Update $bPreviousDownload -LogFile $sLogFile -Debug
+
+    #ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
+
+    $settings.copy | ForEach-Object {
+        $instancePath = $PSItem.instancePath
+        $exclude = $PSItem.categoryExclude
+        $gocOnly = $PSItem.gocOnly
+
+        Write-Message -Type "INFO" -Message "Copy mods to $($instancePath)..." -LogFile ([ref]$sLogFile)
+        $aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath $instancePath -InternalCategoryExclude $exclude -GoCOnly:$gocOnly -Update $bPreviousDownload -LogFile $sLogFile -Debug
+    }
 }
 
 Write-CenterText "*************************************" $sLogFile
