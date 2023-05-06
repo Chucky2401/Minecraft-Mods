@@ -27,7 +27,7 @@ function Get-InfoOptifine {
 
     $sRegexMCVersion  = [Regex]::Escape($MCVersion)
     $sDownloadUrl     = "https://optifine.net/"
-    $sPatternOptifine = "^.+url=(.+f=(Optifine_$($sRegexMCVersion)_(.+_.+_(.+))\.jar).+)`">Download<\/a>$"
+    $sPatternOptifine = "^.+href=`"(.+f=(Optifine_$($sRegexMCVersion)_(.+_.+_(.+))\.jar).+)`">Download<\/a>$"
 
     $oWebReponse = Invoke-WebRequest https://optifine.net/downloads -SessionVariable oSession -UserAgent "Mozilla/5.0 (Windows NT x.y; Win64; x64; rv:10.0) Gecko/20100101 Firefox/10.0"
 
@@ -44,7 +44,7 @@ function Get-InfoOptifine {
     
         $oWebReponse = Invoke-WebRequest $oFirstInfo.DownloadUrl -WebSession $oSession -UserAgent "Mozilla/5.0 (Windows NT x.y; Win64; x64; rv:10.0) Gecko/20100101 Firefox/10.0"
     
-        $sDownloadUrl += (($oWebReponse.Links | Where-Object { $PSItem.outerHTML -match $sPatternDownload }).outerHTML | Select-String -Pattern $sPatternDownload).Matches.Groups[1].Value
+        $sDownloadUrl += (($oWebReponse.Links | Where-Object { $PSItem.outerHTML -match $sPatternDownload }).outerHTML | Select-String -Pattern $sPatternDownload).Matches.Groups[1].Value  -replace "downloadx", "download"
         $fileLength    = (Invoke-WebRequest -Uri $sDownloadUrl -WebSession $oSession).RawContentLength
     
         $htDepend = @{
