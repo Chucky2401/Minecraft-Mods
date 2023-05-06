@@ -52,12 +52,12 @@ function Write-Message {
         [AllowEmptyString()]
         [Alias("m")]
         [string]$Message,
-        [Parameter(Mandatory = $False, ParameterSetName = "Show", Position = 1)]
-        [Parameter(Mandatory = $False, ParameterSetName = "Log", Position = 1)]
+        [Parameter(Mandatory = $False, ParameterSetName = "Show", Position = 2)]
+        [Parameter(Mandatory = $False, ParameterSetName = "Log", Position = 2)]
         [AllowEmptyString()]
         [Alias("v")]
         [string[]]$Variables,
-        [Parameter(Mandatory = $True, ParameterSetName = "Log", Position = 2)]
+        [Parameter(Mandatory = $True, ParameterSetName = "Log", Position = 3)]
         [Alias("f")]
         [ref]$LogFile
     )
