@@ -54,7 +54,7 @@ function Get-InfoFromModrinth {
         [Switch]$Resources
     )
 
-    $url = $Global:settings.modrinth.urlMod -replace "{modId}", $ModId -replace "{versionMc}", $MCVersion -replace "{modLoader}", $global:settings.general.modLoaderType
+    $url = $Global:settings.modrinth.urlMod -replace "{modId}", $ModId -replace "{versionMc}", $MCVersion -replace "{modLoader}", ($global:settings.general.modLoaderType).ToLower()
     If ($Resources) {
         $url = $Global:settings.modrinth.urlResources -replace "{modId}", $ModId -replace "{versionMc}", $MCVersion
     }
