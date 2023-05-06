@@ -17,17 +17,19 @@
     },
     "copy": [
         {
+            "instancePath": "E:\\Games\\Minecraft\\#MultiMC\\instances\\1.19-4-TestOptifine\\.minecraft",
             "includeBaseMods": true,
             "gocOnly": true,
-            "category": [
-                "Optifine"
+            "categoryExclude": [
+                "NoOptifine"
             ]
         },
         {
+            "instancePath": "E:\\Games\\Minecraft\\#MultiMC\\instances\\1.19.4-TestMods\\.minecraft",
             "includeBaseMods": true,
             "gocOnly": false,
-            "category": [
-                "NoOptifine"
+            "categoryExclude": [
+                "Optifine"
             ]
         }
     ]
