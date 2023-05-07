@@ -239,6 +239,10 @@ $aMainModsList | Where-Object { $PSItem.isEnabled } | ForEach-Object {
 
     ShowLogMessage -type "INFO" -message "Querying last file for $($sModName) (Loader: $($global:settings.general.modLoaderType); MC Version: $($mojangFormatVersion))..." -sLogFile ([ref]$sLogFile)
 
+    #If ($sModName -eq "YetAnotherConfigLib") {
+    #    $dummy = $True
+    #}
+
     switch ($PSItem.sourceWebsite) {
         "curseforge" {
             If ($sType -eq "Mods") {
@@ -425,8 +429,8 @@ $aMainModsList | Where-Object { $PSItem.isEnabled } | ForEach-Object {
                 $sErrorMessage = $PSItem.Exception.Message
                 ShowLogMessage -type "ERROR" -message "The mod has not been downloaded!" -sLogFile ([ref]$sLogFile)
                 If ($PSBoundParameters['Debug']) {
-                    ShowLogMessage -type "DEBUG" -message "Error detail:" -sLogFile ([ref]$sLogFile)
-                    ShowLogMessage -type "OTHER" -message "`$($sErrorMessage)" -sLogFile ([ref]$sLogFile)
+                    ShowLogMessage -type "OTHER" -message "Error detail:" -sLogFile ([ref]$sLogFile)
+                    ShowLogMessage -type "OTHER" -message "`t$($sErrorMessage)" -sLogFile ([ref]$sLogFile)
                 }
             }
         } While (-not $bDownloadSuccess -and $iNumberDownloadTried -le $iMaxDownloadTry)
