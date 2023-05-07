@@ -98,6 +98,10 @@ function Get-InfoFromModrinth {
         }
     }
 
+    If ($oFileInfo.files.Count -gt 1) {
+        $oFileInfo.files = $oFileInfo.files | Where-Object { $PSItem.primary -eq $True }
+    }
+
     If ($oFileInfo.files.url -eq "" -or $null -eq $oFileInfo.files.url) {
         $projectId = $oFileInfo.project_id
         $fileModId = $oFileInfo.id
