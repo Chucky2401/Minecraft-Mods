@@ -199,7 +199,7 @@ PROCESS {
                 }
                 Break
             }
-            "Ressources" {
+            "Resources" {
                 $sDestinationFile = "$($sInstanceRessourcesPath)\$($sFileName)"
                 If ( -not [System.Convert]::ToBoolean($PSItem.Add)) {
                     $sPreviousFilePath = "$($sInstanceRessourcesPath)\$($sPreviousFileName)"
