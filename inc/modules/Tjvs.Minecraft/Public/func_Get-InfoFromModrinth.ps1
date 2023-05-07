@@ -54,7 +54,7 @@ function Get-InfoFromModrinth {
         [Switch]$Resources
     )
 
-    $url = $Global:settings.modrinth.urlMod -replace "{modId}", $ModId -replace "{versionMc}", $MCVersion -replace "{modLoader}", ($global:settings.general.modLoaderType).ToLower()
+    $url = $Global:settings.modrinth.urlMod -replace "{modId}", $ModId -replace "{versionMc}", $MCVersion
     If ($Resources) {
         $url = $Global:settings.modrinth.urlResources -replace "{modId}", $ModId -replace "{versionMc}", $MCVersion
     }
@@ -67,10 +67,21 @@ function Get-InfoFromModrinth {
 
     $sDependencies = ""
     $aDependencies = @()
+    $oResult       = $null
+    $increment     = 0
+    $numberLoader  = (($global:settings.general.modLoaderType).Count)
 
     $sVersion = ""
 
-    $oResult = Invoke-RestMethod @oParametersQueryFiles
+    do {
+        If (-not $Resources) {
+            $oParametersQueryFiles.Uri = $Global:settings.modrinth.urlMod -replace "{modId}", $ModId -replace "{versionMc}", $MCVersion -replace "{modLoader}", ($global:settings.general.modLoaderType[$increment]).ToLower()
+        }
+
+        $oResult = Invoke-RestMethod @oParametersQueryFiles
+        $increment++
+    } while ($oResult.Count -eq 0 -and $increment -lt $numberLoader)
+
     If ($oResult.Count -eq 0) {
         return $null
     }

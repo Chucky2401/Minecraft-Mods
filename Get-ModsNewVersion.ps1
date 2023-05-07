@@ -29,7 +29,7 @@
         Created by     : Chucky2401
         Date created   : 13/07/2022
         Modified by    : Chucky2401
-        Date modified  : 01/05/2023
+        Date modified  : 07/05/2023
         Change         : Add Modrinth source
     .LINK
         https://github.com/Chucky2401/Minecraft-Mods/blob/main/README.md#get-modsnewversion
@@ -237,9 +237,9 @@ $aMainModsList | Where-Object { $PSItem.isEnabled } | ForEach-Object {
         $sVersionModsMc = $PSItem.ForceMcVersion
     }
 
-    ShowLogMessage -type "INFO" -message "Querying last file for $($sModName) (Loader: $($global:settings.general.modLoaderType); MC Version: $($mojangFormatVersion))..." -sLogFile ([ref]$sLogFile)
+    ShowLogMessage -type "INFO" -message "Querying last file for $($sModName) (Loader: $($global:settings.general.modLoaderType[0]); MC Version: $($mojangFormatVersion))..." -sLogFile ([ref]$sLogFile)
 
-    #If ($sModName -eq "YetAnotherConfigLib") {
+    #If ($sModName -eq "Advancements Enlarger") {
     #    $dummy = $True
     #}
 

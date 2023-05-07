@@ -54,7 +54,7 @@ function Get-InfoFromCurseForge {
         [Switch]$Resources
     )
 
-    $url = $Global:settings.curseforge.urlMod -replace "{modId}", $ModId -replace "{versionMc}", $MCVersion -replace "{modLoader}", $global:settings.general.modLoaderType
+    $url = $Global:settings.curseforge.urlMod -replace "{modId}", $ModId -replace "{versionMc}", $MCVersion
     If ($Resources) {
         $url = $Global:settings.curseforge.urlResources -replace "{modId}", $ModId -replace "{versionMc}", $MCVersion
     }
@@ -81,10 +81,21 @@ function Get-InfoFromCurseForge {
         'Incompatible'
         'Include'
     )
+    $oResult      = $null
+    $increment    = 0
+    $numberLoader = (($global:settings.general.modLoaderType).Count)
+    $sVersion     = ""
 
-    $sVersion = ""
 
-    $oResult = Invoke-RestMethod @oParametersQueryFiles
+    do {
+        If (-not $Resources) {
+            $oParametersQueryFiles.Uri = $Global:settings.curseforge.urlMod -replace "{modId}", $ModId -replace "{versionMc}", $MCVersion -replace "{modLoader}", $global:settings.general.modLoaderType[$increment]
+        }
+
+        $oResult = Invoke-RestMethod @oParametersQueryFiles
+        $increment++
+    } while ($oResult.pagination.resultCount -eq 0 -and $increment -lt $numberLoader)
+
     If ($oResult.pagination.resultCount -eq 0) {
         return $null
     }

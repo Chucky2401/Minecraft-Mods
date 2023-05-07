@@ -1,10 +1,13 @@
 {
     "general": {
-        "modLoaderType": "Fabric",
+        "modLoaderType": [
+            "Quilt",
+            "Fabric"
+        ],
         "baseFolder": "E:\\Games\\Minecraft\\#Setup_Minecraft\\"
     },
     "curseforge": {
-        "tokenValue": "$2a$10$aQVrafk./C1ahFnuIUShBux7c7Wq5MQy.rXFFi8ScpxjSFdp4DYxm",
+        "tokenValue": "dFRs+6etq8xMpTANNn1yM2Sz5DQ=",
         "urlMod": "https://api.curseforge.com/v1/mods/{modId}/files?gameVersion={versionMc}&modLoaderType={modLoader}",
         "urlResources": "https://api.curseforge.com/v1/mods/{modId}/files?gameVersion={versionMc}"
     },
@@ -25,7 +28,7 @@
             ]
         },
         {
-            "instancePath": "E:\\Games\\Minecraft\\#MultiMC\\instances\\1.19.4-TestMods\\.minecraft",
+            "instancePath": "E:\\Games\\Minecraft\\#MultiMC\\instances\\1.19.4-Quilt\\.minecraft",
             "includeBaseMods": true,
             "gocOnly": false,
             "categoryExclude": [
