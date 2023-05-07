@@ -2,7 +2,7 @@
 
 $DefaultSettings = [PSCustomObject]@{
     general = [PSCustomObject]@{
-        modLoaderType = $True
+        modLoaderType = @("Fabric")
         baseFolder    = ""
     }
     curseforge = [PSCustomObject]@{
@@ -10,19 +10,25 @@ $DefaultSettings = [PSCustomObject]@{
         urlMod       = "https://api.curseforge.com/v1/mods/{modId}/files?gameVersion={versionMc}&modLoaderType={modLoader}"
         urlResources = "https://api.curseforge.com/v1/mods/{modId}/files?gameVersion={versionMc}"
     }
+    modrinth = [PSCustomObject]@{
+        urlMod       = "https://api.modrinth.com/v2/project/{modId}/version?game_versions=[`"{versionMc}`"]&loaders=[`"{modLoader}`"]"
+        urlResources = "https://api.modrinth.com/v2/project/{modId}/version?game_versions=[`"{versionMc}`"]"
+    }
     minecraft = [PSCustomObject]@{
         baseFolder = ""
     }
     copy = @(
         [PSCustomObject]@{
+            instancePath    = ""
             includeBaseMods = $True
             gocOnly         = $True
-            category        = @("Optifine")
+            categoryExclude = @("Optifine")
         },
         [PSCustomObject]@{
+            instancePath    = ""
             includeBaseMods = $True
             gocOnly         = $False
-            category        = @("NoOptifine")
+            categoryExclude = @("NoOptifine")
         }
     )
 }
