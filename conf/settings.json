@@ -17,7 +17,7 @@
     },
     "copy": [
         {
-            "instancePath": "E:\\Games\\Minecraft\\#MultiMC\\instances\\1.19-4-TestOptifine\\.minecraft",
+            "instancePath": "E:\\Games\\Minecraft\\#MultiMC\\instances\\1.19.4-TestOptifine\\.minecraft",
             "includeBaseMods": true,
             "gocOnly": true,
             "categoryExclude": [
