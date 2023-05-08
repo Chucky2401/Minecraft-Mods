@@ -129,6 +129,9 @@ function Get-InfoFromCurseForge {
         $oFileInfo.downloadUrl = "https://edge.forgecdn.net/files/$($sIdFirstPart)/$($sIdSecondPart)/$($oFileInfo.fileName)"
     }
 
+    $oFileInfo.downloadUrl = $oFileInfo.downloadUrl -replace " ", "%20"
+    $oFileInfo.filename    = $oFileInfo.filename -replace " ",    "_"
+
     $oInformation = [PSCustomObject]@{
         Version      = $sVersion
         id           = $oFileInfo.id

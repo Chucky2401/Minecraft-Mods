@@ -120,6 +120,9 @@ function Get-InfoFromModrinth {
         $oFileInfo.files.url = "https://cdn.modrinth.com/data/$($projectId)/versions/$($fileModId)/$($fileName)"
     }
 
+    $oFileInfo.files.url      = $oFileInfo.files.url -replace " ", "%20"
+    $oFileInfo.files.filename = $oFileInfo.files.filename -replace " ", "_"
+
     $oInformation = [PSCustomObject]@{
         Version      = $sVersion
         id           = $oFileInfo.project_id
