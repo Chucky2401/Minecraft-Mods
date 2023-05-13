@@ -63,6 +63,8 @@ Param (
 #Set Error Action
 $ErrorActionPreference = "Stop"
 
+$PSStyle.Progress.MaxWidth = ($Host.UI.RawUI.WindowSize.Width)-5
+
 Import-Module -Name ".\inc\modules\Tjvs.Message", ".\inc\modules\Tjvs.Minecraft", ".\inc\modules\Tjvs.Settings"
 
 #-----------------------------------------------------------[Functions]------------------------------------------------------------
@@ -74,8 +76,9 @@ $sModsCsvListDirectory  = "$($PSScriptRoot)\csv"
 $sModsMarkdownDirectory = "$($PSScriptRoot)\md"
 $sModsTexteDirectory    = "$($PSScriptRoot)\txt"
 ## CSV
-$aMainModsListFile    = "$($sModsCsvListDirectory)\00_main_listing.csv"
-$aVersionModsListFile = "$($sModsCsvListDirectory)\MC_$($MCVersion)-$(Get-Date -Format "yyyy.MM.dd_HH.mm").csv"
+$aMainModsListFile      = "$($sModsCsvListDirectory)\00_main_listing.csv"
+$aVersionModsListFile   = "$($sModsCsvListDirectory)\MC_$($MCVersion)-$(Get-Date -Format "yyyy.MM.dd_HH.mm").csv"
+$filterPreviousDownload = "MC_$($MCVersion)-*.csv"
 ## Markdown
 $sMarkdownOptifine   = "$($sModsMarkdownDirectory)\MC_$($MCVersion)-Optifine-$(Get-Date -Format "yyyy.MM.dd_HH.mm").md"
 $sMarkdownNoOptifine = "$($sModsMarkdownDirectory)\MC_$($MCVersion)-NoOptifine-$(Get-Date -Format "yyyy.MM.dd_HH.mm").md"
@@ -102,13 +105,21 @@ If ($MCVersion -match "^(.+)\.0$") {
     $mojangFormatVersion = $MCVersion
 }
 
+$loaderProgressBar = $global:settings.general.modLoaderType[0]
 If (-not $Quilt -and $global:settings.general.modLoaderType.Contains("Quilt")) {
     $global:settings.general.modLoaderType = $global:settings.general.modLoaderType | Where-Object { $PSItem -ne "Quilt" }
+    $loaderProgressBar = $global:settings.general.modLoaderType
 }
 
 $global:settings.general.baseFolder += $MCVersion
 If ($Quilt) {
     $global:settings.general.baseFolder += "-Quilt"
+    $aVersionModsListFile   = $aVersionModsListFile -replace $($MCVersion), "$($($MCVersion))-Quilt"
+    $filterPreviousDownload = $filterPreviousDownload -replace $($MCVersion), "$($($MCVersion))-Quilt"
+    $sMarkdownOptifine      = $sMarkdownOptifine -replace $($MCVersion), "$($($MCVersion))-Quilt"
+    $sMarkdownNoOptifine    = $sMarkdownNoOptifine -replace $($MCVersion), "$($($MCVersion))-Quilt"
+    $sInfoWebSiteOptifine   = $sInfoWebSiteOptifine -replace $($MCVersion), "$($($MCVersion))-Quilt"
+    $sInfoWebSiteNoOptifine = $sInfoWebSiteNoOptifine -replace $($MCVersion), "$($($MCVersion))-Quilt"
 }
 $htDownloadDirectories = [ordered]@{
     BaseFolder              = "$($global:settings.general.baseFolder)"
@@ -200,7 +211,7 @@ ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
 
 # Previous download?
 ShowLogMessage -type "INFO" -message "Checking if we already download mods..." -sLogFile ([ref]$sLogFile)
-$oPreviousDownload = Get-ChildItem $($sModsCsvListDirectory) -Filter "MC_$($MCVersion)-*.csv" | Sort-Object LastWriteTime -Desc | Select-Object -First 1
+$oPreviousDownload = Get-ChildItem $($sModsCsvListDirectory) -Filter $filterPreviousDownload | Sort-Object LastWriteTime -Desc | Select-Object -First 1
 If ($null -eq $oPreviousDownload) {
     ShowLogMessage -type "INFO" -message "No previous download..." -sLogFile ([ref]$sLogFile)
 } Else {
@@ -248,9 +259,9 @@ $aMainModsList | Where-Object { $PSItem.isEnabled } | ForEach-Object {
         $sVersionModsMc = $PSItem.ForceMcVersion
     }
 
-    ShowLogMessage -type "INFO" -message "Querying last file for $($sModName) (Loader: $($global:settings.general.modLoaderType[0]); MC Version: $($mojangFormatVersion))..." -sLogFile ([ref]$sLogFile)
+    ShowLogMessage -type "INFO" -message "Querying last file for $($sModName) (Loader: $($loaderProgressBar); MC Version: $($mojangFormatVersion))..." -sLogFile ([ref]$sLogFile)
 
-    #If ($sModName -eq "Advancements Enlarger") {
+    #If ($sModName -eq "Zoomify") {
     #    $dummy = $True
     #}
 
@@ -261,6 +272,7 @@ $aMainModsList | Where-Object { $PSItem.isEnabled } | ForEach-Object {
             } Else {
                 $oFileInfo = Get-InfoFromCurseForge -ModId $sModId -Skip $iSkip -VersionPattern $sVersionPattern -FieldVersion $sField -MCVersion $sVersionModsMc -MainModList $aMainModsList -Resources 
             }
+            Break
         }
         "modrinth" {
             If ($sType -eq "Mods") {
@@ -268,18 +280,23 @@ $aMainModsList | Where-Object { $PSItem.isEnabled } | ForEach-Object {
             } Else {
                 $oFileInfo = Get-InfoFromModrinth -ModId $sModId -Skip $iSkip -VersionPattern $sVersionPattern -FieldVersion $sField -MCVersion $sVersionModsMc -MainModList $aMainModsList -Resources 
             }
+            Break
         }
         "optifine" {
             $oFileInfo = Get-InfoOptifine -MCVersion $sVersionModsMc
+            Break
         }
         "replaymod" {
             $oFileInfo = Get-InfoReplayMod -MCVersion $sVersionModsMc
+            Break
         }
         "chocolateminecraft" {
             $oFileInfo = Get-InfoXaeroMod -MCVersion $sVersionModsMc -Mod $sModName
+            Break
         }
         "fabricmc" {
             $oFileInfo = Get-InfoFabricLoader -MCVersion $sVersionModsMc
+            Break
         }
         Default { $oFileInfo = $null }
     }
@@ -296,12 +313,15 @@ $aMainModsList | Where-Object { $PSItem.isEnabled } | ForEach-Object {
                 } Else {
                     $sFilePath = "$($htDownloadDirectories['ModsFolder'])\$($oFileInfo.filename)"
                 }
+                Break
             }
             "Resources" {
                 $sFilePath = "$($htDownloadDirectories['ResourcesFolder'])\$($oFileInfo.filename)"
+                Break
             }
             "Shaders" {
                 $sFilePath = "$($htDownloadDirectories['ShadersFolder'])\$($oFileInfo.filename)"
+                Break
             }
             Default {
                 $sFilePath = "$($htDownloadDirectories['ModsFolder'])\$($oFileInfo.filename)"
@@ -325,7 +345,7 @@ $aMainModsList | Where-Object { $PSItem.isEnabled } | ForEach-Object {
                 FileLength       = $oFileInfo.fileLength
                 DownloadUrl      = $oFileInfo.downloadUrl
                 GameVersion      = $mojangFormatVersion
-                Dependencies     = $sDependencies
+                Dependencies     = $oFileInfo.dependencies
                 Copy             = $bCopy
                 Add              = $True
                 Update           = $True
@@ -371,7 +391,7 @@ $aMainModsList | Where-Object { $PSItem.isEnabled } | ForEach-Object {
                 FileLength       = $oFileInfo.fileLength
                 DownloadUrl      = $oFileInfo.downloadUrl
                 GameVersion      = $mojangFormatVersion
-                Dependencies     = $sDependencies
+                Dependencies     = $oFileInfo.dependencies
                 Copy             = $bCopy
                 Add              = $bAdd
                 Update           = $bFileUpdate
@@ -555,16 +575,6 @@ ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
 
 ## My copy
 If ($Copy) {
-    #ShowLogMessage -type "INFO" -message "Copy GoC Mods..." -sLogFile ([ref]$sLogFile)
-    #$aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-Opti\.minecraft" -InternalCategoryExclude "NoOptifine" -GoCOnly -Update $bPreviousDownload -LogFile $sLogFile -Debug
-
-    #ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
-    #
-    #ShowLogMessage -type "INFO" -message "Copy not GoC Mods..." -sLogFile ([ref]$sLogFile)
-    #$aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath "E:\Games\Minecraft\#MultiMC\instances\1.19-TestMods\.minecraft" -InternalCategoryExclude "Optifine" -Update $bPreviousDownload -LogFile $sLogFile -Debug
-
-    #ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
-
     $settings.copy | ForEach-Object {
         $instancePath = $PSItem.instancePath
         $exclude = $PSItem.categoryExclude
