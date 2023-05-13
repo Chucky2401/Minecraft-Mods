@@ -88,8 +88,12 @@ function Get-InfoFromCurseForge {
 
 
     do {
-        If (-not $Resources) {
+        If (-not $Resources -and $numberLoader -gt 1) {
             $oParametersQueryFiles.Uri = $Global:settings.curseforge.urlMod -replace "{modId}", $ModId -replace "{versionMc}", $MCVersion -replace "{modLoader}", $global:settings.general.modLoaderType[$increment]
+        }
+
+        If (-not $Resources -and $numberLoader -eq 1) {
+            $oParametersQueryFiles.Uri = $Global:settings.curseforge.urlMod -replace "{modId}", $ModId -replace "{versionMc}", $MCVersion -replace "{modLoader}", $global:settings.general.modLoaderType
         }
 
         $oResult = Invoke-RestMethod @oParametersQueryFiles
@@ -129,16 +133,16 @@ function Get-InfoFromCurseForge {
         $oFileInfo.downloadUrl = "https://edge.forgecdn.net/files/$($sIdFirstPart)/$($sIdSecondPart)/$($oFileInfo.fileName)"
     }
 
-    $oFileInfo.downloadUrl = $oFileInfo.downloadUrl -replace " ", "%20"
-    $oFileInfo.filename    = $oFileInfo.filename -replace " ",    "_"
+    $normalizedUrl      = $oFileInfo.downloadUrl -replace " ", "%20"
+    $normalizedFilename = $oFileInfo.filename -replace " ",    "_"
 
     $oInformation = [PSCustomObject]@{
         Version      = $sVersion
         id           = $oFileInfo.id
-        filename     = $oFileInfo.filename
+        filename     = $normalizedFilename
         fileDate     = $oFileInfo.fileDate
         fileLength   = $oFileInfo.fileLength
-        downloadUrl  = $oFileInfo.downloadUrl
+        downloadUrl  = $normalizedUrl
         dependencies = $sDependencies
     }
 

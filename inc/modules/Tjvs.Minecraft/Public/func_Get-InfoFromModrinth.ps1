@@ -74,8 +74,12 @@ function Get-InfoFromModrinth {
     $sVersion = ""
 
     do {
-        If (-not $Resources) {
+        If (-not $Resources -and $numberLoader -gt 1) {
             $oParametersQueryFiles.Uri = $Global:settings.modrinth.urlMod -replace "{modId}", $ModId -replace "{versionMc}", $MCVersion -replace "{modLoader}", ($global:settings.general.modLoaderType[$increment]).ToLower()
+        }
+
+        If (-not $Resources -and $numberLoader -eq 1) {
+            $oParametersQueryFiles.Uri = $Global:settings.modrinth.urlMod -replace "{modId}", $ModId -replace "{versionMc}", $MCVersion -replace "{modLoader}", ($global:settings.general.modLoaderType).ToLower()
         }
 
         $oResult = Invoke-RestMethod @oParametersQueryFiles
@@ -120,16 +124,16 @@ function Get-InfoFromModrinth {
         $oFileInfo.files.url = "https://cdn.modrinth.com/data/$($projectId)/versions/$($fileModId)/$($fileName)"
     }
 
-    $oFileInfo.files.url      = $oFileInfo.files.url -replace " ", "%20"
-    $oFileInfo.files.filename = $oFileInfo.files.filename -replace " ", "_"
+    $normalizedUrl      = $oFileInfo.files.url -replace " ", "%20"
+    $normalizedFilename = $oFileInfo.files.filename -replace " ", "_"
 
     $oInformation = [PSCustomObject]@{
         Version      = $sVersion
         id           = $oFileInfo.project_id
-        filename     = $oFileInfo.files.filename
+        filename     = $normalizedFilename
         fileDate     = $oFileInfo.date_published
         fileLength   = $oFileInfo.files.size
-        downloadUrl  = $oFileInfo.files.url
+        downloadUrl  = $normalizedUrl
         dependencies = $sDependencies
     }
 
