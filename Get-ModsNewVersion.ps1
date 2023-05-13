@@ -17,8 +17,8 @@
         Initiate copy to instance folder
     .PARAMETER Files
         Generate files for Discord and website
-    .PARAMETER IgnoreQuilt
-        Ignore the Quilt loader from settings
+    .PARAMETER Quilt
+        Search mod for Quilt loader before Fabric
     .OUTPUTS
         Log file, markdown file for Gentlemen of Craft Discord server, text file to update the website and a csv with all the mods and information about them.
     .EXAMPLE
@@ -55,7 +55,7 @@ Param (
     [Parameter(Mandatory = $False)]
     [Switch]$Files,
     [Parameter(Mandatory = $False)]
-    [Switch]$IgnoreQuilt
+    [Switch]$Quilt
 )
 
 #---------------------------------------------------------[Initialisations]--------------------------------------------------------
@@ -102,11 +102,14 @@ If ($MCVersion -match "^(.+)\.0$") {
     $mojangFormatVersion = $MCVersion
 }
 
-If ($IgnoreQuilt -and $global:settings.general.modLoaderType.Contains("Quilt")) {
+If (-not $Quilt -and $global:settings.general.modLoaderType.Contains("Quilt")) {
     $global:settings.general.modLoaderType = $global:settings.general.modLoaderType | Where-Object { $PSItem -ne "Quilt" }
 }
 
 $global:settings.general.baseFolder += $MCVersion
+If ($Quilt) {
+    $global:settings.general.baseFolder += "-Quilt"
+}
 $htDownloadDirectories = [ordered]@{
     BaseFolder              = "$($global:settings.general.baseFolder)"
     ModsFolder              = "$($global:settings.general.baseFolder)\Mods"
