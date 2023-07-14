@@ -27,11 +27,11 @@ function Get-InfoOptifine {
 
     $sRegexMCVersion  = [Regex]::Escape($MCVersion)
     $sDownloadUrl     = "https://optifine.net/"
-    $sPatternOptifine = "^.+href=`"(.+f=(Optifine_$($sRegexMCVersion)_(.+_.+_(.+))\.jar).+)`">Download<\/a>$"
+    $sPatternOptifine = "^.+href=`"(.+f=((?:preview_)?Optifine_$($sRegexMCVersion)_(.+_.+_(.+))\.jar).+)`">Download<\/a>$"
 
     $oWebReponse = Invoke-WebRequest https://optifine.net/downloads -SessionVariable oSession -UserAgent "Mozilla/5.0 (Windows NT x.y; Win64; x64; rv:10.0) Gecko/20100101 Firefox/10.0"
 
-    $oDownloadUrl  = @{Label = "DownloadUrl" ; Expression = {($_.outerHTML | Select-String -Pattern $sPatternOptifine).Matches.Groups[1].Value}}
+    $oDownloadUrl  = @{Label = "DownloadUrl" ; Expression = {(($_.outerHTML | Select-String -Pattern $sPatternOptifine).Matches.Groups[1].Value | Select-String -Pattern "^.+(http://optifine\.net/.+)$").Matches.Groups[1].Value}}
     $oFileName     = @{Label = "FileName" ; Expression = {($_.outerHTML | Select-String -Pattern $sPatternOptifine).Matches.Groups[2].Value}}
     $oVersion      = @{Label = "Version" ; Expression = {($_.outerHTML | Select-String -Pattern $sPatternOptifine).Matches.Groups[3].Value}}
     $oMinorVersion = @{Label = "MinorVersion" ; Expression = {($_.outerHTML | Select-String -Pattern $sPatternOptifine).Matches.Groups[4].Value}}
