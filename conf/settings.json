@@ -20,19 +20,39 @@
     },
     "copy": [
         {
-            "instancePath": "E:\\Games\\Minecraft\\#MultiMC\\instances\\1.19.4-TestOptifine\\.minecraft",
+            "instancePath": "E:\\Games\\Minecraft\\#MultiMC\\instances\\1.20.1-TestOptifine\\.minecraft",
             "includeBaseMods": true,
             "gocOnly": true,
+            "Quilt": false,
             "categoryExclude": [
                 "NoOptifine"
+            ],
+            "loaderExclude": [
+                "Quilt"
             ]
         },
         {
-            "instancePath": "E:\\Games\\Minecraft\\#MultiMC\\instances\\1.19.4-Quilt\\.minecraft",
+            "instancePath": "E:\\Games\\Minecraft\\#MultiMC\\instances\\1.20.1-TestIris\\.minecraft",
             "includeBaseMods": true,
             "gocOnly": false,
+            "Quilt": false,
             "categoryExclude": [
                 "Optifine"
+            ],
+            "loaderExclude": [
+                "Quilt"
+            ]
+        },
+        {
+            "instancePath": "E:\\Games\\Minecraft\\#MultiMC\\instances\\1.20.1-TestQuilt\\.minecraft",
+            "includeBaseMods": true,
+            "gocOnly": false,
+            "Quilt": true,
+            "categoryExclude": [
+                "Optifine"
+            ],
+            "loaderExclude": [
+                "Fabric"
             ]
         }
     ]
