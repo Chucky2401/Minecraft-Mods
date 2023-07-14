@@ -42,6 +42,8 @@ It's been a long time...
 - *07b3767* - feat(Copy): Add -LoaderExclude parameter and fix name with square bracket
 - *31c8066* - feat(Minecraft): add functions to download Quilt loader
 
+---
+
 ## 2022.12.18
 
 ### Common
@@ -90,6 +92,7 @@ It's been a long time...
 - *44def94*: chore: Set regex for Shaders as is now working! Use a conditional regex for CraftPresence
 
 ---
+
 ## 2022.09.01
 
 ### Common
