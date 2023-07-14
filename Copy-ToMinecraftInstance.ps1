@@ -81,6 +81,9 @@ Param (
     [String[]]$InternalCategoryInclude,
     [Parameter(ParameterSetName = "Pipeline")]
     [Parameter(ParameterSetName = "File")]
+    [String[]]$LoaderExclude,
+    [Parameter(ParameterSetName = "Pipeline")]
+    [Parameter(ParameterSetName = "File")]
     [Switch]$GoCOnly,
     [Parameter(ParameterSetName = "Pipeline")]
     [Parameter(ParameterSetName = "File")]
@@ -156,6 +159,11 @@ BEGIN {
         [ScriptBlock]$sbFilter = [ScriptBlock]::Create("$($sbFilter.ToString()) -and `$PSItem.InternalCategory -match `"$($sFilterIncludeInternalCategory)`" -or [String]::IsNullOrEmpty(`$PSItem.InternalCategory)")
     }
 
+    If ($LoaderExclude.Count -ge 1) {
+        $sFilterExcludeLoader = "\b$([String]::Join("\b|\b", $LoaderExclude))\b"
+        [ScriptBlock]$sbFilter = [ScriptBlock]::Create("$($sbFilter.ToString()) -and `$PSItem.loader -notmatch `"$($sFilterExcludeLoader)`"")
+    }
+
     If ($IncludeBaseMods) {
         [ScriptBlock]$sbFilter = [ScriptBlock]::Create("$($sbFilter.ToString()) -or [String]::IsNullOrEmpty(`$PSItem.InternalCategory)")
     }
@@ -187,7 +195,7 @@ PROCESS {
         Write-Progress -Activity "Copy new version of Minecraft Mods ($($iCounter)/$($iNbToCopy) - $($iPercentComplete) %)..." -Status "Mods: $($PSItem.Name)..." -PercentComplete $iPercentComplete
 
         $sFileName = $PSItem.FileName
-        $sSourceFile = $PSItem.FilePath
+        $sSourceFile = $PSItem.FilePath -replace "\[", "``[" -replace "\]", "``]"
         $sPreviousFileName = $PSItem.PreviousFileName
 
         switch ($PSItem.Type) {
