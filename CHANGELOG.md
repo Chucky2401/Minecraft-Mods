@@ -1,5 +1,47 @@
 # Changelog
 
+## v2.0.0 - 2023.07.14
+
+It's been a long time...
+
+### New
+
+- (Tjvs.Minecraft): Use a function to get info from *CurseForge*
+- (Tjvs.Minecraft): Add a function to get info from *Modrinth* (copy from CurseForge)
+- Add the loader option to csv and settings file for copy settings
+- (Copy-ToMinecraftInstance): add `-LoaderExclude` parameter
+- (Tjvs.Minecraft): Add a function to get info from *Quilt* official website
+
+### Change
+
+- Use new settings format (`json` instead of `ini`)
+- (Get-ModsNewVersion): Copy is not hard coded anymore, settings file is used
+
+### Fix
+
+- (Get-ModsNewVersion): Pattern to get version of mods in main csv file
+- (Get-ModsNewVersion): Infinite loop when download mods
+- (Get-ModsNewVersion): Download url for *Optifine*
+- (Copy-ToMinecraftInstance): Typo issue in the word *Resources* for conditional
+- Replace space in URL by the encoded character *%20*
+
+## Commit
+
+- *2f1307a* - feat(Copy-ToMinecraftInstance.ps1): update $settings to new version
+- *1638779* - feat(Get-ModsNewVersion): update $settings to new version and use CurseForge function to get info from them
+- *1c98aa0* - feat(Tjvs.Minecraft): good name for new function and declaration in psd1 file
+- *f316533* - fix(main listing): fix pattern version of mods
+- *afded27* - feat(Tjvs.Minecraft): add Modrinth function
+- *d410270* - fix(Get-ModsNewVersion): infinite loop for download mod.
+- *a6955c7* - fix(Tjvs.Minecraft): fix download url finding and final download url for Optifine function
+- *551c257* - feat(Get-ModsNewVersion): use settings for copy
+- *5bc2f0b* - fix(Copy-ToMinecraftInstance): fix switch on type 'Ressources' instead of 'Resources'
+- *39c110d* - feat(Tjvs.Minecraft): replace space in URL by '%20' and space in filename by '_'
+- *899a1d6* - feat(csv): add column loader as the add of Quilt loader.
+- *719fcee* - feat(conf): add the loaderExclude options for copy settings and the Quilt option
+- *07b3767* - feat(Copy): Add -LoaderExclude parameter and fix name with square bracket
+- *31c8066* - feat(Minecraft): add functions to download Quilt loader
+
 ## 2022.12.18
 
 ### Common
