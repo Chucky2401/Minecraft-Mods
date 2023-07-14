@@ -105,36 +105,45 @@ If ($MCVersion -match "^(.+)\.0$") {
     $mojangFormatVersion = $MCVersion
 }
 
+[ScriptBlock]$maintModsListFilter = [ScriptBlock]::Create("`$PSItem.isEnabled")
+
 $loaderProgressBar = $global:settings.general.modLoaderType[0]
 If (-not $Quilt -and $global:settings.general.modLoaderType.Contains("Quilt")) {
     $global:settings.general.modLoaderType = $global:settings.general.modLoaderType | Where-Object { $PSItem -ne "Quilt" }
     $loaderProgressBar = $global:settings.general.modLoaderType
+    [ScriptBlock]$maintModsListFilter = [ScriptBlock]::Create("$($maintModsListFilter.ToString()) -and `$PSItem.loader -ne 'Quilt'")
 }
 
 $global:settings.general.baseFolder += $MCVersion
 If ($Quilt) {
+    [ScriptBlock]$maintModsListFilter = [ScriptBlock]::Create("$($maintModsListFilter.ToString()) -and `$PSItem.loader -ne 'Fabric'")
     $global:settings.general.baseFolder += "-Quilt"
     $aVersionModsListFile   = $aVersionModsListFile -replace $($MCVersion), "$($($MCVersion))-Quilt"
-    $filterPreviousDownload = $filterPreviousDownload -replace $($MCVersion), "$($($MCVersion))-Quilt"
+    $filterPreviousDownload = $filterPreviousDownload -replace $($MCVersion), "Quilt-$($($MCVersion))"
     $sMarkdownOptifine      = $sMarkdownOptifine -replace $($MCVersion), "$($($MCVersion))-Quilt"
     $sMarkdownNoOptifine    = $sMarkdownNoOptifine -replace $($MCVersion), "$($($MCVersion))-Quilt"
     $sInfoWebSiteOptifine   = $sInfoWebSiteOptifine -replace $($MCVersion), "$($($MCVersion))-Quilt"
     $sInfoWebSiteNoOptifine = $sInfoWebSiteNoOptifine -replace $($MCVersion), "$($($MCVersion))-Quilt"
 }
+
+$orgaFolders = $aMainModsList | Where-Object { $PSItem.internalCategory -ne "Optifine" } | Select-Object -Property type, internalCategory -Unique | Sort-Object type
+$gocBaseFolder = "$($global:settings.general.baseFolder)\#GoC\"
 $htDownloadDirectories = [ordered]@{
-    BaseFolder              = "$($global:settings.general.baseFolder)"
-    ModsFolder              = "$($global:settings.general.baseFolder)\Mods"
-    ModsNoOptifineFolder    = "$($global:settings.general.baseFolder)\Mods\NoOptifine"
-    ResourcesFolder         = "$($global:settings.general.baseFolder)\Resources"
-    ShadersFolder           = "$($global:settings.general.baseFolder)\Shaders"
+    BaseFolder = "$($global:settings.general.baseFolder)"
 }
 
 $htComplementFolders = [ordered]@{
-    GocFolder               = "$($global:settings.general.baseFolder)\#GoC"
-    GocModsFolder           = "$($global:settings.general.baseFolder)\#GoC\mods"
-    GocModsNoOptifineFolder = "$($global:settings.general.baseFolder)\#GoC\modsNoOptifine"
-    GocResourcesFolder      = "$($global:settings.general.baseFolder)\#GoC\resourcepacks"
-    GocShadersFolder        = "$($global:settings.general.baseFolder)\#GoC\shaders"
+    BaseFolder = "$($gocBaseFolder)"
+}
+
+$orgaFolders | ForEach-Object {
+    $value = "$($PSItem.type)\$($PSItem.internalCategory)"
+    $htDownloadDirectories.Add("$($value -replace "\\", """")Folder", "$($global:settings.general.baseFolder)\$($value)")
+}
+
+$orgaFolders | ForEach-Object {
+    $value = "$($PSItem.type)$($PSItem.internalCategory)"
+    $htComplementFolders.Add("$($value -replace "\\", """")Folder", "$($gocBaseFolder)$($value.ToLower() -replace "resources", "resourcepacks")")
 }
 
 # Logs
@@ -230,7 +239,7 @@ $toCopy    = @{ Label = "toCopy" ; Expression = { [Boolean]::Parse($PSItem.copy)
 $aMainModsList = $aMainModsList | Select-Object -Property *, $isEnabled, $isGoc, $toCopy -ExcludeProperty enabled, goc, copy
 
 # Downloading
-$aMainModsList | Where-Object { $PSItem.isEnabled } | ForEach-Object {
+$aMainModsList | Where-Object $maintModsListFilter | ForEach-Object {
     $bDownloadSuccess     = $False
     $iNumberDownloadTried = 1
 
@@ -298,6 +307,10 @@ $aMainModsList | Where-Object { $PSItem.isEnabled } | ForEach-Object {
             $oFileInfo = Get-InfoFabricLoader -MCVersion $sVersionModsMc
             Break
         }
+        "quiltmc" {
+            $oFileInfo = Get-InfoQuiltLoader -MCVersion $sVersionModsMc
+            Break
+        }
         Default { $oFileInfo = $null }
     }
 
@@ -309,22 +322,27 @@ $aMainModsList | Where-Object { $PSItem.isEnabled } | ForEach-Object {
         switch ($sType) {
             "Mods" {
                 If ($sInternalCategory -eq "NoOptifine") {
-                    $sFilePath = "$($htDownloadDirectories['ModsNoOptifineFolder'])\$($oFileInfo.filename)"
+                    $sFilePath    = "$($htDownloadDirectories['ModsNoOptifineFolder'])\$($oFileInfo.filename)"
+                    $sFilePathGoc = "$($htComplementFolders['ModsNoOptifineFolder'])\$($oFileInfo.filename)"
                 } Else {
-                    $sFilePath = "$($htDownloadDirectories['ModsFolder'])\$($oFileInfo.filename)"
+                    $sFilePath    = "$($htDownloadDirectories['ModsFolder'])\$($oFileInfo.filename)"
+                    $sFilePathGoc = "$($htComplementFolders['ModsFolder'])\$($oFileInfo.filename)"
                 }
                 Break
             }
             "Resources" {
-                $sFilePath = "$($htDownloadDirectories['ResourcesFolder'])\$($oFileInfo.filename)"
+                $sFilePath    = "$($htDownloadDirectories['ResourcesFolder'])\$($oFileInfo.filename)"
+                $sFilePathGoc = "$($htComplementFolders['ResourcesFolder'])\$($oFileInfo.filename)"
                 Break
             }
             "Shaders" {
-                $sFilePath = "$($htDownloadDirectories['ShadersFolder'])\$($oFileInfo.filename)"
+                $sFilePath    = "$($htDownloadDirectories['ShadersFolder'])\$($oFileInfo.filename)"
+                $sFilePathGoc = "$($htComplementFolders['ShadersFolder'])\$($oFileInfo.filename)"
                 Break
             }
             Default {
-                $sFilePath = "$($htDownloadDirectories['ModsFolder'])\$($oFileInfo.filename)"
+                $sFilePath    = "$($htDownloadDirectories['ModsFolder'])\$($oFileInfo.filename)"
+                $sFilePathGoc = "$($htComplementFolders['ModsFolder'])\$($oFileInfo.filename)"
             }
         }
 
@@ -333,6 +351,7 @@ $aMainModsList | Where-Object { $PSItem.isEnabled } | ForEach-Object {
             $oModInfo = [PSCustomObject]@{
                 Name             = $PSItem.displayName
                 ModId            = $PSItem.id
+                Loader           = $PSItem.loader
                 Version          = $oFileInfo.Version
                 Type             = $sType
                 InternalCategory = $sInternalCategory
@@ -355,11 +374,13 @@ $aMainModsList | Where-Object { $PSItem.isEnabled } | ForEach-Object {
             If ($aPreviousModListDownload.FileId.IndexOf($oFileInfo.id.ToString()) -eq -1) {
                 $aPreviousModListDownload | Where-Object { $PSItem.ModId -eq $sModId -and $PSItem.name -eq $sModDisplayName } | ForEach-Object {
                     If ($PSItem.FileId -ne "") {
-                        $bPreviousModFound = $True
-                        $sPreviousVersion  = $PSItem.Version
-                        $sPreviousFileName = $PSItem.FileName
+                        $bPreviousModFound    = $True
+                        $sPreviousVersion     = $PSItem.Version
+                        $sPreviousFileName    = $PSItem.FileName
+                        $sPreviousFileNameGoc = $sPreviousFileName -replace $($global:settings.general.baseFolder), $gocBaseFolder
                         $bPreviousModFound | Out-Null #To remove Warning
                         $sPreviousFileName | Out-Null #To remove Warning
+                        $sPreviousFileNameGoc | Out-Null #To remove Warning
                         ShowLogMessage -type "INFO" -message "The mods has been updated! ($($sPreviousVersion) -> $($oFileInfo.Version))" -sLogFile ([ref]$sLogFile)
                     } Else {
                         ShowLogMessage -type "INFO" -message "The mods has been updated for Minecraft $($mojangFormatVersion)!" -sLogFile ([ref]$sLogFile)
@@ -379,6 +400,7 @@ $aMainModsList | Where-Object { $PSItem.isEnabled } | ForEach-Object {
             $oModInfo = [PSCustomObject]@{
                 Name             = $PSItem.displayName
                 ModId            = $PSItem.id
+                Loader           = $PSItem.loader
                 Version          = $oFileInfo.Version
                 Type             = $sType
                 InternalCategory = $sInternalCategory
@@ -402,6 +424,7 @@ $aMainModsList | Where-Object { $PSItem.isEnabled } | ForEach-Object {
         $oModInfo = [PSCustomObject]@{
             Name             = $PSItem.displayName
             ModId            = $PSItem.id
+            Loader           = $PSItem.loader
             Version          = ""
             Type             = $sType
             InternalCategory = $sInternalCategory
@@ -429,6 +452,7 @@ $aMainModsList | Where-Object { $PSItem.isEnabled } | ForEach-Object {
             $sNewPreviousFilePath = "$($sPreviousFilePath).old"
             Try {
                 Rename-Item -Path $sPreviousFilePath -NewName $sNewPreviousFilePath -Force -ErrorAction Stop
+                Remove-Item -Path $sPreviousFileNameGoc -Force -ErrorAction Stop
                 ShowLogMessage -type "SUCCESS" -message "Previous file has been renamed!" -sLogFile ([ref]$sLogFile)
             } Catch {
                 $sErrorMessage = $_.Exception.Message
@@ -465,6 +489,21 @@ $aMainModsList | Where-Object { $PSItem.isEnabled } | ForEach-Object {
                 }
             }
         } While (-not $bDownloadSuccess -and $iNumberDownloadTried -le $iMaxDownloadTry)
+
+        If ($oModInfo.GOC) {
+            ShowLogMessage -type "INFO" -message "Copy mods to GoC folder..." -sLogFile ([ref]$sLogFile)
+            Try {
+                Copy-Item -Path ($oModInfo.FilePath -replace "\[", "``[" -replace "\]", "``]") -Destination $sFilePathGoc -ErrorAction Stop
+                ShowLogMessage -type "SUCCESS" -message "The mod has been copied successfully to GoC folder!" -sLogFile ([ref]$sLogFile)
+            } Catch {
+                $sErrorMessage = $PSItem.Exception.Message
+                ShowLogMessage -type "ERROR" -message "The mod has not been copied to GoC folder!" -sLogFile ([ref]$sLogFile)
+                If ($PSBoundParameters['Debug']) {
+                    ShowLogMessage -type "OTHER" -message "Error detail:" -sLogFile ([ref]$sLogFile)
+                    ShowLogMessage -type "OTHER" -message "`t$($sErrorMessage)" -sLogFile ([ref]$sLogFile)
+                }
+            }
+        }
 
         If (-not $bDownloadSuccess -and $iNumberDownloadTried -gt $iMaxDownloadTry) {
             ShowLogMessage -type "ERROR" -message "Too many tries!" -sLogFile ([ref]$sLogFile)
@@ -575,13 +614,14 @@ ShowLogMessage -type "OTHER" -message "" -sLogFile ([ref]$sLogFile)
 
 ## My copy
 If ($Copy) {
-    $settings.copy | ForEach-Object {
-        $instancePath = $PSItem.instancePath
-        $exclude = $PSItem.categoryExclude
-        $gocOnly = $PSItem.gocOnly
+    $settings.copy | Where-Object { $PSItem.Quilt -eq $Quilt } | ForEach-Object {
+        $instancePath    = $PSItem.instancePath
+        $categoryExclude = $PSItem.categoryExclude
+        $gocOnly         = $PSItem.gocOnly
+        $loaderExclude   = $PSItem.loaderExclude
 
         Write-Message -Type "INFO" -Message "Copy mods to $($instancePath)..." -LogFile ([ref]$sLogFile)
-        $aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath $instancePath -InternalCategoryExclude $exclude -GoCOnly:$gocOnly -Update $bPreviousDownload -LogFile $sLogFile -Debug
+        $aModListDownload | .\Copy-ToMinecraftInstance.ps1 -InstancePath $instancePath -InternalCategoryExclude $categoryExclude -LoaderExclude $loaderExclude -GoCOnly:$gocOnly -Update $bPreviousDownload -LogFile $sLogFile -Debug
     }
 }
 
