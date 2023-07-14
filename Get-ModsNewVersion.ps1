@@ -27,12 +27,12 @@
         .\Get-ModsNewVersion.ps1 -MCVersion "1.19.0" -NoDownload
     .NOTES
         Name           : Get-ModsNewVersion
-        Version        : 2.0b
+        Version        : 2.0
         Created by     : Chucky2401
         Date created   : 13/07/2022
         Modified by    : Chucky2401
-        Date modified  : 07/05/2023
-        Change         : Add Modrinth source
+        Date modified  : 14/07/2023
+        Change         : Add Modrinth source and Quilt
     .LINK
         https://github.com/Chucky2401/Minecraft-Mods/blob/main/README.md#get-modsnewversion
 #>

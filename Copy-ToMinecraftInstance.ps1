@@ -45,14 +45,12 @@
         Copy all updated mods from the .csv file, in the specific instance path, where the internal category is not NoOptifine and where the field GOC is equal to True
     .NOTES
         Name           : Copy-ToMinecraftInstance
-        Version        : 1.3
+        Version        : 2.0
         Created by     : Chucky2401
         Date Created   : 14/08/2022
         Modify by      : Chucky2401
-        Date modified  : 18/12/2022
-        Change         : Use modules instead of local functions
-                         Add '-InternalCategoryInclude' and '-IncludeBaseMods' parameters
-                         Unify version number
+        Date modified  : 14/07/2023
+        Change         : Add Modrinth source and Quilt
     .LINK
         https://github.com/Chucky2401/Minecraft-Mods/blob/main/README.md#copy-tominecraftinstance
 #>
